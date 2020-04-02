@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <include resource="org/springframework/boot/logging/logback/base.xml"/>
+  
+  <!-- 日志地址 -->
+  <property name="logPath" value="../log"/>
+
+  <!-- 文件保存日志的相关配置，同步 -->
+  <appender name="logFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <Prudent>true</Prudent>
+      <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <FileNamePattern>
+              ${logPath}/%d{yyyyMMdd}/%d{yyyyMMdd}.%i.log
+          </FileNamePattern>
+          <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+  			<maxFileSize>10MB</maxFileSize>
+  		  </timeBasedFileNamingAndTriggeringPolicy>
+      </rollingPolicy>
+      <layout class="ch.qos.logback.classic.PatternLayout">
+          <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} : %msg %n</pattern>
+      </layout>
+  </appender>
+  <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{35} : %msg %n</pattern>
+        </encoder>
+        <!--滚动策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${logPath}/%d{yyyyMMdd}/%d{yyyyMMdd}-error.%i.log</fileNamePattern>
+        	<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+  			<maxFileSize>10MB</maxFileSize>
+  		  </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+  
+  <root level="info">
+      <appender-ref ref="logFile" />
+      <appender-ref ref="fileErrorLog" />
+  </root>
+  <!-- <logger name="org.springframework.web" level="info" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger> -->
+
+  
+  <logger name="com.pactera.monitoring.dao" level="debug" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+
+  <!-- mybatis日志打印 -->
+  <!-- <logger name="com.ibatis" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+  <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+  <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+  <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+  <logger name="java.sql.Connection" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+  <logger name="java.sql.Statement" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger>
+  <logger name="java.sql.PreparedStatement" level="DEBUG" additivity="false">
+  	<appender-ref ref="logFile" />
+  </logger> -->
+</configuration>
