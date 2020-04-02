@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pactera.monitoring.dao.ds1.monHardwareDiskinfoDtlMapper">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.monHardwareDiskinfoDtl">
+    <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
+    <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
+    <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
+    <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt" />
+    <result column="FILESYSTEM_NM" jdbcType="VARCHAR" property="filesystemNm" />
+    <result column="DISK_TOTAL_SIZE" jdbcType="VARCHAR" property="diskTotalSize" />
+    <result column="DISK_USED_SIZE" jdbcType="VARCHAR" property="diskUsedSize" />
+    <result column="DISK_USED_RATE" jdbcType="VARCHAR" property="diskUsedRate" />
+    <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
+    <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
+    <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3" />
+    <result column="CHAR_BAK_4" jdbcType="VARCHAR" property="charBak4" />
+    <result column="CHAR_BAK_5" jdbcType="VARCHAR" property="charBak5" />
+    <result column="NUM_BAK_1" jdbcType="NUMERIC" property="numBak1" />
+    <result column="NUM_BAK_2" jdbcType="NUMERIC" property="numBak2" />
+    <result column="NUM_BAK_3" jdbcType="NUMERIC" property="numBak3" />
+    <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
+    <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
+  </resultMap>
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.monHardwareDiskinfoDtl">
+    insert into MON_HARDWARE_DISKINFO_DTL (SERVICE_NM, SERVICE_IP, DATA_DT, 
+      RECORD_DT, FILESYSTEM_NM, DISK_TOTAL_SIZE, 
+      DISK_USED_SIZE, DISK_USED_RATE, CHAR_BAK_1, 
+      CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4, 
+      CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2, 
+      NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
+      )
+    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP}, 
+      #{recordDt,jdbcType=TIMESTAMP}, #{filesystemNm,jdbcType=VARCHAR}, #{diskTotalSize,jdbcType=VARCHAR}, 
+      #{diskUsedSize,jdbcType=VARCHAR}, #{diskUsedRate,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR}, 
+      #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR}, 
+      #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC}, 
+      #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.monHardwareDiskinfoDtl">
+    insert into MON_HARDWARE_DISKINFO_DTL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="serviceNm != null">
+        SERVICE_NM,
+      </if>
+      <if test="serviceIp != null">
+        SERVICE_IP,
+      </if>
+      <if test="dataDt != null">
+        DATA_DT,
+      </if>
+      <if test="recordDt != null">
+        RECORD_DT,
+      </if>
+      <if test="filesystemNm != null">
+        FILESYSTEM_NM,
+      </if>
+      <if test="diskTotalSize != null">
+        DISK_TOTAL_SIZE,
+      </if>
+      <if test="diskUsedSize != null">
+        DISK_USED_SIZE,
+      </if>
+      <if test="diskUsedRate != null">
+        DISK_USED_RATE,
+      </if>
+      <if test="charBak1 != null">
+        CHAR_BAK_1,
+      </if>
+      <if test="charBak2 != null">
+        CHAR_BAK_2,
+      </if>
+      <if test="charBak3 != null">
+        CHAR_BAK_3,
+      </if>
+      <if test="charBak4 != null">
+        CHAR_BAK_4,
+      </if>
+      <if test="charBak5 != null">
+        CHAR_BAK_5,
+      </if>
+      <if test="numBak1 != null">
+        NUM_BAK_1,
+      </if>
+      <if test="numBak2 != null">
+        NUM_BAK_2,
+      </if>
+      <if test="numBak3 != null">
+        NUM_BAK_3,
+      </if>
+      <if test="numBak4 != null">
+        NUM_BAK_4,
+      </if>
+      <if test="numBak5 != null">
+        NUM_BAK_5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="serviceNm != null">
+        #{serviceNm,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceIp != null">
+        #{serviceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="dataDt != null">
+        #{dataDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recordDt != null">
+        #{recordDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="filesystemNm != null">
+        #{filesystemNm,jdbcType=VARCHAR},
+      </if>
+      <if test="diskTotalSize != null">
+        #{diskTotalSize,jdbcType=VARCHAR},
+      </if>
+      <if test="diskUsedSize != null">
+        #{diskUsedSize,jdbcType=VARCHAR},
+      </if>
+      <if test="diskUsedRate != null">
+        #{diskUsedRate,jdbcType=VARCHAR},
+      </if>
+      <if test="charBak1 != null">
+        #{charBak1,jdbcType=VARCHAR},
+      </if>
+      <if test="charBak2 != null">
+        #{charBak2,jdbcType=VARCHAR},
+      </if>
+      <if test="charBak3 != null">
+        #{charBak3,jdbcType=VARCHAR},
+      </if>
+      <if test="charBak4 != null">
+        #{charBak4,jdbcType=VARCHAR},
+      </if>
+      <if test="charBak5 != null">
+        #{charBak5,jdbcType=VARCHAR},
+      </if>
+      <if test="numBak1 != null">
+        #{numBak1,jdbcType=NUMERIC},
+      </if>
+      <if test="numBak2 != null">
+        #{numBak2,jdbcType=NUMERIC},
+      </if>
+      <if test="numBak3 != null">
+        #{numBak3,jdbcType=NUMERIC},
+      </if>
+      <if test="numBak4 != null">
+        #{numBak4,jdbcType=NUMERIC},
+      </if>
+      <if test="numBak5 != null">
+        #{numBak5,jdbcType=NUMERIC},
+      </if>
+    </trim>
+  </insert>
+</mapper>
