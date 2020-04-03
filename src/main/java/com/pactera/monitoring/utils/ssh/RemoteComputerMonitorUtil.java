@@ -1,6 +1,7 @@
 package com.pactera.monitoring.utils.ssh;
 
 import com.jcraft.jsch.JSchException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,8 @@ public class RemoteComputerMonitorUtil {
     //查询cpu总线程
     private String cpuTotalThreadsNumCommand = "grep 'processor' /proc/cpuinfo | sort -u | wc -l";
 
-    private String memCommand = "cat /proc/meminfo |grep 'MemTotal\\|MemFree'|awk '{print $2}'";
+    //private String memCommand = "cat /proc/meminfo |grep 'MemTotal\\|MemFree'|awk '{print $2}'";
+    private String memCommand = "free |awk 'NR==2 || NR==4 {print $2,$3,$4,$5,$6,$7}'";
     //private String diskCommand = "df -h|grep -v Filesystem";
     private String diskCommand = "df -h --total|awk 'NR==13''{print $2,$3,$4,$5}'";
     private String networkCommand = "cat /proc/net/dev|grep networkAdapter|awk '{print $2, $10}'";
@@ -175,26 +177,75 @@ public class RemoteComputerMonitorUtil {
      * @return
      */
     public Map<String, String> getMemUsage() throws JSchException {
-        Map<String, String> map = new HashMap<>(3);
-        DecimalFormat df1 = new DecimalFormat("0.000");
+        Map<String, String> map = new HashMap<>(9);
         jschUtil.connect();
         List<String> result = jschUtil.execCmd(memCommand);
-        if (result != null && result.size() > 0) {
-            double memTotal = Double.parseDouble(result.get(0).toString()) / 1024 / 1024;
-            double memFree = Double.parseDouble(result.get(1).toString()) / 1024 / 1024;
-            double memUsed = memTotal - memFree;
-            double memUsedRate = memUsed / memTotal * 100;
-            map.put("memTotal", df1.format(memTotal));
-            map.put("memUsed", df1.format(memUsed));
-            map.put("memFree", df1.format(memFree));
-            map.put("memUsedRate", df1.format(memUsedRate));
-        } else {
-            map.put("memTotal", "0");
-            map.put("memUsed", "0");
-            map.put("memFree", "0");
-        }
-        return map;
+        return memoAnalyis(result);
     }
+
+    /**
+     * 内存结果分析
+     * @param result
+     * @return
+     */
+    public Map<String,String> memoAnalyis(List<String> result){
+        DecimalFormat df = new DecimalFormat("0.000");
+
+        if (result == null || result.size() != 2) {
+            return memoInitAnalyisResult(df);
+        }
+
+        String memoInfo = result.get(0);
+        String swapInfo = result.get(1);
+
+        if (StringUtils.isEmpty(memoInfo) || StringUtils.isEmpty(swapInfo)) {
+            return memoInitAnalyisResult(df);
+        }
+
+        String[] memoInfoArray = memoInfo.split(" ");
+        String[] swapInfoArray = swapInfo.split(" ");
+        int memoBookLen=6;
+        int swapBookLen = 3;
+        if (memoInfoArray.length != memoBookLen || swapInfoArray.length != swapBookLen) {
+            return memoInitAnalyisResult(df);
+        }
+        HashMap<String, String> queryResult = new HashMap<>(9);
+        double memTotal = Double.parseDouble(memoInfoArray[0]) / 1024 / 1024;
+        double memFree = Double.parseDouble(memoInfoArray[2]) / 1024 / 1024;
+        double memUsed = Double.parseDouble(memoInfoArray[1]) / 1024 / 1024;
+        double memoShared = Double.parseDouble(memoInfoArray[3]) / 1024 / 1024;
+        double swapTotal = Double.parseDouble(swapInfoArray[0]) / 1024 / 1024;
+        double swapUsed = Double.parseDouble(swapInfoArray[1]) / 1024 / 1024;
+        double swapFree = Double.parseDouble(swapInfoArray[2]) / 1024 / 1024;
+        double memUsedRate = memUsed / memTotal * 100;
+        double cachedAndBuffers = (Double.parseDouble(memoInfoArray[4])
+                + Double.parseDouble(memoInfoArray[5])) / 1024 / 1024;
+        queryResult.put("memTotal", df.format(memTotal));
+        queryResult.put("memUsed", df.format(memUsed));
+        queryResult.put("memFree", df.format(memFree));
+        queryResult.put("memUsedRate", df.format(memUsedRate));
+        queryResult.put("memoShared", df.format(memoShared));
+        queryResult.put("swapTotal", df.format(swapTotal));
+        queryResult.put("swapUsed", df.format(swapUsed));
+        queryResult.put("swapFree", df.format(swapFree));
+        queryResult.put("cachedAndBuffers", df.format(cachedAndBuffers));
+        return queryResult;
+    }
+
+    public HashMap<String,String> memoInitAnalyisResult(DecimalFormat df){
+        HashMap<String, String> analyisResult = new HashMap<>();
+        analyisResult.put("memTotal", df.format(0));
+        analyisResult.put("memUsed", df.format(0));
+        analyisResult.put("memFree", df.format(0));
+        analyisResult.put("memUsedRate", df.format(0));
+        analyisResult.put("memoShared", df.format(0));
+        analyisResult.put("swapTotal", df.format(0));
+        analyisResult.put("swapUsed", df.format(0));
+        analyisResult.put("swapFree", df.format(0));
+        analyisResult.put("cachedAndBuffers", df.format(0));
+        return analyisResult;
+    }
+
 
     /**
      * 获取io信息(此方法会使用5s时间去Linux收集数据求平均值)
