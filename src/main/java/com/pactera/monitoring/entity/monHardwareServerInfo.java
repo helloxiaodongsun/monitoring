@@ -2,47 +2,113 @@ package com.pactera.monitoring.entity;
 
 import java.util.Date;
 
+/**
+ * 服务器基础信息表
+ */
 public class monHardwareServerInfo {
+    /**
+     * 服务器名称
+     */
     private String serviceNm;
 
+    /**
+     * 服务器IP
+     */
     private String serviceIp;
 
+    /**
+     * 日期
+     */
     private Date dataDt;
 
+    /**
+     * 记录时间戳
+     */
     private Date recordDt;
 
+    /**
+     * 服务器版本信息
+     */
     private String serviceVersion;
 
+    /**
+     * 服务器运行状态1正常0死亡
+     */
     private String serviceActive;
 
+    /**
+     * 服务器内核版本信息
+     */
     private String serviceCoreVersion;
 
+    /**
+     * 服务器用户名
+     */
     private String serviceUser;
 
+    /**
+     * 服务器密码
+     */
     private String servicePassword;
 
+    /**
+     * 服务器类型1数据库服务器2ETL服务器3应用服务器
+     */
     private String serviceType;
 
+    /**
+     * 服务器端口号
+     */
     private String servicePort;
 
+    /**
+     * 字符备用字段1
+     */
     private String charBak1;
 
+    /**
+     * 字符备用字段2
+     */
     private String charBak2;
 
+    /**
+     * 字符备用字段3
+     */
     private String charBak3;
 
+    /**
+     * 字符备用字段4
+     */
     private String charBak4;
 
+    /**
+     * 字符备用字段5
+     */
     private String charBak5;
 
+    /**
+     * 数字备用字段1
+     */
     private Short numBak1;
 
+    /**
+     * 数字备用字段2
+     */
     private Short numBak2;
 
+    /**
+     * 数字备用字段3
+     */
     private Short numBak3;
 
+    /**
+     * 数字备用字段4
+     */
     private Short numBak4;
 
+    /**
+     * 数字备用字段5
+     */
     private Short numBak5;
 
     public String getServiceNm() {

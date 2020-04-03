@@ -2,41 +2,98 @@ package com.pactera.monitoring.entity;
 
 import java.util.Date;
 
+/**
+ * 磁盘基础信息表-明细
+ */
 public class monHardwareDiskinfoDtl {
+    /**
+     * 服务器名称
+     */
     private String serviceNm;
 
+    /**
+     * 服务器IP
+     */
     private String serviceIp;
 
+    /**
+     * 日期
+     */
     private Date dataDt;
 
+    /**
+     * 记录时间戳
+     */
     private Date recordDt;
 
+    /**
+     * 文件系统名称
+     */
     private String filesystemNm;
 
+    /**
+     * 所在磁盘大小
+     */
     private String diskTotalSize;
 
+    /**
+     * 所在磁盘使用大小
+     */
     private String diskUsedSize;
 
+    /**
+     * 所在磁盘使用率
+     */
     private String diskUsedRate;
 
+    /**
+     * 字符备用字段1
+     */
     private String charBak1;
 
+    /**
+     * 字符备用字段2
+     */
     private String charBak2;
 
+    /**
+     * 字符备用字段3
+     */
     private String charBak3;
 
+    /**
+     * 字符备用字段4
+     */
     private String charBak4;
 
+    /**
+     * 字符备用字段5
+     */
     private String charBak5;
 
+    /**
+     * 数字备用字段1
+     */
     private Short numBak1;
 
+    /**
+     * 数字备用字段2
+     */
     private Short numBak2;
 
+    /**
+     * 数字备用字段3
+     */
     private Short numBak3;
 
+    /**
+     * 数字备用字段4
+     */
     private Short numBak4;
 
+    /**
+     * 数字备用字段5
+     */
     private Short numBak5;
 
     public String getServiceNm() {

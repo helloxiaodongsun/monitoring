@@ -2,47 +2,113 @@ package com.pactera.monitoring.entity;
 
 import java.util.Date;
 
+/**
+ * I/O基础信息表
+ */
 public class monHardwareIoInfo {
+    /**
+     * 服务器名称
+     */
     private String serviceNm;
 
+    /**
+     * 服务器IP
+     */
     private String serviceIp;
 
+    /**
+     * 日期
+     */
     private Date dataDt;
 
+    /**
+     * 记录时间戳
+     */
     private Date recordDt;
 
+    /**
+     * 磁盘名称
+     */
     private String diskNm;
 
+    /**
+     * 磁盘每秒传输速度
+     */
     private String diskTrans;
 
+    /**
+     * 磁盘每秒读取数
+     */
     private String diskRead;
 
+    /**
+     * 磁盘每秒写入数
+     */
     private String diskWrite;
 
+    /**
+     * 磁盘使用率
+     */
     private String diskUseRate;
 
+    /**
+     * 磁盘平均响应时间
+     */
     private String diskAvgRespond;
 
+    /**
+     * 服务器类型1数据库服务器2ETL服务器3应用服务器
+     */
     private String serviceType;
 
+    /**
+     * 字符备用字段1
+     */
     private String charBak1;
 
+    /**
+     * 字符备用字段2
+     */
     private String charBak2;
 
+    /**
+     * 字符备用字段3
+     */
     private String charBak3;
 
+    /**
+     * 字符备用字段4
+     */
     private String charBak4;
 
+    /**
+     * 字符备用字段5
+     */
     private String charBak5;
 
+    /**
+     * 数字备用字段1
+     */
     private Short numBak1;
 
+    /**
+     * 数字备用字段2
+     */
     private Short numBak2;
 
+    /**
+     * 数字备用字段3
+     */
     private Short numBak3;
 
+    /**
+     * 数字备用字段4
+     */
     private Short numBak4;
 
+    /**
+     * 数字备用字段5
+     */
     private Short numBak5;
 
     public String getServiceNm() {

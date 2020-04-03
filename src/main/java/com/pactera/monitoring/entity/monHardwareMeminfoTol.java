@@ -2,47 +2,128 @@ package com.pactera.monitoring.entity;
 
 import java.util.Date;
 
+/**
+ * 内存基础信息-汇总
+ */
 public class monHardwareMeminfoTol {
+    /**
+     * 服务器名称
+     */
     private String serviceNm;
 
+    /**
+     * 服务器IP
+     */
     private String serviceIp;
 
+    /**
+     * 日期
+     */
     private Date dataDt;
 
+    /**
+     * 记录时间戳
+     */
     private Date recordDt;
 
+    /**
+     * 内存总大小
+     */
     private String memTotal;
 
-    private String memRate;
+    /**
+     * 内存已使用大小
+     */
+    private String memUseTotal;
 
-    private String useMemRate;
+    /**
+     * 空闲内存大小
+     */
+    private String freeMemTotal;
 
-    private String avaliableUse;
+    /**
+     * 进程共享内存总额
+     */
+    private String sharedMemTotal;
 
-    private String swapTotal;
+    /**
+     * 缓存使用大小
+     */
+    private String bufferCacheUseMemTotal;
 
-    private String cachTotal;
+    /**
+     * 缓存空闲大小
+     */
+    private String bufferCacheFreeMemTotal;
 
+    /**
+     * 交换区总大小
+     */
+    private String swapMemTotal;
+
+    /**
+     * 交换区使用大小
+     */
+    private String swapUseMemTotal;
+
+    /**
+     * 交换区空闲大小
+     */
+    private String swapFreeMemTotal;
+
+    /**
+     * 服务器类型1数据库服务器2ETL服务器3应用服务器
+     */
     private String serviceType;
 
+    /**
+     * 字符备用字段1
+     */
     private String charBak1;
 
+    /**
+     * 字符备用字段2
+     */
     private String charBak2;
 
+    /**
+     * 字符备用字段3
+     */
     private String charBak3;
 
+    /**
+     * 字符备用字段4
+     */
     private String charBak4;
 
+    /**
+     * 字符备用字段5
+     */
     private String charBak5;
 
+    /**
+     * 数字备用字段1
+     */
     private Short numBak1;
 
+    /**
+     * 数字备用字段2
+     */
     private Short numBak2;
 
+    /**
+     * 数字备用字段3
+     */
     private Short numBak3;
 
+    /**
+     * 数字备用字段4
+     */
     private Short numBak4;
 
+    /**
+     * 数字备用字段5
+     */
     private Short numBak5;
 
     public String getServiceNm() {
@@ -85,44 +166,68 @@ public class monHardwareMeminfoTol {
         this.memTotal = memTotal == null ? null : memTotal.trim();
     }
 
-    public String getMemRate() {
-        return memRate;
+    public String getMemUseTotal() {
+        return memUseTotal;
     }
 
-    public void setMemRate(String memRate) {
-        this.memRate = memRate == null ? null : memRate.trim();
+    public void setMemUseTotal(String memUseTotal) {
+        this.memUseTotal = memUseTotal == null ? null : memUseTotal.trim();
     }
 
-    public String getUseMemRate() {
-        return useMemRate;
+    public String getFreeMemTotal() {
+        return freeMemTotal;
     }
 
-    public void setUseMemRate(String useMemRate) {
-        this.useMemRate = useMemRate == null ? null : useMemRate.trim();
+    public void setFreeMemTotal(String freeMemTotal) {
+        this.freeMemTotal = freeMemTotal == null ? null : freeMemTotal.trim();
     }
 
-    public String getAvaliableUse() {
-        return avaliableUse;
+    public String getSharedMemTotal() {
+        return sharedMemTotal;
     }
 
-    public void setAvaliableUse(String avaliableUse) {
-        this.avaliableUse = avaliableUse == null ? null : avaliableUse.trim();
+    public void setSharedMemTotal(String sharedMemTotal) {
+        this.sharedMemTotal = sharedMemTotal == null ? null : sharedMemTotal.trim();
     }
 
-    public String getSwapTotal() {
-        return swapTotal;
+    public String getBufferCacheUseMemTotal() {
+        return bufferCacheUseMemTotal;
     }
 
-    public void setSwapTotal(String swapTotal) {
-        this.swapTotal = swapTotal == null ? null : swapTotal.trim();
+    public void setBufferCacheUseMemTotal(String bufferCacheUseMemTotal) {
+        this.bufferCacheUseMemTotal = bufferCacheUseMemTotal == null ? null : bufferCacheUseMemTotal.trim();
     }
 
-    public String getCachTotal() {
-        return cachTotal;
+    public String getBufferCacheFreeMemTotal() {
+        return bufferCacheFreeMemTotal;
     }
 
-    public void setCachTotal(String cachTotal) {
-        this.cachTotal = cachTotal == null ? null : cachTotal.trim();
+    public void setBufferCacheFreeMemTotal(String bufferCacheFreeMemTotal) {
+        this.bufferCacheFreeMemTotal = bufferCacheFreeMemTotal == null ? null : bufferCacheFreeMemTotal.trim();
+    }
+
+    public String getSwapMemTotal() {
+        return swapMemTotal;
+    }
+
+    public void setSwapMemTotal(String swapMemTotal) {
+        this.swapMemTotal = swapMemTotal == null ? null : swapMemTotal.trim();
+    }
+
+    public String getSwapUseMemTotal() {
+        return swapUseMemTotal;
+    }
+
+    public void setSwapUseMemTotal(String swapUseMemTotal) {
+        this.swapUseMemTotal = swapUseMemTotal == null ? null : swapUseMemTotal.trim();
+    }
+
+    public String getSwapFreeMemTotal() {
+        return swapFreeMemTotal;
+    }
+
+    public void setSwapFreeMemTotal(String swapFreeMemTotal) {
+        this.swapFreeMemTotal = swapFreeMemTotal == null ? null : swapFreeMemTotal.trim();
     }
 
     public String getServiceType() {
