@@ -3,108 +3,111 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- * I/O基础信息表
+ * 磁盘基础信息表-汇总
  */
-public class monHardwareIoInfo {
+public class MonHardwareDiskinfoTol {
+
     /**
      * 服务器名称
      */
     private String serviceNm;
+
 
     /**
      * 服务器IP
      */
     private String serviceIp;
 
+
     /**
      * 日期
      */
     private Date dataDt;
+
 
     /**
      * 记录时间戳
      */
     private Date recordDt;
 
-    /**
-     * 磁盘名称
-     */
-    private String diskNm;
 
     /**
-     * 磁盘每秒传输速度
+     * 磁盘总大小
      */
-    private String diskTrans;
+    private String diskTotalSize;
+
 
     /**
-     * 磁盘每秒读取数
+     * 磁盘使用大小
      */
-    private String diskRead;
+    private String diskUsedSize;
 
-    /**
-     * 磁盘每秒写入数
-     */
-    private String diskWrite;
 
     /**
      * 磁盘使用率
      */
-    private String diskUseRate;
+    private String diskUsedRate;
 
-    /**
-     * 磁盘平均响应时间
-     */
-    private String diskAvgRespond;
 
     /**
      * 服务器类型1数据库服务器2ETL服务器3应用服务器
      */
     private String serviceType;
 
+
     /**
      * 字符备用字段1
      */
     private String charBak1;
+
 
     /**
      * 字符备用字段2
      */
     private String charBak2;
 
+
     /**
      * 字符备用字段3
      */
     private String charBak3;
+
 
     /**
      * 字符备用字段4
      */
     private String charBak4;
 
+
     /**
      * 字符备用字段5
      */
     private String charBak5;
+
 
     /**
      * 数字备用字段1
      */
     private Short numBak1;
 
+
     /**
      * 数字备用字段2
      */
     private Short numBak2;
+
 
     /**
      * 数字备用字段3
      */
     private Short numBak3;
 
+
     /**
      * 数字备用字段4
      */
     private Short numBak4;
+
 
     /**
      * 数字备用字段5
@@ -143,52 +146,28 @@ public class monHardwareIoInfo {
         this.recordDt = recordDt;
     }
 
-    public String getDiskNm() {
-        return diskNm;
+    public String getDiskTotalSize() {
+        return diskTotalSize;
     }
 
-    public void setDiskNm(String diskNm) {
-        this.diskNm = diskNm == null ? null : diskNm.trim();
+    public void setDiskTotalSize(String diskTotalSize) {
+        this.diskTotalSize = diskTotalSize == null ? null : diskTotalSize.trim();
     }
 
-    public String getDiskTrans() {
-        return diskTrans;
+    public String getDiskUsedSize() {
+        return diskUsedSize;
     }
 
-    public void setDiskTrans(String diskTrans) {
-        this.diskTrans = diskTrans == null ? null : diskTrans.trim();
+    public void setDiskUsedSize(String diskUsedSize) {
+        this.diskUsedSize = diskUsedSize == null ? null : diskUsedSize.trim();
     }
 
-    public String getDiskRead() {
-        return diskRead;
+    public String getDiskUsedRate() {
+        return diskUsedRate;
     }
 
-    public void setDiskRead(String diskRead) {
-        this.diskRead = diskRead == null ? null : diskRead.trim();
-    }
-
-    public String getDiskWrite() {
-        return diskWrite;
-    }
-
-    public void setDiskWrite(String diskWrite) {
-        this.diskWrite = diskWrite == null ? null : diskWrite.trim();
-    }
-
-    public String getDiskUseRate() {
-        return diskUseRate;
-    }
-
-    public void setDiskUseRate(String diskUseRate) {
-        this.diskUseRate = diskUseRate == null ? null : diskUseRate.trim();
-    }
-
-    public String getDiskAvgRespond() {
-        return diskAvgRespond;
-    }
-
-    public void setDiskAvgRespond(String diskAvgRespond) {
-        this.diskAvgRespond = diskAvgRespond == null ? null : diskAvgRespond.trim();
+    public void setDiskUsedRate(String diskUsedRate) {
+        this.diskUsedRate = diskUsedRate == null ? null : diskUsedRate.trim();
     }
 
     public String getServiceType() {

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pactera.monitoring.dao.ds1.monHardwareIoInfoMapper">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.monHardwareIoInfo">
+<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareServerInfoMapper">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareServerInfo">
     <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
     <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
     <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
     <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt" />
-    <result column="DISK_NM" jdbcType="VARCHAR" property="diskNm" />
-    <result column="DISK_TRANS" jdbcType="VARCHAR" property="diskTrans" />
-    <result column="DISK_READ" jdbcType="VARCHAR" property="diskRead" />
-    <result column="DISK_WRITE" jdbcType="VARCHAR" property="diskWrite" />
-    <result column="DISK_USE_RATE" jdbcType="VARCHAR" property="diskUseRate" />
-    <result column="DISK_AVG_RESPOND" jdbcType="VARCHAR" property="diskAvgRespond" />
+    <result column="SERVICE_VERSION" jdbcType="VARCHAR" property="serviceVersion" />
+    <result column="SERVICE_ACTIVE" jdbcType="VARCHAR" property="serviceActive" />
+    <result column="SERVICE_CORE_VERSION" jdbcType="VARCHAR" property="serviceCoreVersion" />
+    <result column="SERVICE_USER" jdbcType="VARCHAR" property="serviceUser" />
+    <result column="SERVICE_PASSWORD" jdbcType="VARCHAR" property="servicePassword" />
     <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
+    <result column="SERVICE_PORT" jdbcType="VARCHAR" property="servicePort" />
     <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
     <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
     <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3" />
@@ -24,26 +24,26 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.monHardwareIoInfo">
-    insert into MON_HARDWARE_IO_INFO (SERVICE_NM, SERVICE_IP, DATA_DT, 
-      RECORD_DT, DISK_NM, DISK_TRANS, 
-      DISK_READ, DISK_WRITE, DISK_USE_RATE, 
-      DISK_AVG_RESPOND, SERVICE_TYPE, CHAR_BAK_1, 
-      CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4, 
-      CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2, 
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareServerInfo">
+    insert into MON_HARDWARE_SERVER_INFO (SERVICE_NM, SERVICE_IP, DATA_DT,
+      RECORD_DT, SERVICE_VERSION, SERVICE_ACTIVE,
+      SERVICE_CORE_VERSION, SERVICE_USER, SERVICE_PASSWORD,
+      SERVICE_TYPE, SERVICE_PORT, CHAR_BAK_1,
+      CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4,
+      CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2,
       NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
       )
-    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP}, 
-      #{recordDt,jdbcType=TIMESTAMP}, #{diskNm,jdbcType=VARCHAR}, #{diskTrans,jdbcType=VARCHAR}, 
-      #{diskRead,jdbcType=VARCHAR}, #{diskWrite,jdbcType=VARCHAR}, #{diskUseRate,jdbcType=VARCHAR}, 
-      #{diskAvgRespond,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR}, 
-      #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR}, 
-      #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC}, 
+    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
+      #{recordDt,jdbcType=TIMESTAMP}, #{serviceVersion,jdbcType=VARCHAR}, #{serviceActive,jdbcType=VARCHAR},
+      #{serviceCoreVersion,jdbcType=VARCHAR}, #{serviceUser,jdbcType=VARCHAR}, #{servicePassword,jdbcType=VARCHAR},
+      #{serviceType,jdbcType=VARCHAR}, #{servicePort,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR},
+      #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR},
+      #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC},
       #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.monHardwareIoInfo">
-    insert into MON_HARDWARE_IO_INFO
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareServerInfo">
+    insert into MON_HARDWARE_SERVER_INFO
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="serviceNm != null">
         SERVICE_NM,
@@ -57,26 +57,26 @@
       <if test="recordDt != null">
         RECORD_DT,
       </if>
-      <if test="diskNm != null">
-        DISK_NM,
+      <if test="serviceVersion != null">
+        SERVICE_VERSION,
       </if>
-      <if test="diskTrans != null">
-        DISK_TRANS,
+      <if test="serviceActive != null">
+        SERVICE_ACTIVE,
       </if>
-      <if test="diskRead != null">
-        DISK_READ,
+      <if test="serviceCoreVersion != null">
+        SERVICE_CORE_VERSION,
       </if>
-      <if test="diskWrite != null">
-        DISK_WRITE,
+      <if test="serviceUser != null">
+        SERVICE_USER,
       </if>
-      <if test="diskUseRate != null">
-        DISK_USE_RATE,
-      </if>
-      <if test="diskAvgRespond != null">
-        DISK_AVG_RESPOND,
+      <if test="servicePassword != null">
+        SERVICE_PASSWORD,
       </if>
       <if test="serviceType != null">
         SERVICE_TYPE,
+      </if>
+      <if test="servicePort != null">
+        SERVICE_PORT,
       </if>
       <if test="charBak1 != null">
         CHAR_BAK_1,
@@ -122,26 +122,26 @@
       <if test="recordDt != null">
         #{recordDt,jdbcType=TIMESTAMP},
       </if>
-      <if test="diskNm != null">
-        #{diskNm,jdbcType=VARCHAR},
+      <if test="serviceVersion != null">
+        #{serviceVersion,jdbcType=VARCHAR},
       </if>
-      <if test="diskTrans != null">
-        #{diskTrans,jdbcType=VARCHAR},
+      <if test="serviceActive != null">
+        #{serviceActive,jdbcType=VARCHAR},
       </if>
-      <if test="diskRead != null">
-        #{diskRead,jdbcType=VARCHAR},
+      <if test="serviceCoreVersion != null">
+        #{serviceCoreVersion,jdbcType=VARCHAR},
       </if>
-      <if test="diskWrite != null">
-        #{diskWrite,jdbcType=VARCHAR},
+      <if test="serviceUser != null">
+        #{serviceUser,jdbcType=VARCHAR},
       </if>
-      <if test="diskUseRate != null">
-        #{diskUseRate,jdbcType=VARCHAR},
-      </if>
-      <if test="diskAvgRespond != null">
-        #{diskAvgRespond,jdbcType=VARCHAR},
+      <if test="servicePassword != null">
+        #{servicePassword,jdbcType=VARCHAR},
       </if>
       <if test="serviceType != null">
         #{serviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePort != null">
+        #{servicePort,jdbcType=VARCHAR},
       </if>
       <if test="charBak1 != null">
         #{charBak1,jdbcType=VARCHAR},

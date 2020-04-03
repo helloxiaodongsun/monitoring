@@ -3,9 +3,9 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- * 内存基础信息-汇总
+ * 磁盘基础信息表-明细
  */
-public class monHardwareMeminfoTol {
+public class MonHardwareDiskinfoDtl {
     /**
      * 服务器名称
      */
@@ -27,54 +27,24 @@ public class monHardwareMeminfoTol {
     private Date recordDt;
 
     /**
-     * 内存总大小
+     * 文件系统名称
      */
-    private String memTotal;
+    private String filesystemNm;
 
     /**
-     * 内存已使用大小
+     * 所在磁盘大小
      */
-    private String memUseTotal;
+    private String diskTotalSize;
 
     /**
-     * 空闲内存大小
+     * 所在磁盘使用大小
      */
-    private String freeMemTotal;
+    private String diskUsedSize;
 
     /**
-     * 进程共享内存总额
+     * 所在磁盘使用率
      */
-    private String sharedMemTotal;
-
-    /**
-     * 缓存使用大小
-     */
-    private String bufferCacheUseMemTotal;
-
-    /**
-     * 缓存空闲大小
-     */
-    private String bufferCacheFreeMemTotal;
-
-    /**
-     * 交换区总大小
-     */
-    private String swapMemTotal;
-
-    /**
-     * 交换区使用大小
-     */
-    private String swapUseMemTotal;
-
-    /**
-     * 交换区空闲大小
-     */
-    private String swapFreeMemTotal;
-
-    /**
-     * 服务器类型1数据库服务器2ETL服务器3应用服务器
-     */
-    private String serviceType;
+    private String diskUsedRate;
 
     /**
      * 字符备用字段1
@@ -158,84 +128,36 @@ public class monHardwareMeminfoTol {
         this.recordDt = recordDt;
     }
 
-    public String getMemTotal() {
-        return memTotal;
+    public String getFilesystemNm() {
+        return filesystemNm;
     }
 
-    public void setMemTotal(String memTotal) {
-        this.memTotal = memTotal == null ? null : memTotal.trim();
+    public void setFilesystemNm(String filesystemNm) {
+        this.filesystemNm = filesystemNm == null ? null : filesystemNm.trim();
     }
 
-    public String getMemUseTotal() {
-        return memUseTotal;
+    public String getDiskTotalSize() {
+        return diskTotalSize;
     }
 
-    public void setMemUseTotal(String memUseTotal) {
-        this.memUseTotal = memUseTotal == null ? null : memUseTotal.trim();
+    public void setDiskTotalSize(String diskTotalSize) {
+        this.diskTotalSize = diskTotalSize == null ? null : diskTotalSize.trim();
     }
 
-    public String getFreeMemTotal() {
-        return freeMemTotal;
+    public String getDiskUsedSize() {
+        return diskUsedSize;
     }
 
-    public void setFreeMemTotal(String freeMemTotal) {
-        this.freeMemTotal = freeMemTotal == null ? null : freeMemTotal.trim();
+    public void setDiskUsedSize(String diskUsedSize) {
+        this.diskUsedSize = diskUsedSize == null ? null : diskUsedSize.trim();
     }
 
-    public String getSharedMemTotal() {
-        return sharedMemTotal;
+    public String getDiskUsedRate() {
+        return diskUsedRate;
     }
 
-    public void setSharedMemTotal(String sharedMemTotal) {
-        this.sharedMemTotal = sharedMemTotal == null ? null : sharedMemTotal.trim();
-    }
-
-    public String getBufferCacheUseMemTotal() {
-        return bufferCacheUseMemTotal;
-    }
-
-    public void setBufferCacheUseMemTotal(String bufferCacheUseMemTotal) {
-        this.bufferCacheUseMemTotal = bufferCacheUseMemTotal == null ? null : bufferCacheUseMemTotal.trim();
-    }
-
-    public String getBufferCacheFreeMemTotal() {
-        return bufferCacheFreeMemTotal;
-    }
-
-    public void setBufferCacheFreeMemTotal(String bufferCacheFreeMemTotal) {
-        this.bufferCacheFreeMemTotal = bufferCacheFreeMemTotal == null ? null : bufferCacheFreeMemTotal.trim();
-    }
-
-    public String getSwapMemTotal() {
-        return swapMemTotal;
-    }
-
-    public void setSwapMemTotal(String swapMemTotal) {
-        this.swapMemTotal = swapMemTotal == null ? null : swapMemTotal.trim();
-    }
-
-    public String getSwapUseMemTotal() {
-        return swapUseMemTotal;
-    }
-
-    public void setSwapUseMemTotal(String swapUseMemTotal) {
-        this.swapUseMemTotal = swapUseMemTotal == null ? null : swapUseMemTotal.trim();
-    }
-
-    public String getSwapFreeMemTotal() {
-        return swapFreeMemTotal;
-    }
-
-    public void setSwapFreeMemTotal(String swapFreeMemTotal) {
-        this.swapFreeMemTotal = swapFreeMemTotal == null ? null : swapFreeMemTotal.trim();
-    }
-
-    public String getServiceType() {
-        return serviceType;
-    }
-
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType == null ? null : serviceType.trim();
+    public void setDiskUsedRate(String diskUsedRate) {
+        this.diskUsedRate = diskUsedRate == null ? null : diskUsedRate.trim();
     }
 
     public String getCharBak1() {

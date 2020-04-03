@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pactera.monitoring.dao.ds1.monHardwareCpuinfoTolMapper">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.monHardwareCpuinfoTol">
+<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareCpuinfoDtlMapper">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareCpuinfoDtl">
     <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
     <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
     <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
     <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt" />
-    <result column="CPU_TYPE" jdbcType="VARCHAR" property="cpuType" />
-    <result column="CPU_NUM" jdbcType="VARCHAR" property="cpuNum" />
-    <result column="CPU_THREAD" jdbcType="VARCHAR" property="cpuThread" />
+    <result column="US_CPU_RATE" jdbcType="VARCHAR" property="usCpuRate" />
+    <result column="SY_CPU_RATE" jdbcType="VARCHAR" property="syCpuRate" />
+    <result column="NI_CPU_RATE" jdbcType="VARCHAR" property="niCpuRate" />
+    <result column="ID_CPU_RATE" jdbcType="VARCHAR" property="idCpuRate" />
+    <result column="WA_CPU_RATE" jdbcType="VARCHAR" property="waCpuRate" />
     <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
     <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
     <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
@@ -21,24 +23,24 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.monHardwareCpuinfoTol">
-    insert into MON_HARDWARE_CPUINFO_TOL (SERVICE_NM, SERVICE_IP, DATA_DT, 
-      RECORD_DT, CPU_TYPE, CPU_NUM, 
-      CPU_THREAD, SERVICE_TYPE, CHAR_BAK_1, 
-      CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4, 
-      CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2, 
-      NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
-      )
-    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP}, 
-      #{recordDt,jdbcType=TIMESTAMP}, #{cpuType,jdbcType=VARCHAR}, #{cpuNum,jdbcType=VARCHAR}, 
-      #{cpuThread,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR}, 
-      #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR}, 
-      #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC}, 
-      #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
-      )
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareCpuinfoDtl">
+    insert into MON_HARDWARE_CPUINFO_DTL (SERVICE_NM, SERVICE_IP, DATA_DT,
+      RECORD_DT, US_CPU_RATE, SY_CPU_RATE,
+      NI_CPU_RATE, ID_CPU_RATE, WA_CPU_RATE,
+      SERVICE_TYPE, CHAR_BAK_1, CHAR_BAK_2,
+      CHAR_BAK_3, CHAR_BAK_4, CHAR_BAK_5,
+      NUM_BAK_1, NUM_BAK_2, NUM_BAK_3,
+      NUM_BAK_4, NUM_BAK_5)
+    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
+      #{recordDt,jdbcType=TIMESTAMP}, #{usCpuRate,jdbcType=VARCHAR}, #{syCpuRate,jdbcType=VARCHAR},
+      #{niCpuRate,jdbcType=VARCHAR}, #{idCpuRate,jdbcType=VARCHAR}, #{waCpuRate,jdbcType=VARCHAR},
+      #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR}, #{charBak2,jdbcType=VARCHAR},
+      #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR}, #{charBak5,jdbcType=VARCHAR},
+      #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC}, #{numBak3,jdbcType=NUMERIC},
+      #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC})
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.monHardwareCpuinfoTol">
-    insert into MON_HARDWARE_CPUINFO_TOL
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareCpuinfoDtl">
+    insert into MON_HARDWARE_CPUINFO_DTL
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="serviceNm != null">
         SERVICE_NM,
@@ -52,14 +54,20 @@
       <if test="recordDt != null">
         RECORD_DT,
       </if>
-      <if test="cpuType != null">
-        CPU_TYPE,
+      <if test="usCpuRate != null">
+        US_CPU_RATE,
       </if>
-      <if test="cpuNum != null">
-        CPU_NUM,
+      <if test="syCpuRate != null">
+        SY_CPU_RATE,
       </if>
-      <if test="cpuThread != null">
-        CPU_THREAD,
+      <if test="niCpuRate != null">
+        NI_CPU_RATE,
+      </if>
+      <if test="idCpuRate != null">
+        ID_CPU_RATE,
+      </if>
+      <if test="waCpuRate != null">
+        WA_CPU_RATE,
       </if>
       <if test="serviceType != null">
         SERVICE_TYPE,
@@ -108,14 +116,20 @@
       <if test="recordDt != null">
         #{recordDt,jdbcType=TIMESTAMP},
       </if>
-      <if test="cpuType != null">
-        #{cpuType,jdbcType=VARCHAR},
+      <if test="usCpuRate != null">
+        #{usCpuRate,jdbcType=VARCHAR},
       </if>
-      <if test="cpuNum != null">
-        #{cpuNum,jdbcType=VARCHAR},
+      <if test="syCpuRate != null">
+        #{syCpuRate,jdbcType=VARCHAR},
       </if>
-      <if test="cpuThread != null">
-        #{cpuThread,jdbcType=VARCHAR},
+      <if test="niCpuRate != null">
+        #{niCpuRate,jdbcType=VARCHAR},
+      </if>
+      <if test="idCpuRate != null">
+        #{idCpuRate,jdbcType=VARCHAR},
+      </if>
+      <if test="waCpuRate != null">
+        #{waCpuRate,jdbcType=VARCHAR},
       </if>
       <if test="serviceType != null">
         #{serviceType,jdbcType=VARCHAR},

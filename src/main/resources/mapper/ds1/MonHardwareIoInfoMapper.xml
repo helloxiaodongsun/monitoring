@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pactera.monitoring.dao.ds1.monHardwareCpuinfoDtlMapper">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.monHardwareCpuinfoDtl">
+<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareIoInfoMapper">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareIoInfo">
     <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
     <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
     <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
     <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt" />
-    <result column="US_CPU_RATE" jdbcType="VARCHAR" property="usCpuRate" />
-    <result column="SY_CPU_RATE" jdbcType="VARCHAR" property="syCpuRate" />
-    <result column="NI_CPU_RATE" jdbcType="VARCHAR" property="niCpuRate" />
-    <result column="ID_CPU_RATE" jdbcType="VARCHAR" property="idCpuRate" />
-    <result column="WA_CPU_RATE" jdbcType="VARCHAR" property="waCpuRate" />
+    <result column="DISK_NM" jdbcType="VARCHAR" property="diskNm" />
+    <result column="DISK_TRANS" jdbcType="VARCHAR" property="diskTrans" />
+    <result column="DISK_READ" jdbcType="VARCHAR" property="diskRead" />
+    <result column="DISK_WRITE" jdbcType="VARCHAR" property="diskWrite" />
+    <result column="DISK_USE_RATE" jdbcType="VARCHAR" property="diskUseRate" />
+    <result column="DISK_AVG_RESPOND" jdbcType="VARCHAR" property="diskAvgRespond" />
     <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
     <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
     <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
@@ -23,24 +24,26 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.monHardwareCpuinfoDtl">
-    insert into MON_HARDWARE_CPUINFO_DTL (SERVICE_NM, SERVICE_IP, DATA_DT, 
-      RECORD_DT, US_CPU_RATE, SY_CPU_RATE, 
-      NI_CPU_RATE, ID_CPU_RATE, WA_CPU_RATE, 
-      SERVICE_TYPE, CHAR_BAK_1, CHAR_BAK_2, 
-      CHAR_BAK_3, CHAR_BAK_4, CHAR_BAK_5, 
-      NUM_BAK_1, NUM_BAK_2, NUM_BAK_3, 
-      NUM_BAK_4, NUM_BAK_5)
-    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP}, 
-      #{recordDt,jdbcType=TIMESTAMP}, #{usCpuRate,jdbcType=VARCHAR}, #{syCpuRate,jdbcType=VARCHAR}, 
-      #{niCpuRate,jdbcType=VARCHAR}, #{idCpuRate,jdbcType=VARCHAR}, #{waCpuRate,jdbcType=VARCHAR}, 
-      #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR}, #{charBak2,jdbcType=VARCHAR}, 
-      #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR}, #{charBak5,jdbcType=VARCHAR}, 
-      #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC}, #{numBak3,jdbcType=NUMERIC}, 
-      #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC})
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareIoInfo">
+    insert into MON_HARDWARE_IO_INFO (SERVICE_NM, SERVICE_IP, DATA_DT,
+      RECORD_DT, DISK_NM, DISK_TRANS,
+      DISK_READ, DISK_WRITE, DISK_USE_RATE,
+      DISK_AVG_RESPOND, SERVICE_TYPE, CHAR_BAK_1,
+      CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4,
+      CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2,
+      NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
+      )
+    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
+      #{recordDt,jdbcType=TIMESTAMP}, #{diskNm,jdbcType=VARCHAR}, #{diskTrans,jdbcType=VARCHAR},
+      #{diskRead,jdbcType=VARCHAR}, #{diskWrite,jdbcType=VARCHAR}, #{diskUseRate,jdbcType=VARCHAR},
+      #{diskAvgRespond,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR},
+      #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR},
+      #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC},
+      #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.monHardwareCpuinfoDtl">
-    insert into MON_HARDWARE_CPUINFO_DTL
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareIoInfo">
+    insert into MON_HARDWARE_IO_INFO
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="serviceNm != null">
         SERVICE_NM,
@@ -54,20 +57,23 @@
       <if test="recordDt != null">
         RECORD_DT,
       </if>
-      <if test="usCpuRate != null">
-        US_CPU_RATE,
+      <if test="diskNm != null">
+        DISK_NM,
       </if>
-      <if test="syCpuRate != null">
-        SY_CPU_RATE,
+      <if test="diskTrans != null">
+        DISK_TRANS,
       </if>
-      <if test="niCpuRate != null">
-        NI_CPU_RATE,
+      <if test="diskRead != null">
+        DISK_READ,
       </if>
-      <if test="idCpuRate != null">
-        ID_CPU_RATE,
+      <if test="diskWrite != null">
+        DISK_WRITE,
       </if>
-      <if test="waCpuRate != null">
-        WA_CPU_RATE,
+      <if test="diskUseRate != null">
+        DISK_USE_RATE,
+      </if>
+      <if test="diskAvgRespond != null">
+        DISK_AVG_RESPOND,
       </if>
       <if test="serviceType != null">
         SERVICE_TYPE,
@@ -116,20 +122,23 @@
       <if test="recordDt != null">
         #{recordDt,jdbcType=TIMESTAMP},
       </if>
-      <if test="usCpuRate != null">
-        #{usCpuRate,jdbcType=VARCHAR},
+      <if test="diskNm != null">
+        #{diskNm,jdbcType=VARCHAR},
       </if>
-      <if test="syCpuRate != null">
-        #{syCpuRate,jdbcType=VARCHAR},
+      <if test="diskTrans != null">
+        #{diskTrans,jdbcType=VARCHAR},
       </if>
-      <if test="niCpuRate != null">
-        #{niCpuRate,jdbcType=VARCHAR},
+      <if test="diskRead != null">
+        #{diskRead,jdbcType=VARCHAR},
       </if>
-      <if test="idCpuRate != null">
-        #{idCpuRate,jdbcType=VARCHAR},
+      <if test="diskWrite != null">
+        #{diskWrite,jdbcType=VARCHAR},
       </if>
-      <if test="waCpuRate != null">
-        #{waCpuRate,jdbcType=VARCHAR},
+      <if test="diskUseRate != null">
+        #{diskUseRate,jdbcType=VARCHAR},
+      </if>
+      <if test="diskAvgRespond != null">
+        #{diskAvgRespond,jdbcType=VARCHAR},
       </if>
       <if test="serviceType != null">
         #{serviceType,jdbcType=VARCHAR},

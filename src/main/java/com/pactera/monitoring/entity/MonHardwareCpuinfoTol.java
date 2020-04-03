@@ -3,9 +3,9 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- * 磁盘基础信息表-明细
+ *CPU基础信息表-汇总
  */
-public class monHardwareDiskinfoDtl {
+public class MonHardwareCpuinfoTol {
     /**
      * 服务器名称
      */
@@ -27,24 +27,24 @@ public class monHardwareDiskinfoDtl {
     private Date recordDt;
 
     /**
-     * 文件系统名称
+     * CPU型号
      */
-    private String filesystemNm;
+    private String cpuType;
 
     /**
-     * 所在磁盘大小
+     * CPU个数
      */
-    private String diskTotalSize;
+    private String cpuNum;
 
     /**
-     * 所在磁盘使用大小
+     * CPU线程数
      */
-    private String diskUsedSize;
+    private String cpuThread;
 
     /**
-     * 所在磁盘使用率
+     * 服务器类型1数据库服务器2ETL服务器3应用服务器
      */
-    private String diskUsedRate;
+    private String serviceType;
 
     /**
      * 字符备用字段1
@@ -128,36 +128,36 @@ public class monHardwareDiskinfoDtl {
         this.recordDt = recordDt;
     }
 
-    public String getFilesystemNm() {
-        return filesystemNm;
+    public String getCpuType() {
+        return cpuType;
     }
 
-    public void setFilesystemNm(String filesystemNm) {
-        this.filesystemNm = filesystemNm == null ? null : filesystemNm.trim();
+    public void setCpuType(String cpuType) {
+        this.cpuType = cpuType == null ? null : cpuType.trim();
     }
 
-    public String getDiskTotalSize() {
-        return diskTotalSize;
+    public String getCpuNum() {
+        return cpuNum;
     }
 
-    public void setDiskTotalSize(String diskTotalSize) {
-        this.diskTotalSize = diskTotalSize == null ? null : diskTotalSize.trim();
+    public void setCpuNum(String cpuNum) {
+        this.cpuNum = cpuNum == null ? null : cpuNum.trim();
     }
 
-    public String getDiskUsedSize() {
-        return diskUsedSize;
+    public String getCpuThread() {
+        return cpuThread;
     }
 
-    public void setDiskUsedSize(String diskUsedSize) {
-        this.diskUsedSize = diskUsedSize == null ? null : diskUsedSize.trim();
+    public void setCpuThread(String cpuThread) {
+        this.cpuThread = cpuThread == null ? null : cpuThread.trim();
     }
 
-    public String getDiskUsedRate() {
-        return diskUsedRate;
+    public String getServiceType() {
+        return serviceType;
     }
 
-    public void setDiskUsedRate(String diskUsedRate) {
-        this.diskUsedRate = diskUsedRate == null ? null : diskUsedRate.trim();
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType == null ? null : serviceType.trim();
     }
 
     public String getCharBak1() {

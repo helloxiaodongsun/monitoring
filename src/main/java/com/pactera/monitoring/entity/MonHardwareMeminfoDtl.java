@@ -3,9 +3,9 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- *CPU基础信息表-汇总
+ * 内存基础信息-明细
  */
-public class monHardwareCpuinfoTol {
+public class MonHardwareMeminfoDtl {
     /**
      * 服务器名称
      */
@@ -27,19 +27,49 @@ public class monHardwareCpuinfoTol {
     private Date recordDt;
 
     /**
-     * CPU型号
+     * 内存总大小
      */
-    private String cpuType;
+    private String memTotal;
 
     /**
-     * CPU个数
+     * 内存已使用大小
      */
-    private String cpuNum;
+    private String memUseTotal;
 
     /**
-     * CPU线程数
+     * 空闲内存大小
      */
-    private String cpuThread;
+    private String freeMemTotal;
+
+    /**
+     * 进程共享内存总额
+     */
+    private String sharedMemTotal;
+
+    /**
+     * 缓存使用大小
+     */
+    private String bufferCacheUseMemTotal;
+
+    /**
+     * 缓存空闲大小
+     */
+    private String bufferCacheFreeMemTotal;
+
+    /**
+     * 交换区总大小
+     */
+    private String swapMemTotal;
+
+    /**
+     * 交换区使用大小
+     */
+    private String swapUseMemTotal;
+
+    /**
+     * 交换区空闲大小
+     */
+    private String swapFreeMemTotal;
 
     /**
      * 服务器类型1数据库服务器2ETL服务器3应用服务器
@@ -128,28 +158,76 @@ public class monHardwareCpuinfoTol {
         this.recordDt = recordDt;
     }
 
-    public String getCpuType() {
-        return cpuType;
+    public String getMemTotal() {
+        return memTotal;
     }
 
-    public void setCpuType(String cpuType) {
-        this.cpuType = cpuType == null ? null : cpuType.trim();
+    public void setMemTotal(String memTotal) {
+        this.memTotal = memTotal == null ? null : memTotal.trim();
     }
 
-    public String getCpuNum() {
-        return cpuNum;
+    public String getMemUseTotal() {
+        return memUseTotal;
     }
 
-    public void setCpuNum(String cpuNum) {
-        this.cpuNum = cpuNum == null ? null : cpuNum.trim();
+    public void setMemUseTotal(String memUseTotal) {
+        this.memUseTotal = memUseTotal == null ? null : memUseTotal.trim();
     }
 
-    public String getCpuThread() {
-        return cpuThread;
+    public String getFreeMemTotal() {
+        return freeMemTotal;
     }
 
-    public void setCpuThread(String cpuThread) {
-        this.cpuThread = cpuThread == null ? null : cpuThread.trim();
+    public void setFreeMemTotal(String freeMemTotal) {
+        this.freeMemTotal = freeMemTotal == null ? null : freeMemTotal.trim();
+    }
+
+    public String getSharedMemTotal() {
+        return sharedMemTotal;
+    }
+
+    public void setSharedMemTotal(String sharedMemTotal) {
+        this.sharedMemTotal = sharedMemTotal == null ? null : sharedMemTotal.trim();
+    }
+
+    public String getBufferCacheUseMemTotal() {
+        return bufferCacheUseMemTotal;
+    }
+
+    public void setBufferCacheUseMemTotal(String bufferCacheUseMemTotal) {
+        this.bufferCacheUseMemTotal = bufferCacheUseMemTotal == null ? null : bufferCacheUseMemTotal.trim();
+    }
+
+    public String getBufferCacheFreeMemTotal() {
+        return bufferCacheFreeMemTotal;
+    }
+
+    public void setBufferCacheFreeMemTotal(String bufferCacheFreeMemTotal) {
+        this.bufferCacheFreeMemTotal = bufferCacheFreeMemTotal == null ? null : bufferCacheFreeMemTotal.trim();
+    }
+
+    public String getSwapMemTotal() {
+        return swapMemTotal;
+    }
+
+    public void setSwapMemTotal(String swapMemTotal) {
+        this.swapMemTotal = swapMemTotal == null ? null : swapMemTotal.trim();
+    }
+
+    public String getSwapUseMemTotal() {
+        return swapUseMemTotal;
+    }
+
+    public void setSwapUseMemTotal(String swapUseMemTotal) {
+        this.swapUseMemTotal = swapUseMemTotal == null ? null : swapUseMemTotal.trim();
+    }
+
+    public String getSwapFreeMemTotal() {
+        return swapFreeMemTotal;
+    }
+
+    public void setSwapFreeMemTotal(String swapFreeMemTotal) {
+        this.swapFreeMemTotal = swapFreeMemTotal == null ? null : swapFreeMemTotal.trim();
     }
 
     public String getServiceType() {

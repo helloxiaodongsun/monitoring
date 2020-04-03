@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pactera.monitoring.dao.ds1.monHardwareMeminfoTolMapper">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.monHardwareMeminfoTol">
+<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareMeminfoTolMapper">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareMeminfoTol">
     <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
     <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
     <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
@@ -27,27 +27,27 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.monHardwareMeminfoTol">
-    insert into MON_HARDWARE_MEMINFO_TOL (SERVICE_NM, SERVICE_IP, DATA_DT, 
-      RECORD_DT, MEM_TOTAL, MEM_USE_TOTAL, 
-      FREE_MEM_TOTAL, SHARED_MEM_TOTAL, BUFFER_CACHE_USE_MEM_TOTAL, 
-      BUFFER_CACHE_FREE_MEM_TOTAL, SWAP_MEM_TOTAL, 
-      SWAP_USE_MEM_TOTAL, SWAP_FREE_MEM_TOTAL, SERVICE_TYPE, 
-      CHAR_BAK_1, CHAR_BAK_2, CHAR_BAK_3, 
-      CHAR_BAK_4, CHAR_BAK_5, NUM_BAK_1, 
-      NUM_BAK_2, NUM_BAK_3, NUM_BAK_4, 
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareMeminfoTol">
+    insert into MON_HARDWARE_MEMINFO_TOL (SERVICE_NM, SERVICE_IP, DATA_DT,
+      RECORD_DT, MEM_TOTAL, MEM_USE_TOTAL,
+      FREE_MEM_TOTAL, SHARED_MEM_TOTAL, BUFFER_CACHE_USE_MEM_TOTAL,
+      BUFFER_CACHE_FREE_MEM_TOTAL, SWAP_MEM_TOTAL,
+      SWAP_USE_MEM_TOTAL, SWAP_FREE_MEM_TOTAL, SERVICE_TYPE,
+      CHAR_BAK_1, CHAR_BAK_2, CHAR_BAK_3,
+      CHAR_BAK_4, CHAR_BAK_5, NUM_BAK_1,
+      NUM_BAK_2, NUM_BAK_3, NUM_BAK_4,
       NUM_BAK_5)
-    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP}, 
-      #{recordDt,jdbcType=TIMESTAMP}, #{memTotal,jdbcType=VARCHAR}, #{memUseTotal,jdbcType=VARCHAR}, 
-      #{freeMemTotal,jdbcType=VARCHAR}, #{sharedMemTotal,jdbcType=VARCHAR}, #{bufferCacheUseMemTotal,jdbcType=VARCHAR}, 
-      #{bufferCacheFreeMemTotal,jdbcType=VARCHAR}, #{swapMemTotal,jdbcType=VARCHAR}, 
-      #{swapUseMemTotal,jdbcType=VARCHAR}, #{swapFreeMemTotal,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR}, 
-      #{charBak1,jdbcType=VARCHAR}, #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, 
-      #{charBak4,jdbcType=VARCHAR}, #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, 
-      #{numBak2,jdbcType=NUMERIC}, #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, 
+    values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
+      #{recordDt,jdbcType=TIMESTAMP}, #{memTotal,jdbcType=VARCHAR}, #{memUseTotal,jdbcType=VARCHAR},
+      #{freeMemTotal,jdbcType=VARCHAR}, #{sharedMemTotal,jdbcType=VARCHAR}, #{bufferCacheUseMemTotal,jdbcType=VARCHAR},
+      #{bufferCacheFreeMemTotal,jdbcType=VARCHAR}, #{swapMemTotal,jdbcType=VARCHAR},
+      #{swapUseMemTotal,jdbcType=VARCHAR}, #{swapFreeMemTotal,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR},
+      #{charBak1,jdbcType=VARCHAR}, #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR},
+      #{charBak4,jdbcType=VARCHAR}, #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC},
+      #{numBak2,jdbcType=NUMERIC}, #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC},
       #{numBak5,jdbcType=NUMERIC})
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.monHardwareMeminfoTol">
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareMeminfoTol">
     insert into MON_HARDWARE_MEMINFO_TOL
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="serviceNm != null">

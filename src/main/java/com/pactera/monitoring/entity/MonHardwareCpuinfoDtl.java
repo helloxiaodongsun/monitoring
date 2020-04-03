@@ -3,9 +3,9 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- * 服务器基础信息表
+ * CPU基础信息表-明细
  */
-public class monHardwareServerInfo {
+public class MonHardwareCpuinfoDtl {
     /**
      * 服务器名称
      */
@@ -27,39 +27,34 @@ public class monHardwareServerInfo {
     private Date recordDt;
 
     /**
-     * 服务器版本信息
+     * 用户空间占用CPU百分比
      */
-    private String serviceVersion;
+    private String usCpuRate;
 
     /**
-     * 服务器运行状态1正常0死亡
+     * 内核空间占用CPU的百分比
      */
-    private String serviceActive;
+    private String syCpuRate;
 
     /**
-     * 服务器内核版本信息
+     * 改变过优先级的进程占用CPU的百分比
      */
-    private String serviceCoreVersion;
+    private String niCpuRate;
 
     /**
-     * 服务器用户名
+     * 空闲CPU百分比
      */
-    private String serviceUser;
+    private String idCpuRate;
 
     /**
-     * 服务器密码
+     * IO等待占用CPU的百分比
      */
-    private String servicePassword;
+    private String waCpuRate;
 
     /**
      * 服务器类型1数据库服务器2ETL服务器3应用服务器
      */
     private String serviceType;
-
-    /**
-     * 服务器端口号
-     */
-    private String servicePort;
 
     /**
      * 字符备用字段1
@@ -143,44 +138,44 @@ public class monHardwareServerInfo {
         this.recordDt = recordDt;
     }
 
-    public String getServiceVersion() {
-        return serviceVersion;
+    public String getUsCpuRate() {
+        return usCpuRate;
     }
 
-    public void setServiceVersion(String serviceVersion) {
-        this.serviceVersion = serviceVersion == null ? null : serviceVersion.trim();
+    public void setUsCpuRate(String usCpuRate) {
+        this.usCpuRate = usCpuRate == null ? null : usCpuRate.trim();
     }
 
-    public String getServiceActive() {
-        return serviceActive;
+    public String getSyCpuRate() {
+        return syCpuRate;
     }
 
-    public void setServiceActive(String serviceActive) {
-        this.serviceActive = serviceActive == null ? null : serviceActive.trim();
+    public void setSyCpuRate(String syCpuRate) {
+        this.syCpuRate = syCpuRate == null ? null : syCpuRate.trim();
     }
 
-    public String getServiceCoreVersion() {
-        return serviceCoreVersion;
+    public String getNiCpuRate() {
+        return niCpuRate;
     }
 
-    public void setServiceCoreVersion(String serviceCoreVersion) {
-        this.serviceCoreVersion = serviceCoreVersion == null ? null : serviceCoreVersion.trim();
+    public void setNiCpuRate(String niCpuRate) {
+        this.niCpuRate = niCpuRate == null ? null : niCpuRate.trim();
     }
 
-    public String getServiceUser() {
-        return serviceUser;
+    public String getIdCpuRate() {
+        return idCpuRate;
     }
 
-    public void setServiceUser(String serviceUser) {
-        this.serviceUser = serviceUser == null ? null : serviceUser.trim();
+    public void setIdCpuRate(String idCpuRate) {
+        this.idCpuRate = idCpuRate == null ? null : idCpuRate.trim();
     }
 
-    public String getServicePassword() {
-        return servicePassword;
+    public String getWaCpuRate() {
+        return waCpuRate;
     }
 
-    public void setServicePassword(String servicePassword) {
-        this.servicePassword = servicePassword == null ? null : servicePassword.trim();
+    public void setWaCpuRate(String waCpuRate) {
+        this.waCpuRate = waCpuRate == null ? null : waCpuRate.trim();
     }
 
     public String getServiceType() {
@@ -189,14 +184,6 @@ public class monHardwareServerInfo {
 
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType == null ? null : serviceType.trim();
-    }
-
-    public String getServicePort() {
-        return servicePort;
-    }
-
-    public void setServicePort(String servicePort) {
-        this.servicePort = servicePort == null ? null : servicePort.trim();
     }
 
     public String getCharBak1() {
