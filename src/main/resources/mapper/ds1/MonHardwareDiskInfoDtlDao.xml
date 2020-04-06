@@ -10,7 +10,7 @@
     <result column="DISK_TOTAL_SIZE" jdbcType="VARCHAR" property="diskTotalSize" />
     <result column="DISK_USED_SIZE" jdbcType="VARCHAR" property="diskUsedSize" />
     <result column="DISK_USED_RATE" jdbcType="VARCHAR" property="diskUsedRate" />
-    <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
+    <result column="DISK_AVAIL_SIZE" jdbcType="VARCHAR" property="diskAvailSize" />
     <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
     <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3" />
     <result column="CHAR_BAK_4" jdbcType="VARCHAR" property="charBak4" />

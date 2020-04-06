@@ -16,7 +16,7 @@
     <result column="SWAP_USE_MEM_TOTAL" jdbcType="VARCHAR" property="swapUseMemTotal" />
     <result column="SWAP_FREE_MEM_TOTAL" jdbcType="VARCHAR" property="swapFreeMemTotal" />
     <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
-    <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
+    <result column="MEM_USED_RATE" jdbcType="VARCHAR" property="memUsedRate" />
     <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
     <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3" />
     <result column="CHAR_BAK_4" jdbcType="VARCHAR" property="charBak4" />
