@@ -1,12 +1,20 @@
 package com.pactera.monitoring.utils.ssh;
 
 import com.jcraft.jsch.JSchException;
+import com.pactera.monitoring.entity.MonHardwareCpuInfoDtl;
+import com.pactera.monitoring.entity.MonHardwareCpuInfoTol;
+import com.pactera.monitoring.entity.MonHardwareDiskInfoDtl;
+import com.pactera.monitoring.entity.MonHardwareDiskInfoTol;
+import com.pactera.monitoring.entity.MonHardwareIoInfo;
+import com.pactera.monitoring.entity.MonHardwareMemInfoDtl;
+import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,40 +30,47 @@ public class RemoteComputerMonitorUtil {
     private String networkAdapter;
     private String cpuCommand = "vmstat|awk 'NR==3''{print $13, $14, $16, $15}'";
     //查询物理cpu数目
-    private String cpuNumCommand = "grep 'physical id' /proc/cpuinfo /proc/cpuinfo|sort|uniq|wc -l";
-    //查询逻辑cpu数目
-    private String cpuLogicNumCommand = "cat /proc/cpuinfo| grep \"processor\"| wc -l";
+    private String cpuNumCommand = "grep 'physical id' /proc/cpuinfo|sort -u|wc -l";
     //查询cpu核心数
-    private String cpuCoreNumCommand = "grep 'cpu cores' /proc/cpuinfo|uniq|awk -F '[:\\ ]' '{print $NF}'";
+    private String cpuCoreNumCommand = "grep 'cpu cores' /proc/cpuinfo|uniq|awk -F '[: ]' '{print $NF}'";
     //查询cpu总线程
     private String cpuTotalThreadsNumCommand = "grep 'processor' /proc/cpuinfo | sort -u | wc -l";
+    //cpu型号
+    private String cpuModel = "grep 'model name' /proc/cpuinfo|awk -F ':' '{if(NR==1) print $NF}'";
 
     //private String memCommand = "cat /proc/meminfo |grep 'MemTotal\\|MemFree'|awk '{print $2}'";
     private String memCommand = "free |awk 'NR==2 || NR==4 {print $2,$3,$4,$5,$6,$7}'";
     //private String diskCommand = "df -h|grep -v Filesystem";
-    private String diskCommand = "df -h --total|awk 'NR==13''{print $2,$3,$4,$5}'";
+    private String diskCommandTol = "df -h --total|awk 'NR==13 {print $2,$3,$4,$5}'";
+    private String diskCommandDtl = "df -h |awk 'NR>1 {print $1,$2,$3,$4,$5}'";
     private String networkCommand = "cat /proc/net/dev|grep networkAdapter|awk '{print $2, $10}'";
     private String serverInfoCommand = "lsb_release  -a|awk '$1 ~/Description/ {print $2, $3, $4}'";
+    //服务名
+    private String serverHostNameCommand = "hostname";
     private String serverCoreCommand = "uname -r ";
     private String ioCommand = "iostat -dx 1 5|awk '!/^$|Device:|CPU\\}|Linux/ {print $1,$4,$5,$6,$7,$10,$NF}'";
-    private String test = "vmstat 2 10";
     private JSchUtil jschUtil;
+    //cpu明细键
+    private String cpuDtlKey = "cpuDtl";
+    //cpu汇总键
+    private String cpuTolKey = "cpuTol";
+    DecimalFormat df = new DecimalFormat("0.000");
 
 
-    private RemoteComputerMonitorUtil(String user, String passwd, String host, int port) {
+    public RemoteComputerMonitorUtil(String user, String passwd, String host, int port) {
         jschUtil = new JSchUtil(user, passwd, host, port);
     }
 
-    private RemoteComputerMonitorUtil(String user, String passwd, String host) {
+    public RemoteComputerMonitorUtil(String user, String passwd, String host) {
         jschUtil = new JSchUtil(user, passwd, host);
     }
 
-    private RemoteComputerMonitorUtil(String user, String passwd, String host, int port, String networkAdapter) {
+    public RemoteComputerMonitorUtil(String user, String passwd, String host, int port, String networkAdapter) {
         jschUtil = new JSchUtil(user, passwd, host, port);
         this.networkAdapter = networkAdapter;
     }
 
-    private RemoteComputerMonitorUtil(String user, String passwd, String host, String networkAdapter) {
+    public RemoteComputerMonitorUtil(String user, String passwd, String host, String networkAdapter) {
         jschUtil = new JSchUtil(user, passwd, host);
         this.networkAdapter = networkAdapter;
     }
@@ -85,90 +100,119 @@ public class RemoteComputerMonitorUtil {
         return map;
     }
 
-    public Map<String, String> getServerInfo() {
-        Map<String, String> serverRes = new HashMap<>(3);
+
+    public MonHardwareServerInfo getServerInfo() throws JSchException {
+        MonHardwareServerInfo monHardwareServerInfo = new MonHardwareServerInfo();
         try {
             jschUtil.connect();
             List<String> sercerCoreResult = jschUtil.execCmd(serverCoreCommand);
             List<String> serverInfoResult = jschUtil.execCmd(serverInfoCommand);
+            List<String> serverHostNameResult = jschUtil.execCmd(serverHostNameCommand);
             if (sercerCoreResult != null && sercerCoreResult.size() > 0) {
-                serverRes.put("serverCore", sercerCoreResult.get(0));
+                monHardwareServerInfo.setServiceCoreVersion(sercerCoreResult.get(0));
             }
             if (serverInfoResult != null && serverInfoResult.size() > 0) {
-                serverRes.put("serverInfo", serverInfoResult.get(0));
+                monHardwareServerInfo.setServiceVersion(serverInfoResult.get(0));
             }
-            serverRes.put("serverStatus", "1");
-        } catch (JSchException e) {
-            logger.error(e.getMessage(), e);
-            serverRes.put("serverCore", "");
-            serverRes.put("serverInfo", "");
-            serverRes.put("serverStatus", "0");
-        } finally {
+            monHardwareServerInfo.setServiceActive("1");
+            if(serverHostNameResult !=null && serverHostNameResult.size()>0){
+                monHardwareServerInfo.setServiceNm(serverHostNameResult.get(0));
+            }
+        }  finally {
             close();
         }
 
-        return serverRes;
+        return monHardwareServerInfo;
     }
 
+
     /**
-     * 获取CPU使用情况
+     * 获取CPU使用情况_明细
      *
      * @return
      */
-    public Map<String, String> getCpuUsage() throws JSchException {
+    public MonHardwareCpuInfoDtl getCpuUsageDtl() throws JSchException {
         Map<String, String> map = new HashMap<>(5);
         jschUtil.connect();
-        String[] cpuUsageCommandArray = {cpuCommand, cpuCoreNumCommand,
-                cpuLogicNumCommand, cpuNumCommand, cpuTotalThreadsNumCommand};
+        String[] cpuUsageCommandArray = {cpuCommand,serverHostNameCommand};
         Map<String, List<String>> cpuUsageCollect = jschUtil.execCmdMultipleCommands(cpuUsageCommandArray);
-        return cpuUsageAnalyis(cpuUsageCollect);
+        return (MonHardwareCpuInfoDtl)cpuUsageAnalyis(cpuUsageCollect, jschUtil.getHost()).get(cpuDtlKey);
+    }
+
+    /**
+     * 获取CPU使用情况(汇总)
+     *
+     * @return
+     */
+    public MonHardwareCpuInfoTol getCpuUsageTol() throws JSchException {
+        jschUtil.connect();
+        String[] cpuUsageCommandArray = {cpuCommand, cpuCoreNumCommand,
+                cpuModel, cpuNumCommand, cpuTotalThreadsNumCommand,serverHostNameCommand};
+        Map<String, List<String>> cpuUsageCollect = jschUtil.execCmdMultipleCommands(cpuUsageCommandArray);
+        return (MonHardwareCpuInfoTol)cpuUsageAnalyis(cpuUsageCollect, jschUtil.getHost()).get(cpuTolKey);
+    }
+
+    /**
+     * 获取全量cpu信息
+     * @return
+     * @throws JSchException
+     */
+    public Map<String, Object> getCpuUsageInfo() throws JSchException {
+        jschUtil.connect();
+        String[] cpuUsageCommandArray = {cpuCommand,
+                cpuModel, cpuNumCommand, cpuTotalThreadsNumCommand,serverHostNameCommand};
+        Map<String, List<String>> cpuUsageCollect = jschUtil.execCmdMultipleCommands(cpuUsageCommandArray);
+        return cpuUsageAnalyis(cpuUsageCollect,jschUtil.getHost());
     }
 
     /**
      * cpu结果集格式化
+     *
      * @param cpuUsageCollect
      * @return
      */
-    public Map<String, String> cpuUsageAnalyis(Map<String, List<String>> cpuUsageCollect) {
+    public Map<String, Object> cpuUsageAnalyis(Map<String, List<String>> cpuUsageCollect,String ip) {
         if (cpuUsageCollect == null || cpuUsageCollect.size() <= 0) {
             return new HashMap<>(0);
         }
-        HashMap<String, String> resultAnalyis = new HashMap<>();
-        List<String> cpuCommandRes = cpuUsageCollect.get(cpuCommand);
-        if (cpuCommandRes != null && cpuCommandRes.size() > 0) {
-            String[] cpuInfo = cpuCommandRes.get(0).split(" ");
-            resultAnalyis.put("cpuUser", cpuInfo[0]);
-            resultAnalyis.put("cpuSys", cpuInfo[1]);
-            resultAnalyis.put("cpuWait", cpuInfo[2]);
-            resultAnalyis.put("cpuIdle", cpuInfo[3]);
-            double others = 100.00 - Double.parseDouble(cpuInfo[0]) - Double.parseDouble(cpuInfo[1]) -
-                    Double.parseDouble(cpuInfo[2]) - Double.parseDouble(cpuInfo[3]);
-            DecimalFormat df = new DecimalFormat("0.0");
-            resultAnalyis.put("cpuOthers", df.format(others));
-        } else {
-            resultAnalyis.put("cpuUser", "0");
-            resultAnalyis.put("cpuSys", "0");
-            resultAnalyis.put("cpuWait", "0");
-            resultAnalyis.put("cpuIdle", "0");
-            resultAnalyis.put("cpuOthers", "0");
-        }
-        String cpuCoreNumCommandRes = cpuUsageCollect.get(cpuCoreNumCommand) != null
-                && cpuUsageCollect.get(cpuCoreNumCommand).size() > 0
-                ? cpuUsageCollect.get(cpuCoreNumCommand).get(0) : "";
-        String cpuLogicNumCommandRes = cpuUsageCollect.get(cpuLogicNumCommand) != null
-                && cpuUsageCollect.get(cpuLogicNumCommand).size() > 0
-                ? cpuUsageCollect.get(cpuLogicNumCommand).get(0) : "";
+        HashMap<String, Object> result = new HashMap<>(2);
+        Date date = new Date();
+        String cpuModelInfo = cpuUsageCollect.get(cpuModel) != null
+                && cpuUsageCollect.get(cpuModel).size() > 0
+                ? cpuUsageCollect.get(cpuModel).get(0) : "";
         String cpuNumCommandRes = cpuUsageCollect.get(cpuNumCommand) != null
                 && cpuUsageCollect.get(cpuNumCommand).size() > 0
                 ? cpuUsageCollect.get(cpuNumCommand).get(0) : "";
         String cpuTotalThreadsNumCommandRes = cpuUsageCollect.get(cpuTotalThreadsNumCommand) != null
                 && cpuUsageCollect.get(cpuTotalThreadsNumCommand).size() > 0
                 ? cpuUsageCollect.get(cpuTotalThreadsNumCommand).get(0) : "";
-        resultAnalyis.put("cpuCoreNumCommand", cpuCoreNumCommandRes);
-        resultAnalyis.put("cpuLogicNumCommand", cpuLogicNumCommandRes);
-        resultAnalyis.put("cpuNumCommand", cpuNumCommandRes);
-        resultAnalyis.put("cpuTotalThreadsNumCommand", cpuTotalThreadsNumCommandRes);
-        return resultAnalyis;
+        String serverName = cpuUsageCollect.get(serverHostNameCommand) != null
+                && cpuUsageCollect.get(serverHostNameCommand).size() > 0
+                ? cpuUsageCollect.get(serverHostNameCommand).get(0) : "";
+
+        List<String> cpuCommandRes = cpuUsageCollect.get(cpuCommand);
+        if (cpuCommandRes != null && cpuCommandRes.size() > 0) {
+            String[] cpuInfo = cpuCommandRes.get(0).split(" ");
+            MonHardwareCpuInfoDtl monHardwareCpuInfoDtl = new MonHardwareCpuInfoDtl();
+            monHardwareCpuInfoDtl.setUsCpuRate(cpuInfo[0]);
+            monHardwareCpuInfoDtl.setSyCpuRate(cpuInfo[1]);
+            monHardwareCpuInfoDtl.setWaCpuRate(cpuInfo[2]);
+            monHardwareCpuInfoDtl.setIdCpuRate(cpuInfo[3]);
+            monHardwareCpuInfoDtl.setDataDt(date);
+            monHardwareCpuInfoDtl.setServiceIp(ip);
+            if(StringUtils.isNotEmpty(serverName)){
+                monHardwareCpuInfoDtl.setServiceNm(serverName);
+            }
+            result.put(cpuDtlKey, monHardwareCpuInfoDtl);
+        }
+        MonHardwareCpuInfoTol monHardwareCpuInfoTol = new MonHardwareCpuInfoTol();
+        monHardwareCpuInfoTol.setCpuNum(cpuNumCommandRes);
+        monHardwareCpuInfoTol.setCpuType(cpuModelInfo);
+        monHardwareCpuInfoTol.setCpuThread(cpuTotalThreadsNumCommandRes);
+        monHardwareCpuInfoTol.setDataDt(date);
+        monHardwareCpuInfoTol.setServiceNm(serverName);
+        result.put(cpuTolKey, monHardwareCpuInfoTol);
+        return result;
     }
 
     /**
@@ -176,30 +220,34 @@ public class RemoteComputerMonitorUtil {
      *
      * @return
      */
-    public Map<String, String> getMemUsage() throws JSchException {
+    public MonHardwareMemInfoDtl getMemUsage() throws JSchException {
         Map<String, String> map = new HashMap<>(9);
         jschUtil.connect();
-        List<String> result = jschUtil.execCmd(memCommand);
-        return memoAnalyis(result);
+        List<String> memoResult = jschUtil.execCmd(memCommand);
+        List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
+        return memoAnalyis(memoResult,serverNameResult);
     }
 
     /**
      * 内存结果分析
-     * @param result
+     * @param memoResult
      * @return
      */
-    public Map<String,String> memoAnalyis(List<String> result){
-        DecimalFormat df = new DecimalFormat("0.000");
+    public MonHardwareMemInfoDtl memoAnalyis(List<String> memoResult,List<String> serverNameResult){
 
-        if (result == null || result.size() != 2) {
-            return memoInitAnalyisResult(df);
+        if (memoResult == null
+                || memoResult.size() != 2
+                || serverNameResult == null
+                || StringUtils.isEmpty(serverNameResult.get(0))) {
+            return new MonHardwareMemInfoDtl();
         }
 
-        String memoInfo = result.get(0);
-        String swapInfo = result.get(1);
+        String memoInfo = memoResult.get(0);
+        String swapInfo = memoResult.get(1);
+        String serverName = serverNameResult.get(0);
 
         if (StringUtils.isEmpty(memoInfo) || StringUtils.isEmpty(swapInfo)) {
-            return memoInitAnalyisResult(df);
+            return new MonHardwareMemInfoDtl();
         }
 
         String[] memoInfoArray = memoInfo.split(" ");
@@ -207,9 +255,8 @@ public class RemoteComputerMonitorUtil {
         int memoBookLen=6;
         int swapBookLen = 3;
         if (memoInfoArray.length != memoBookLen || swapInfoArray.length != swapBookLen) {
-            return memoInitAnalyisResult(df);
+            return new MonHardwareMemInfoDtl();
         }
-        HashMap<String, String> queryResult = new HashMap<>(9);
         double memTotal = Double.parseDouble(memoInfoArray[0]) / 1024 / 1024;
         double memFree = Double.parseDouble(memoInfoArray[2]) / 1024 / 1024;
         double memUsed = Double.parseDouble(memoInfoArray[1]) / 1024 / 1024;
@@ -220,16 +267,18 @@ public class RemoteComputerMonitorUtil {
         double memUsedRate = memUsed / memTotal * 100;
         double cachedAndBuffers = (Double.parseDouble(memoInfoArray[4])
                 + Double.parseDouble(memoInfoArray[5])) / 1024 / 1024;
-        queryResult.put("memTotal", df.format(memTotal));
-        queryResult.put("memUsed", df.format(memUsed));
-        queryResult.put("memFree", df.format(memFree));
-        queryResult.put("memUsedRate", df.format(memUsedRate));
-        queryResult.put("memoShared", df.format(memoShared));
-        queryResult.put("swapTotal", df.format(swapTotal));
-        queryResult.put("swapUsed", df.format(swapUsed));
-        queryResult.put("swapFree", df.format(swapFree));
-        queryResult.put("cachedAndBuffers", df.format(cachedAndBuffers));
-        return queryResult;
+        MonHardwareMemInfoDtl monHardwareMemInfoDtl = new MonHardwareMemInfoDtl();
+        monHardwareMemInfoDtl.setMemTotal(df.format(memTotal));
+        monHardwareMemInfoDtl.setMemUseTotal(df.format(memUsed));
+        monHardwareMemInfoDtl.setFreeMemTotal(df.format(memFree));
+        monHardwareMemInfoDtl.setMemUsedRate(df.format(memUsedRate));
+        monHardwareMemInfoDtl.setSharedMemTotal(df.format(memoShared));
+        monHardwareMemInfoDtl.setSwapMemTotal(df.format(swapTotal));
+        monHardwareMemInfoDtl.setSwapUseMemTotal(df.format(swapUsed));
+        monHardwareMemInfoDtl.setSwapFreeMemTotal(df.format(swapFree));
+        monHardwareMemInfoDtl.setBufferCacheUseMemTotal(df.format(cachedAndBuffers));
+        monHardwareMemInfoDtl.setServiceNm(serverName);
+        return monHardwareMemInfoDtl;
     }
 
     public HashMap<String,String> memoInitAnalyisResult(DecimalFormat df){
@@ -246,17 +295,48 @@ public class RemoteComputerMonitorUtil {
         return analyisResult;
     }
 
-
     /**
      * 获取io信息(此方法会使用5s时间去Linux收集数据求平均值)
      *
      * @return
      */
-    public List<Map<String, String>> getIoUsage() throws JSchException {
+    public  List<MonHardwareIoInfo> getIoUsage() throws JSchException {
         jschUtil.connect();
         List<String> remoteQueryRes = jschUtil.execCmd(ioCommand);
+        List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
         Map<String, List<Map<String, String>>> parseIoUsageMsg = parseIoUsageMsg(remoteQueryRes);
-        return ioUsageCalculation(parseIoUsageMsg);
+        List<Map<String, String>> ioUsageCalculation = ioUsageCalculation(parseIoUsageMsg);
+        ArrayList<MonHardwareIoInfo> monHardwareIoInfoArrayList = new ArrayList<>();
+        Date date = new Date();
+        ioUsageCalculation.forEach(map->{
+            MonHardwareIoInfo monHardwareIoInfo = new MonHardwareIoInfo();
+            //设备名
+            monHardwareIoInfo.setDiskNm(map.get("device"));
+            /*//每秒读次数
+            splitArrayCollect.put("readTimesPerSecond", splitQuery[1]);*/
+            /*//每秒写次数
+            splitArrayCollect.put("writeTimesPerSecond", splitQuery[2]);*/
+            //每秒读数据量
+            monHardwareIoInfo.setDiskRead(map.get("readKbPerSecond"));
+            //每秒写数据量
+            monHardwareIoInfo.setDiskWrite(map.get("writeKbPerSecond"));
+            //磁盘响应时间
+            monHardwareIoInfo.setDiskAvgRespond(map.get("await"));
+            //磁盘使用率
+            monHardwareIoInfo.setDiskAvgRespond(map.get("util"));
+            if(serverNameResult !=null
+                    && serverNameResult.size()!=0
+                    && StringUtils.isNotEmpty(serverNameResult.get(0))){
+                monHardwareIoInfo.setServiceNm(serverNameResult.get(0));
+            }
+            monHardwareIoInfo.setDataDt(date);
+            Double diskTranSecond = Double.parseDouble(map.get("readKbPerSecond")) + Double.parseDouble(map.get("writeKbPerSecond"));
+            monHardwareIoInfo.setDiskTrans(df.format(diskTranSecond));
+            monHardwareIoInfo.setServiceIp(jschUtil.getHost());
+            monHardwareIoInfoArrayList.add(monHardwareIoInfo);
+        });
+
+        return monHardwareIoInfoArrayList;
     }
 
     /**
@@ -340,28 +420,67 @@ public class RemoteComputerMonitorUtil {
     }
 
     /**
-     * 获取磁盘使用情况
+     * 获取磁盘使用情况_汇总
      *
      * @return
      */
-    public String getDiskUsage() throws JSchException {
+    public MonHardwareDiskInfoTol getDiskUsageTol() throws JSchException {
         jschUtil.connect();
-        List<String> result = jschUtil.execCmd(diskCommand);
-        Map<String, String> diskInfoMapping = new HashMap<>(4);
+        List<String> result = jschUtil.execCmd(diskCommandTol);
+        List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
+        MonHardwareDiskInfoTol monHardwareDiskInfoTol = new MonHardwareDiskInfoTol();
         if (result != null && result.size() > 0) {
             String diskInfo = result.get(0);
             String[] diskInfoArray = diskInfo.split(" ");
-            diskInfoMapping.put("total", diskInfoArray[0]);
-            diskInfoMapping.put("used", diskInfoArray[1]);
-            diskInfoMapping.put("avail", diskInfoArray[2]);
-            diskInfoMapping.put("hardDiskUsage", diskInfoArray[3]);
-        } else {
-            diskInfoMapping.put("total", "0");
-            diskInfoMapping.put("used", "0");
-            diskInfoMapping.put("avail", "0");
-            diskInfoMapping.put("hardDiskUsage", "0");
+            monHardwareDiskInfoTol.setDiskTotalSize(diskInfoArray[0]);
+            monHardwareDiskInfoTol.setDiskUsedSize(diskInfoArray[1]);
+            monHardwareDiskInfoTol.setDiskAvailSize(diskInfoArray[2]);
+            monHardwareDiskInfoTol.setDiskUsedRate(diskInfoArray[3]);
+            monHardwareDiskInfoTol.setDataDt(new Date());
+            monHardwareDiskInfoTol.setServiceIp(jschUtil.getHost());
+            if (serverNameResult !=null
+                && serverNameResult.size()>0
+                && StringUtils.isNotEmpty(serverNameResult.get(0))) {
+                monHardwareDiskInfoTol.setServiceNm(serverNameResult.get(0));
+            }
         }
-        return diskInfoMapping.toString();
+        return monHardwareDiskInfoTol;
+    }
+
+    /**
+     * 获取磁盘使用情况_明细
+     *
+     * @return 磁盘明细对象集合
+     */
+    public List<MonHardwareDiskInfoDtl> getDiskUsageDtl() throws JSchException {
+        jschUtil.connect();
+        List<String> result = jschUtil.execCmd(diskCommandDtl);
+        List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
+        ArrayList<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList = new ArrayList<>();
+        if(result == null || result.size()<=0){
+            return monHardwareDiskInfoDtlList;
+        }
+        Date date = new Date();
+        result.forEach(item->{
+            if(StringUtils.isEmpty(item)){return;}
+            String[] diskInfoArray = item.split(" ");
+            if(diskInfoArray.length!=5){return;}
+            MonHardwareDiskInfoDtl monHardwareDiskInfoDtl = new MonHardwareDiskInfoDtl();
+            monHardwareDiskInfoDtl.setFilesystemNm(diskInfoArray[0]);
+            monHardwareDiskInfoDtl.setDiskTotalSize(diskInfoArray[1]);
+            monHardwareDiskInfoDtl.setDiskUsedSize(diskInfoArray[2]);
+            monHardwareDiskInfoDtl.setDiskAvailSize(diskInfoArray[3]);
+            monHardwareDiskInfoDtl.setDiskUsedRate(diskInfoArray[4]);
+            if(serverNameResult!=null
+                    && serverNameResult.size()>0
+                    && StringUtils.isNotEmpty(serverNameResult.get(0))) {
+                monHardwareDiskInfoDtl.setServiceNm(serverNameResult.get(0));
+            }
+            monHardwareDiskInfoDtl.setServiceIp(jschUtil.getHost());
+            monHardwareDiskInfoDtl.setDataDt(date);
+            monHardwareDiskInfoDtlList.add(monHardwareDiskInfoDtl);
+        });
+        return monHardwareDiskInfoDtlList;
     }
 
     /**
@@ -429,12 +548,12 @@ public class RemoteComputerMonitorUtil {
      *
      * @param args
      */
-    /*public static void main(String[] args) throws JSchException {
+   /* public static void main(String[] args) throws JSchException {
         RemoteComputerMonitorUtil remoteComputerMonitorUtil
                 = new RemoteComputerMonitorUtil("root", "admin", "localhost", 49160, "eth0");
         try {
 
-            Map<String, String> cpuUsage = remoteComputerMonitorUtil.getCpuUsage();
+            Map<String, String> cpuUsage = remoteComputerMonitorUtil.getServerInfo();
             System.out.println(cpuUsage);
         } finally {
             remoteComputerMonitorUtil.close();

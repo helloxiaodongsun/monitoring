@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareMeminfoTolMapper">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareMeminfoTol">
+<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareMemInfoTolDao">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareMemInfoTol">
     <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
     <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
     <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
@@ -27,7 +27,7 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareMeminfoTol">
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareMemInfoTol">
     insert into MON_HARDWARE_MEMINFO_TOL (SERVICE_NM, SERVICE_IP, DATA_DT,
       RECORD_DT, MEM_TOTAL, MEM_USE_TOTAL,
       FREE_MEM_TOTAL, SHARED_MEM_TOTAL, BUFFER_CACHE_USE_MEM_TOTAL,
@@ -47,7 +47,7 @@
       #{numBak2,jdbcType=NUMERIC}, #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC},
       #{numBak5,jdbcType=NUMERIC})
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareMeminfoTol">
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareMemInfoTol">
     insert into MON_HARDWARE_MEMINFO_TOL
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="serviceNm != null">

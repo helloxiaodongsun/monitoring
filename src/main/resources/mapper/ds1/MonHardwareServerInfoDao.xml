@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareCpuinfoTolMapper">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareCpuinfoTol">
+<mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareServerInfoDao">
+  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareServerInfo">
     <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
     <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
     <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
     <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt" />
-    <result column="CPU_TYPE" jdbcType="VARCHAR" property="cpuType" />
-    <result column="CPU_NUM" jdbcType="VARCHAR" property="cpuNum" />
-    <result column="CPU_THREAD" jdbcType="VARCHAR" property="cpuThread" />
+    <result column="SERVICE_VERSION" jdbcType="VARCHAR" property="serviceVersion" />
+    <result column="SERVICE_ACTIVE" jdbcType="VARCHAR" property="serviceActive" />
+    <result column="SERVICE_CORE_VERSION" jdbcType="VARCHAR" property="serviceCoreVersion" />
+    <result column="SERVICE_USER" jdbcType="VARCHAR" property="serviceUser" />
+    <result column="SERVICE_PASSWORD" jdbcType="VARCHAR" property="servicePassword" />
     <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
+    <result column="SERVICE_PORT" jdbcType="VARCHAR" property="servicePort" />
     <result column="CHAR_BAK_1" jdbcType="VARCHAR" property="charBak1" />
     <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
     <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3" />
@@ -21,24 +24,50 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareCpuinfoTol">
-    insert into MON_HARDWARE_CPUINFO_TOL (SERVICE_NM, SERVICE_IP, DATA_DT,
-      RECORD_DT, CPU_TYPE, CPU_NUM,
-      CPU_THREAD, SERVICE_TYPE, CHAR_BAK_1,
+  <sql id="serverInfoSql">
+     SERVICE_NM,
+     SERVICE_IP,
+     DATA_DT,
+     RECORD_DT,
+     SERVICE_VERSION,
+     SERVICE_ACTIVE,
+     SERVICE_CORE_VERSION,
+     SERVICE_USER,
+     SERVICE_PASSWORD,
+     SERVICE_TYPE,
+     case when
+     SERVICE_PORT is null then '22' else SERVICE_PORT end as SERVICE_PORT,
+     CHAR_BAK_1,
+     CHAR_BAK_2,
+     CHAR_BAK_3,
+     CHAR_BAK_4,
+     CHAR_BAK_5,
+     NUM_BAK_1,
+     NUM_BAK_2,
+     NUM_BAK_3,
+     NUM_BAK_4,
+     NUM_BAK_5
+  </sql>
+  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareServerInfo">
+    insert into MON_HARDWARE_SERVER_INFO (SERVICE_NM, SERVICE_IP, DATA_DT,
+      RECORD_DT, SERVICE_VERSION, SERVICE_ACTIVE,
+      SERVICE_CORE_VERSION, SERVICE_USER, SERVICE_PASSWORD,
+      SERVICE_TYPE, SERVICE_PORT, CHAR_BAK_1,
       CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4,
       CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2,
       NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
       )
     values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
-      #{recordDt,jdbcType=TIMESTAMP}, #{cpuType,jdbcType=VARCHAR}, #{cpuNum,jdbcType=VARCHAR},
-      #{cpuThread,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR},
+      #{recordDt,jdbcType=TIMESTAMP}, #{serviceVersion,jdbcType=VARCHAR}, #{serviceActive,jdbcType=VARCHAR},
+      #{serviceCoreVersion,jdbcType=VARCHAR}, #{serviceUser,jdbcType=VARCHAR}, #{servicePassword,jdbcType=VARCHAR},
+      #{serviceType,jdbcType=VARCHAR}, #{servicePort,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR},
       #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR},
       #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC},
       #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareCpuinfoTol">
-    insert into MON_HARDWARE_CPUINFO_TOL
+  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareServerInfo">
+    insert into MON_HARDWARE_SERVER_INFO
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="serviceNm != null">
         SERVICE_NM,
@@ -52,17 +81,26 @@
       <if test="recordDt != null">
         RECORD_DT,
       </if>
-      <if test="cpuType != null">
-        CPU_TYPE,
+      <if test="serviceVersion != null">
+        SERVICE_VERSION,
       </if>
-      <if test="cpuNum != null">
-        CPU_NUM,
+      <if test="serviceActive != null">
+        SERVICE_ACTIVE,
       </if>
-      <if test="cpuThread != null">
-        CPU_THREAD,
+      <if test="serviceCoreVersion != null">
+        SERVICE_CORE_VERSION,
+      </if>
+      <if test="serviceUser != null">
+        SERVICE_USER,
+      </if>
+      <if test="servicePassword != null">
+        SERVICE_PASSWORD,
       </if>
       <if test="serviceType != null">
         SERVICE_TYPE,
+      </if>
+      <if test="servicePort != null">
+        SERVICE_PORT,
       </if>
       <if test="charBak1 != null">
         CHAR_BAK_1,
@@ -108,17 +146,26 @@
       <if test="recordDt != null">
         #{recordDt,jdbcType=TIMESTAMP},
       </if>
-      <if test="cpuType != null">
-        #{cpuType,jdbcType=VARCHAR},
+      <if test="serviceVersion != null">
+        #{serviceVersion,jdbcType=VARCHAR},
       </if>
-      <if test="cpuNum != null">
-        #{cpuNum,jdbcType=VARCHAR},
+      <if test="serviceActive != null">
+        #{serviceActive,jdbcType=VARCHAR},
       </if>
-      <if test="cpuThread != null">
-        #{cpuThread,jdbcType=VARCHAR},
+      <if test="serviceCoreVersion != null">
+        #{serviceCoreVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="serviceUser != null">
+        #{serviceUser,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePassword != null">
+        #{servicePassword,jdbcType=VARCHAR},
       </if>
       <if test="serviceType != null">
         #{serviceType,jdbcType=VARCHAR},
+      </if>
+      <if test="servicePort != null">
+        #{servicePort,jdbcType=VARCHAR},
       </if>
       <if test="charBak1 != null">
         #{charBak1,jdbcType=VARCHAR},
@@ -152,4 +199,8 @@
       </if>
     </trim>
   </insert>
+  <select id="findByIp" resultMap="BaseResultMap" parameterType="String">
+    select <include refid="serverInfoSql"></include>
+    from MON_HARDWARE_SERVER_INFO where SERVICE_IP=#{ip,jdbcType=VARCHAR}
+  </select>
 </mapper>

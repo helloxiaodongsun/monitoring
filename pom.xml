@@ -226,6 +226,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>cn.easyproject</groupId>
+			<artifactId>orai18n</artifactId>
+			<version>12.1.0.2.0</version>
+		</dependency>
 		<!--ssh连接-->
 		<dependency>
 			<groupId>com.jcraft</groupId>

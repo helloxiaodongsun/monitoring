@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  *CPU基础信息表-汇总
  */
-public class MonHardwareCpuinfoTol {
+public class MonHardwareCpuInfoTol {
     /**
      * 服务器名称
      */

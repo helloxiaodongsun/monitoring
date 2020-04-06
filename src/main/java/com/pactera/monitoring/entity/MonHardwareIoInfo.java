@@ -4,6 +4,7 @@ import java.util.Date;
 
 /**
  * I/O基础信息表
+ * @author 84483
  */
 public class MonHardwareIoInfo {
     /**

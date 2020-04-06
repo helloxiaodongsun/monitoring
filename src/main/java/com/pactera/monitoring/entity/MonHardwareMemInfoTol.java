@@ -3,9 +3,9 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- * 内存基础信息-明细
+ * 内存基础信息-汇总
  */
-public class MonHardwareMeminfoDtl {
+public class MonHardwareMemInfoTol {
     /**
      * 服务器名称
      */

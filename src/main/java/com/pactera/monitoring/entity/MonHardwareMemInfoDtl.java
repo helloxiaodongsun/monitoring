@@ -3,9 +3,9 @@ package com.pactera.monitoring.entity;
 import java.util.Date;
 
 /**
- * 内存基础信息-汇总
+ * 内存基础信息-明细
  */
-public class MonHardwareMeminfoTol {
+public class MonHardwareMemInfoDtl {
     /**
      * 服务器名称
      */
@@ -77,9 +77,9 @@ public class MonHardwareMeminfoTol {
     private String serviceType;
 
     /**
-     * 字符备用字段1
+     * 服务器使用内存占比
      */
-    private String charBak1;
+    private String memUsedRate;
 
     /**
      * 字符备用字段2
@@ -238,12 +238,12 @@ public class MonHardwareMeminfoTol {
         this.serviceType = serviceType == null ? null : serviceType.trim();
     }
 
-    public String getCharBak1() {
-        return charBak1;
+    public String getMemUsedRate() {
+        return memUsedRate;
     }
 
-    public void setCharBak1(String charBak1) {
-        this.charBak1 = charBak1 == null ? null : charBak1.trim();
+    public void setMemUsedRate(String memUsedRate) {
+        this.memUsedRate = memUsedRate == null ? null : memUsedRate.trim();
     }
 
     public String getCharBak2() {

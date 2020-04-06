@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * Cache工具类
- * 
+ *
  * @author ruoyi
  */
 public class CacheUtils
@@ -24,7 +24,7 @@ public class CacheUtils
 
     /**
      * 获取SYS_CACHE缓存
-     * 
+     *
      * @param key
      * @return
      */
@@ -35,7 +35,7 @@ public class CacheUtils
 
     /**
      * 获取SYS_CACHE缓存
-     * 
+     *
      * @param key
      * @param defaultValue
      * @return
@@ -48,7 +48,7 @@ public class CacheUtils
 
     /**
      * 写入SYS_CACHE缓存
-     * 
+     *
      * @param key
      * @return
      */
@@ -59,7 +59,7 @@ public class CacheUtils
 
     /**
      * 从SYS_CACHE缓存中移除
-     * 
+     *
      * @param key
      * @return
      */
@@ -70,7 +70,7 @@ public class CacheUtils
 
     /**
      * 获取缓存
-     * 
+     *
      * @param cacheName
      * @param key
      * @return
@@ -82,7 +82,7 @@ public class CacheUtils
 
     /**
      * 获取缓存
-     * 
+     *
      * @param cacheName
      * @param key
      * @param defaultValue
@@ -96,7 +96,7 @@ public class CacheUtils
 
     /**
      * 写入缓存
-     * 
+     *
      * @param cacheName
      * @param key
      * @param value
@@ -108,7 +108,7 @@ public class CacheUtils
 
     /**
      * 从缓存中移除
-     * 
+     *
      * @param cacheName
      * @param key
      */
@@ -119,7 +119,7 @@ public class CacheUtils
 
     /**
      * 从缓存中移除所有
-     * 
+     *
      * @param cacheName
      */
     public static void removeAll(String cacheName)
@@ -135,7 +135,7 @@ public class CacheUtils
 
     /**
      * 从缓存中移除指定key
-     * 
+     *
      * @param keys
      */
     public static void removeByKeys(Set<String> keys)
@@ -145,7 +145,7 @@ public class CacheUtils
 
     /**
      * 从缓存中移除指定key
-     * 
+     *
      * @param cacheName
      * @param keys
      */
@@ -160,7 +160,7 @@ public class CacheUtils
 
     /**
      * 获取缓存键名
-     * 
+     *
      * @param key
      * @return
      */
@@ -171,7 +171,7 @@ public class CacheUtils
 
     /**
      * 获得一个Cache，没有则显示日志。
-     * 
+     *
      * @param cacheName
      * @return
      */

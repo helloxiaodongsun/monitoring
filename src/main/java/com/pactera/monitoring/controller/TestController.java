@@ -1,17 +1,15 @@
 package com.pactera.monitoring.controller;
 
-import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
-
 import com.pactera.monitoring.entity.Test;
 import com.pactera.monitoring.service.TestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class TestController {
