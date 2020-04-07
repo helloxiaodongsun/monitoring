@@ -1,0 +1,16 @@
+{
+  "?data":"data中的name的顺序不能变，只有value能变",
+  "code": "200",
+  "message": "成功",
+  "data": [
+
+    {
+      "value": 31,
+      "name": "已用"
+    },
+    {
+      "value": 84,
+      "name": "空闲"
+    }
+  ]
+}
