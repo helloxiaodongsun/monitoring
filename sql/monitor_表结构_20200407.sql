@@ -1,0 +1,724 @@
+create table MON_HARDWARE_CPUINFO_DTL
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	US_CPU_RATE VARCHAR2(100),
+	SY_CPU_RATE VARCHAR2(100),
+	NI_CPU_RATE VARCHAR2(100),
+	ID_CPU_RATE VARCHAR2(100),
+	WA_CPU_RATE VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	CHAR_BAK_1 VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_CPUINFO_DTL is 'CPU基础信息表-明细'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.US_CPU_RATE is '用户空间占用CPU百分比'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.SY_CPU_RATE is '内核空间占用CPU的百分比'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.NI_CPU_RATE is '改变过优先级的进程占用CPU的百分比'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.ID_CPU_RATE is '空闲CPU百分比'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.WA_CPU_RATE is 'IO等待占用CPU的百分比 '
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.CHAR_BAK_1 is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_CPUINFO_DTL.NUM_BAK_5 is '数字备用字段5'
+;
+
+create table MON_HARDWARE_CPUINFO_TOL
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	CPU_TYPE VARCHAR2(100),
+	CPU_NUM VARCHAR2(100),
+	CPU_THREAD VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	CHAR_BAK_1 VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_CPUINFO_TOL is 'CPU基础信息表-汇总'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CPU_TYPE is 'CPU型号'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CPU_NUM is 'CPU个数'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CPU_THREAD is 'CPU线程数'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CHAR_BAK_1 is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_CPUINFO_TOL.NUM_BAK_5 is '数字备用字段5'
+;
+
+create table MON_HARDWARE_DISKINFO_DTL
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	FILESYSTEM_NM VARCHAR2(100),
+	DISK_TOTAL_SIZE VARCHAR2(100),
+	DISK_USED_SIZE VARCHAR2(100),
+	DISK_USED_RATE VARCHAR2(100),
+	DISK_AVAIL_SIZE VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_DISKINFO_DTL is '磁盘基础信息表-明细'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.FILESYSTEM_NM is '文件系统名称'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.DISK_TOTAL_SIZE is '所在磁盘大小'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.DISK_USED_SIZE is '所在磁盘使用大小'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.DISK_USED_RATE is '所在磁盘使用率'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.DISK_AVAIL_SIZE is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_DISKINFO_DTL.NUM_BAK_5 is '数字备用字段5'
+;
+
+
+create table MON_HARDWARE_DISKINFO_TOL
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	DISK_TOTAL_SIZE VARCHAR2(100),
+	DISK_USED_SIZE VARCHAR2(100),
+	DISK_USED_RATE VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	DISK_AVAIL_SIZE VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_DISKINFO_TOL is '磁盘基础信息表-汇总'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.DISK_TOTAL_SIZE is '磁盘总大小'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.DISK_USED_SIZE is '磁盘使用大小'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.DISK_USED_RATE is '磁盘使用率'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.DISK_AVAIL_SIZE is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_DISKINFO_TOL.NUM_BAK_5 is '数字备用字段5'
+;
+
+
+
+create table MON_HARDWARE_IO_INFO
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	DISK_NM VARCHAR2(100),
+	DISK_TRANS VARCHAR2(100),
+	DISK_READ VARCHAR2(100),
+	DISK_WRITE VARCHAR2(100),
+	DISK_USE_RATE VARCHAR2(100),
+	DISK_AVG_RESPOND VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	CHAR_BAK_1 VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_IO_INFO is 'I;O基础信息表'
+;
+
+comment on column MON_HARDWARE_IO_INFO.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_IO_INFO.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_IO_INFO.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DISK_NM is '磁盘名称'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DISK_TRANS is '磁盘每秒传输速度'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DISK_READ is '磁盘每秒读取数'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DISK_WRITE is '磁盘每秒写入数'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DISK_USE_RATE is '磁盘使用率'
+;
+
+comment on column MON_HARDWARE_IO_INFO.DISK_AVG_RESPOND is '磁盘平均响应时间'
+;
+
+comment on column MON_HARDWARE_IO_INFO.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_IO_INFO.CHAR_BAK_1 is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_IO_INFO.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_IO_INFO.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_IO_INFO.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_IO_INFO.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_IO_INFO.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_IO_INFO.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_IO_INFO.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_IO_INFO.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_IO_INFO.NUM_BAK_5 is '数字备用字段5'
+;
+
+create table MON_HARDWARE_MEMINFO_DTL
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	MEM_TOTAL VARCHAR2(100),
+	MEM_USE_TOTAL VARCHAR2(100),
+	FREE_MEM_TOTAL VARCHAR2(100),
+	SHARED_MEM_TOTAL VARCHAR2(100),
+	BUFFER_CACHE_USE_MEM_TOTAL VARCHAR2(100),
+	BUFFER_CACHE_FREE_MEM_TOTAL VARCHAR2(100),
+	SWAP_MEM_TOTAL VARCHAR2(100),
+	SWAP_USE_MEM_TOTAL VARCHAR2(100),
+	SWAP_FREE_MEM_TOTAL VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	MEM_USED_RATE VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_MEMINFO_DTL is '内存基础信息-明细'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.MEM_TOTAL is '内存总大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.MEM_USE_TOTAL is '内存已使用大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.FREE_MEM_TOTAL is '空闲内存大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SHARED_MEM_TOTAL is '进程共享内存总额'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.BUFFER_CACHE_USE_MEM_TOTAL is '缓存使用大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.BUFFER_CACHE_FREE_MEM_TOTAL is '缓存空闲大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SWAP_MEM_TOTAL is '交换区总大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SWAP_USE_MEM_TOTAL is '交换区使用大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SWAP_FREE_MEM_TOTAL is '交换区空闲大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.MEM_USED_RATE is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_MEMINFO_DTL.NUM_BAK_5 is '数字备用字段5'
+;
+
+create table MON_HARDWARE_MEMINFO_TOL
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	MEM_TOTAL VARCHAR2(100),
+	MEM_USE_TOTAL VARCHAR2(100),
+	FREE_MEM_TOTAL VARCHAR2(100),
+	SHARED_MEM_TOTAL VARCHAR2(100),
+	BUFFER_CACHE_USE_MEM_TOTAL VARCHAR2(100),
+	BUFFER_CACHE_FREE_MEM_TOTAL VARCHAR2(100),
+	SWAP_MEM_TOTAL VARCHAR2(100),
+	SWAP_USE_MEM_TOTAL VARCHAR2(100),
+	SWAP_FREE_MEM_TOTAL VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	CHAR_BAK_1 VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_MEMINFO_TOL is '内存基础信息-汇总'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.MEM_TOTAL is '内存总大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.MEM_USE_TOTAL is '内存已使用大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.FREE_MEM_TOTAL is '空闲内存大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SHARED_MEM_TOTAL is '进程共享内存总额'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.BUFFER_CACHE_USE_MEM_TOTAL is '缓存使用大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.BUFFER_CACHE_FREE_MEM_TOTAL is '缓存空闲大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SWAP_MEM_TOTAL is '交换区总大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SWAP_USE_MEM_TOTAL is '交换区使用大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SWAP_FREE_MEM_TOTAL is '交换区空闲大小'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.CHAR_BAK_1 is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_MEMINFO_TOL.NUM_BAK_5 is '数字备用字段5'
+;
+
+create table MON_HARDWARE_SERVER_INFO
+(
+	SERVICE_NM VARCHAR2(100),
+	SERVICE_IP VARCHAR2(100),
+	DATA_DT DATE,
+	RECORD_DT TIMESTAMP(6),
+	SERVICE_VERSION VARCHAR2(100),
+	SERVICE_ACTIVE VARCHAR2(100),
+	SERVICE_CORE_VERSION VARCHAR2(100),
+	SERVICE_USER VARCHAR2(100),
+	SERVICE_PASSWORD VARCHAR2(100),
+	SERVICE_TYPE VARCHAR2(100),
+	SERVICE_PORT VARCHAR2(100),
+	CHAR_BAK_1 VARCHAR2(100),
+	CHAR_BAK_2 VARCHAR2(100),
+	CHAR_BAK_3 VARCHAR2(100),
+	CHAR_BAK_4 VARCHAR2(100),
+	CHAR_BAK_5 VARCHAR2(100),
+	NUM_BAK_1 NUMBER,
+	NUM_BAK_2 NUMBER,
+	NUM_BAK_3 NUMBER,
+	NUM_BAK_4 NUMBER,
+	NUM_BAK_5 NUMBER
+)
+;
+
+comment on table MON_HARDWARE_SERVER_INFO is '服务器基础信息表'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_NM is '服务器名称'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_IP is '服务器IP'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.DATA_DT is '日期'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.RECORD_DT is '记录时间戳'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_VERSION is '服务器版本信息'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_ACTIVE is '服务器运行状态1正常0死亡'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_CORE_VERSION is '服务器内核版本信息'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_USER is '服务器用户名'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_PASSWORD is '服务器密码'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_TYPE is '服务器类型1数据库服务器2ETL服务器3应用服务器'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.SERVICE_PORT is '服务器端口号'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.CHAR_BAK_1 is '字符备用字段1'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.CHAR_BAK_2 is '字符备用字段2'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.CHAR_BAK_3 is '字符备用字段3'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.CHAR_BAK_4 is '字符备用字段4'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.CHAR_BAK_5 is '字符备用字段5'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.NUM_BAK_1 is '数字备用字段1'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.NUM_BAK_2 is '数字备用字段2'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.NUM_BAK_3 is '数字备用字段3'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.NUM_BAK_4 is '数字备用字段4'
+;
+
+comment on column MON_HARDWARE_SERVER_INFO.NUM_BAK_5 is '数字备用字段5'
+;
+
+INSERT INTO MON_HARDWARE_SERVER_INFO (SERVICE_NM, SERVICE_IP, DATA_DT, RECORD_DT, SERVICE_VERSION, SERVICE_ACTIVE, SERVICE_CORE_VERSION, SERVICE_USER, SERVICE_PASSWORD, SERVICE_TYPE, SERVICE_PORT, CHAR_BAK_1, CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4, CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2, NUM_BAK_3, NUM_BAK_4, NUM_BAK_5) VALUES ('f667ef11850c', '127.0.0.1', TO_DATE('2020-04-02 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), null, 'Ubuntu 14.04.1 LTS', null, '4.19.76-linuxkit', 'root', 'admin', null, '49160', null, null, null, null, null, null, null, null, null, null);
