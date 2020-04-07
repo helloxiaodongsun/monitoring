@@ -5,6 +5,8 @@ import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.util.List;
+
 /**
  * 查询服务器信息
  * @author 84483
@@ -41,5 +43,12 @@ public interface MonHardwareServerInfoService {
      * @throws BussinessException 未在数据库中查询到该服务器的配置信息
      */
     MonHardwareServerInfo queryServerInfoFromDb(String ip) throws BussinessException;
+
+    /**
+     * 查询所有服务器列表
+     * @return
+     * @throws Exception
+     */
+    List<MonHardwareServerInfoDto> queryAllServerInfo() throws Exception;
 
 }

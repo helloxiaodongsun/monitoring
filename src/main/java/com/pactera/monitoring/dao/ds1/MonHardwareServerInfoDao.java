@@ -4,6 +4,8 @@ import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface MonHardwareServerInfoDao {
     int insert(MonHardwareServerInfo record);
@@ -16,4 +18,10 @@ public interface MonHardwareServerInfoDao {
      * @return
      */
     MonHardwareServerInfo findByIp(@Param("ip") String ip);
+
+    /**
+     * 查询所有服务器列表
+     * @return
+     */
+    List<MonHardwareServerInfo> findAll();
 }

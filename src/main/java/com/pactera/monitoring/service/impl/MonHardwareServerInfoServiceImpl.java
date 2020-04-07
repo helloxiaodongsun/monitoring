@@ -6,6 +6,7 @@ import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**服务器基本信息查询
  * @author 84483
@@ -86,5 +89,22 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
             throw new BussinessException("The IP is  configured incorrectly in the basic table");
         }
         return byIp;
+    }
+
+    //do to dto
+    class DoToDTOConverter extends BaseConverter<MonHardwareServerInfo, MonHardwareServerInfoDto> {
+        @Override
+        protected void convert(MonHardwareServerInfo from, MonHardwareServerInfoDto to) {
+            super.convert(from, to);
+        }
+    }
+
+    @Override
+    public List<MonHardwareServerInfoDto> queryAllServerInfo() throws Exception {
+        List<MonHardwareServerInfo> monHardwareServerInfoList = monHardwareServerInfoDao.findAll();
+        List<MonHardwareServerInfoDto> monHardwareServerInfoDtoList = new ArrayList<MonHardwareServerInfoDto>();
+        DoToDTOConverter doToDTOConverter = new DoToDTOConverter();
+        monHardwareServerInfoDtoList = doToDTOConverter.convert(monHardwareServerInfoList,MonHardwareServerInfoDto.class);
+        return monHardwareServerInfoDtoList;
     }
 }

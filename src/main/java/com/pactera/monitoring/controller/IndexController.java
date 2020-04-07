@@ -2,8 +2,10 @@ package com.pactera.monitoring.controller;
 
 import com.pactera.monitoring.entity.SysMenu;
 import com.pactera.monitoring.entity.TestServer;
+import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
 import com.pactera.monitoring.enums.ResultCode;
 import com.pactera.monitoring.service.MenuService;
+import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.JsonResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class IndexController {
 
     @Autowired
     MenuService menuService;
+    @Autowired
+    MonHardwareServerInfoService monHardwareServerInfoService;
 
     @GetMapping("/index")
     public String index(ModelMap mmap){
@@ -33,17 +37,16 @@ public class IndexController {
     }
     // 系统介绍
     @GetMapping("/system/main")
-    public String main(ModelMap mmap)
-    {
-        TestServer t1 = new TestServer("1","192.168.1.1","java");
+    public String main(ModelMap mmap) throws Exception {
+        /*TestServer t1 = new TestServer("1","192.168.1.1","java");
         TestServer t2 = new TestServer("2","192.168.1.2","gp");
         TestServer t3 = new TestServer("3","192.168.1.3","oracle");
         List<TestServer> servers = new ArrayList<TestServer>();
         servers.add(t1);
         servers.add(t2);
-        servers.add(t3);
+        servers.add(t3);*/
 
-
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfo();
         mmap.put("servers",servers);
         return "main";
     }

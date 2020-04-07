@@ -39,7 +39,7 @@
                             </div>
                             <div class="col-sm-8" style="top: -6px;">
                                 <select id="servers" name="servers" class="form-control">
-                                    <option th:each="server : ${servers}" th:text="${server.ip+' '+server.name}" th:value="${server.id}"></option>
+                                    <option th:each="server : ${servers}" th:text="${server.serviceIp+' '+server.serviceNm}" th:value="${server.serviceIp}"></option>
                                 </select>
                             </div>
                         </div>

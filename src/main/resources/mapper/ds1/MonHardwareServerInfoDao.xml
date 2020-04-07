@@ -203,4 +203,8 @@
     select <include refid="serverInfoSql"></include>
     from MON_HARDWARE_SERVER_INFO where SERVICE_IP=#{ip,jdbcType=VARCHAR}
   </select>
+  <select id="findAll" resultMap="BaseResultMap" parameterType="String">
+    select <include refid="serverInfoSql"></include>
+    from MON_HARDWARE_SERVER_INFO order by SERVICE_IP
+  </select>
 </mapper>
