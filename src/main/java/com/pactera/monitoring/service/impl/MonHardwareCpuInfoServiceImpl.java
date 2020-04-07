@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**cpu信息查询
  * @author 84483
  */
@@ -89,6 +91,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         MonHardwareCpuInfoDtl monHardwareCpuInfoDtl = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
         MonHardwareCpuInfoDtlDto monHardwareCpuInfoDtlDto = new MonHardwareCpuInfoDtlDto();
         BeanUtils.copyProperties(monHardwareCpuInfoDtl,monHardwareCpuInfoDtlDto);
+        monHardwareCpuInfoDtlDto.setNiCpuRate("0");
         return monHardwareCpuInfoDtlDto;
     }
 
@@ -114,4 +117,6 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         }
         return cpuUsageDtl;
     }
+
+
 }
