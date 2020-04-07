@@ -1,9 +1,24 @@
+var portal = {};
 /**
  * 通用方法封装处理
  * Copyright (c) 2019 ruoyi 
  */
 $(function() {
-	
+    /**
+     * 获得项目根路径
+     *
+     * 使用方法：portal.bp();
+     */
+    portal.bp = function() {
+        var curWwwPath = window.document.location.href;
+        var pathName = window.document.location.pathname;
+        var pos = curWwwPath.indexOf(pathName);
+        var localhostPaht = curWwwPath.substring(0, pos);
+        //var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);
+        //return (localhostPaht+projectName);
+        return (localhostPaht);
+    };
+
 	//  layer扩展皮肤
 	if (window.layer !== undefined) {
 		layer.config({

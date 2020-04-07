@@ -1,10 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <th:block th:include="include :: header('首页监控')" />
+    <th:block th:include="include :: bootstrap-select-css" />
 </head>
-<body>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="col-sm-12">
+        <!--<div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <h3>选择服务器</h3>
+                                </div>
+                                <div class="col-sm-9">
+                                    <select id="servers" name="servers" class="form-control">
+                                        <option th:each="server : ${servers}" th:text="${server.ip+' '+server.name}" th:value="${server.id}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
+                    </div>
+                </div>
+            </div>
+        </div>-->
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <div class="">
+                            <div class="col-sm-3">
+                                <h5>服务器基本信息概况</h5>
+                            </div>
+                            <div class="col-sm-8" style="top: -6px;">
+                                <select id="servers" name="servers" class="form-control">
+                                    <option th:each="server : ${servers}" th:text="${server.ip+' '+server.name}" th:value="${server.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <!--<a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>-->
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="padding-bottom: 0px;">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-hover margin bottom">
+                                    <tbody>
+                                    <tr>
+                                        <td>地址</td>
+                                        <td id="ipAddress"></td>
+                                        <td>系统</td>
+                                        <td id="system"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>状态</td>
+                                        <td id="status"></td>
+                                        <td>内核</td>
+                                        <td id="os"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>硬盘</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link"><i class="fa fa-times"></i></a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="div-disk" style="height: 200px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>CPU</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            <a class="close-link"><i class="fa fa-times"></i></a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="div-cpu" style="height: 200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>I/O</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link"><i class="fa fa-times"></i></a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="div-io" style="height: 200px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>内存</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            <a class="close-link"><i class="fa fa-times"></i></a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="div-mem" style="height: 200px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-select-js" />
+<th:block th:include="include :: echarts-js" />
+
+<script th:src="@{/monitoring/main.js}"></script>
+<script>
+    $(".modal").appendTo("body"), $("[data-toggle=popover]").popover(), $(".collapse-link").click(function() {
+        var div_ibox = $(this).closest("div.ibox"),
+            e = $(this).find("i"),
+            i = div_ibox.find("div.ibox-content");
+        i.slideToggle(200),
+            e.toggleClass("fa-chevron-up").toggleClass("fa-chevron-down"),
+            div_ibox.toggleClass("").toggleClass("border-bottom"),
+            setTimeout(function() {
+                div_ibox.resize();
+            }, 50);
+    }), $(".close-link").click(function () {
+        var div_ibox = $(this).closest("div.ibox");
+        div_ibox.remove()
+    });
+</script>
 </html>
