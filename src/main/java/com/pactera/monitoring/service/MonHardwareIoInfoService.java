@@ -17,7 +17,7 @@ public interface MonHardwareIoInfoService {
      * @param ip ip地址
      * @return io信息明细
      */
-    List<MonHardwareIoInfoDto> queryIoInfoByIp(String ip) throws BussinessException, JSchException;
+    MonHardwareIoInfoDto queryIoInfoByIp(String ip) throws BussinessException, JSchException;
 
     /**
      * 查询服务器内存信息

@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-
 /**
  * @author 84483
  */
@@ -40,14 +38,14 @@ public class MonHardwareIoInfoController {
     @MethodExplain(methodType= MethodType.SELECT,methodName = "io信息查询")
     @ResponseBody
     public JsonResult getIoInfo(@RequestParam(value = "ip") String ip) {
-        List<MonHardwareIoInfoDto> monHardwareIoInfoDtos;
+        MonHardwareIoInfoDto monHardwareIoInfoDto;
         try {
-             monHardwareIoInfoDtos = monHardwareIoInfoService.queryIoInfoByIp(ip);
+             monHardwareIoInfoDto = monHardwareIoInfoService.queryIoInfoByIp(ip);
         } catch (BussinessException | JSchException e) {
             log.error(e.getMessage(),e);
             return new JsonResult(ResultCode.EXCEPTION, e.getMessage());
         }
-        return new JsonResult(ResultCode.SUCCESS,ResultCode.SUCCESS.getMsg(),monHardwareIoInfoDtos);
+        return new JsonResult(ResultCode.SUCCESS,ResultCode.SUCCESS.getMsg(),monHardwareIoInfoDto);
     }
 
 }

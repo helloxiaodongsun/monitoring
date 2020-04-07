@@ -14,11 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 查询io信息
+ *
  * @author 84483
  */
 @Service
@@ -36,18 +37,35 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
      * @return io信息明细
      */
     @Override
-    public List<MonHardwareIoInfoDto> queryIoInfoByIp(String ip) throws BussinessException, JSchException {
+    public MonHardwareIoInfoDto queryIoInfoByIp(String ip) throws BussinessException, JSchException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(ip);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
         List<MonHardwareIoInfo> monHardwareIoInfo = queryIoInfo(serviceUser, servicePassword, ip, port);
-        return monHardwareIoInfo.stream().map(item->{
-            MonHardwareIoInfoDto monHardwareIoInfoDto = new MonHardwareIoInfoDto();
-            BeanUtils.copyProperties(item,monHardwareIoInfoDto);
-            return monHardwareIoInfoDto;
-        }).collect(Collectors.toList());
+        if (monHardwareIoInfo == null || monHardwareIoInfo.size() <= 0) {
+            return new MonHardwareIoInfoDto();
+        }
+        MonHardwareIoInfoDto monHardwareIoInfoDto = new MonHardwareIoInfoDto();
+        BeanUtils.copyProperties(monHardwareIoInfo.get(0), monHardwareIoInfoDto);
+        double readKbPerSecondSum = 0.0;
+        double writeKbPerSecondSum = 0.0;
+        double diskTranSecondSum;
+        double awaitSum = 0.0;
+        DecimalFormat df = new DecimalFormat("0.000");
+        for (MonHardwareIoInfo hardwareIoInfo : monHardwareIoInfo) {
+            readKbPerSecondSum += Double.parseDouble(hardwareIoInfo.getDiskRead());
+            writeKbPerSecondSum +=Double.parseDouble(hardwareIoInfo.getDiskWrite());
+            awaitSum +=Double.parseDouble(hardwareIoInfo.getDiskAvgRespond());
+        }
+        double awaitSumAvg = awaitSum / monHardwareIoInfo.size();
+        diskTranSecondSum=readKbPerSecondSum+writeKbPerSecondSum;
+        monHardwareIoInfoDto.setDiskAvgRespond(df.format(awaitSumAvg));
+        monHardwareIoInfoDto.setDiskTrans(df.format(diskTranSecondSum));
+        monHardwareIoInfoDto.setDiskRead(df.format(readKbPerSecondSum));
+        monHardwareIoInfoDto.setDiskWrite(df.format(writeKbPerSecondSum));
+        return monHardwareIoInfoDto;
     }
 
     /**
@@ -65,10 +83,10 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
                 = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
         List<MonHardwareIoInfo> ioUsage;
         try {
-             ioUsage = remoteComputerMonitorUtil.getIoUsage();
-        }finally {
+            ioUsage = remoteComputerMonitorUtil.getIoUsage();
+        } finally {
             remoteComputerMonitorUtil.close();
         }
-        return  ioUsage;
+        return ioUsage;
     }
 }

@@ -91,7 +91,6 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         MonHardwareCpuInfoDtl monHardwareCpuInfoDtl = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
         MonHardwareCpuInfoDtlDto monHardwareCpuInfoDtlDto = new MonHardwareCpuInfoDtlDto();
         BeanUtils.copyProperties(monHardwareCpuInfoDtl,monHardwareCpuInfoDtlDto);
-        monHardwareCpuInfoDtlDto.setNiCpuRate("0");
         return monHardwareCpuInfoDtlDto;
     }
 

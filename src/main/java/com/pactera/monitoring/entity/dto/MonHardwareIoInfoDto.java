@@ -32,7 +32,7 @@ public class MonHardwareIoInfoDto implements Serializable {
     /**
      * 磁盘名称
      */
-    private String diskNm;
+    //private String diskNm;
 
     /**
      * 磁盘每秒传输速度
@@ -96,14 +96,14 @@ public class MonHardwareIoInfoDto implements Serializable {
         this.recordDt = recordDt;
     }
 
-    public String getDiskNm() {
+    /*public String getDiskNm() {
         return diskNm;
     }
 
     public void setDiskNm(String diskNm) {
         this.diskNm = diskNm;
     }
-
+*/
     public String getDiskTrans() {
         return diskTrans;
     }
