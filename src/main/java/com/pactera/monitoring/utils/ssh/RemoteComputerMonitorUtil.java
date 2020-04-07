@@ -40,16 +40,16 @@ public class RemoteComputerMonitorUtil {
     private String cpuModel = "grep 'model name' /proc/cpuinfo|awk -F ':' '{if(NR==1) print $NF}'";
 
     //private String memCommand = "cat /proc/meminfo |grep 'MemTotal\\|MemFree'|awk '{print $2}'";
-    private String memCommand = "free |awk 'NR==2 || NR==4 {print $2,$3,$4,$5,$6,$7}'";
+    private String memCommand = "free |awk '/Mem/||/Swap/ {print $2,$3,$4,$5,$6,$7}'";
     //private String diskCommand = "df -h|grep -v Filesystem";
     //查看硬盘汇总
-    private String diskCommandTol = "df -h --total|awk 'NR==13 {print $2,$3,$4,$5}'";
+    private String diskCommandTol = "df -h --total|awk '/total/ {print $2,$3,$4,$5}'";
     //查看硬盘明细
     private String diskCommandDtl = "df -h |awk 'NR>1 {print $1,$2,$3,$4,$5}'";
     //查看磁盘使用率
     private String diskUseRateCommand = "df |awk 'NR !=1 {print $2 \";\" $3}'";
     private String networkCommand = "cat /proc/net/dev|grep networkAdapter|awk '{print $2, $10}'";
-    private String serverInfoCommand = "lsb_release  -a|awk '$1 ~/Description/ {print $2, $3, $4}'";
+    private String serverInfoCommand = "cat /etc/issue.net";
 
     //服务名
     private String serverHostNameCommand = "hostname";
