@@ -1,9 +1,14 @@
 {
-  "?data":"固定顺序：'总占比', '用户空间', '内核空间','改变优先级进程', 'IO等待'；data[1]:固定顺序的所占比例；data[0]:[0]和[4]固定为0，[1]=data[1][2]+data[1][3]+data[1][4]，[2]=data[1][3]+data[1][4]，[3]=data[1][4]",
   "code": "200",
   "message": "成功",
-  "data": [
-    [0, 45, 30, 10, 0],
-    [50, 5, 15, 20, 10]
-  ]
+  "data": {
+    "serviceNm": "4a88d4cb1a66",
+    "serviceIp": "127.0.0.1",
+    "dataDt": "Apr 8, 2020 11:24:29 AM",
+    "usCpuRate": "0.43",
+    "syCpuRate": "0.74",
+    "niCpuRate": "1.00",
+    "idCpuRate": "98.81",
+    "waCpuRate": "0.02"
+  }
 }
