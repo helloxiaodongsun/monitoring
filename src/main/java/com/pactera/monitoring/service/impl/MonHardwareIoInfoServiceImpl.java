@@ -43,28 +43,12 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        List<MonHardwareIoInfo> monHardwareIoInfo = queryIoInfo(serviceUser, servicePassword, ip, port);
-        if (monHardwareIoInfo == null || monHardwareIoInfo.size() <= 0) {
+        MonHardwareIoInfo monHardwareIoInfo = queryIoInfo(serviceUser, servicePassword, ip, port);
+        if (monHardwareIoInfo == null) {
             return new MonHardwareIoInfoDto();
         }
         MonHardwareIoInfoDto monHardwareIoInfoDto = new MonHardwareIoInfoDto();
-        BeanUtils.copyProperties(monHardwareIoInfo.get(0), monHardwareIoInfoDto);
-        double readKbPerSecondSum = 0.0;
-        double writeKbPerSecondSum = 0.0;
-        double diskTranSecondSum;
-        double awaitSum = 0.0;
-        DecimalFormat df = new DecimalFormat("0.000");
-        for (MonHardwareIoInfo hardwareIoInfo : monHardwareIoInfo) {
-            readKbPerSecondSum += Double.parseDouble(hardwareIoInfo.getDiskRead());
-            writeKbPerSecondSum +=Double.parseDouble(hardwareIoInfo.getDiskWrite());
-            awaitSum +=Double.parseDouble(hardwareIoInfo.getDiskAvgRespond());
-        }
-        double awaitSumAvg = awaitSum / monHardwareIoInfo.size();
-        diskTranSecondSum=readKbPerSecondSum+writeKbPerSecondSum;
-        monHardwareIoInfoDto.setDiskAvgRespond(df.format(awaitSumAvg));
-        monHardwareIoInfoDto.setDiskTrans(df.format(diskTranSecondSum));
-        monHardwareIoInfoDto.setDiskRead(df.format(readKbPerSecondSum));
-        monHardwareIoInfoDto.setDiskWrite(df.format(writeKbPerSecondSum));
+        BeanUtils.copyProperties(monHardwareIoInfo, monHardwareIoInfoDto);
         return monHardwareIoInfoDto;
     }
 
@@ -78,10 +62,10 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
      * @return io信息明细
      */
     @Override
-    public List<MonHardwareIoInfo> queryIoInfo(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
+    public MonHardwareIoInfo queryIoInfo(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
         RemoteComputerMonitorUtil remoteComputerMonitorUtil
                 = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
-        List<MonHardwareIoInfo> ioUsage;
+        MonHardwareIoInfo ioUsage;
         try {
             ioUsage = remoteComputerMonitorUtil.getIoUsage();
         } finally {

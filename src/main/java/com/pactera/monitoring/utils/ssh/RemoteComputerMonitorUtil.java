@@ -14,10 +14,14 @@ import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -40,21 +44,27 @@ public class RemoteComputerMonitorUtil {
     private String cpuModel = "grep 'model name' /proc/cpuinfo|awk -F ':' '{if(NR==1) print $NF}'";
 
     //private String memCommand = "cat /proc/meminfo |grep 'MemTotal\\|MemFree'|awk '{print $2}'";
-    private String memCommand = "free |awk '/Mem/||/Swap/ {print $2,$3,$4,$5,$6,$7}'";
+    private String memCommandUbantu = "free |awk '/Mem/||/Swap/ {print $2,$3,$4,$5,$6,$7}'";
+    private String memCommandCentos = "free |awk '/Mem/||/Swap/ {print $2,$3,$4,$5,$6,$7}'";
     //private String diskCommand = "df -h|grep -v Filesystem";
     //查看硬盘汇总
-    private String diskCommandTol = "df -h --total|awk '/total/ {print $2,$3,$4,$5}'";
+    private String diskCommandTol = "df --total|awk '/total/ {print $2,$3,$4,$5}'";
     //查看硬盘明细
-    private String diskCommandDtl = "df -h |awk 'NR>1 {print $1,$2,$3,$4,$5}'";
+    private String diskCommandDtl = "df |awk 'NR>1 {print $1,$2,$3,$4,$5}'";
     //查看磁盘使用率
     private String diskUseRateCommand = "df |awk 'NR !=1 {print $2 \";\" $3}'";
     private String networkCommand = "cat /proc/net/dev|grep networkAdapter|awk '{print $2, $10}'";
-    private String serverInfoCommand = "cat /etc/issue.net";
-
+    //ubantu查看发行版本号
+    private String serverInfoCommandUbntu = "cat /etc/issue.net";
+    //centos 、redhat查看发行版本号
+    private String serverInfoCommandCentos = "cat /etc/redhat-release";
+    //判断服务器是ubantu 还是centos 、redhat
+    private String determineServerType = "find /etc -name redhat-release |wc -l";
     //服务名
     private String serverHostNameCommand = "hostname";
     private String serverCoreCommand = "uname -r ";
-    private String ioCommand = "iostat -dx 1 5|awk '!/^$|Device:|CPU\\}|Linux/ {print $1,$4,$5,$6,$7,$10,$NF}'";
+    private String ioCommand = "iostat -dx |awk '!/^$|Linux/ {print $0}'";
+
     private JSchUtil jschUtil;
     //cpu明细键
     private String cpuDtlKey = "cpuDtl";
@@ -108,6 +118,7 @@ public class RemoteComputerMonitorUtil {
 
     /**
      * 获得服务器信息
+     *
      * @return
      * @throws JSchException
      */
@@ -116,7 +127,17 @@ public class RemoteComputerMonitorUtil {
         try {
             jschUtil.connect();
             List<String> sercerCoreResult = jschUtil.execCmd(serverCoreCommand);
-            List<String> serverInfoResult = jschUtil.execCmd(serverInfoCommand);
+            List<String> determinServerTypeList = jschUtil.execCmd(determineServerType);
+            List<String> serverInfoResult ;
+            if(determinServerTypeList==null
+                    || determinServerTypeList.size()<=0
+                    || "1".equals(determinServerTypeList.get(0))){
+                //服务器是centos、redhat
+                serverInfoResult = jschUtil.execCmd(serverInfoCommandCentos);
+            }else {
+                //服务器是ubantu
+                serverInfoResult = jschUtil.execCmd(serverInfoCommandUbntu);
+            }
             List<String> serverHostNameResult = jschUtil.execCmd(serverHostNameCommand);
             if (sercerCoreResult != null && sercerCoreResult.size() > 0) {
                 monHardwareServerInfo.setServiceCoreVersion(sercerCoreResult.get(0));
@@ -142,7 +163,6 @@ public class RemoteComputerMonitorUtil {
      * @return
      */
     public MonHardwareCpuInfoDtl getCpuUsageDtl() throws JSchException {
-        Map<String, String> map = new HashMap<>(5);
         jschUtil.connect();
         String[] cpuUsageCommandArray = {cpuCommand, serverHostNameCommand};
         Map<String, List<String>> cpuUsageCollect = jschUtil.execCmdMultipleCommands(cpuUsageCommandArray);
@@ -235,7 +255,7 @@ public class RemoteComputerMonitorUtil {
     public MonHardwareMemInfoDtl getMemUsage() throws JSchException {
         Map<String, String> map = new HashMap<>(9);
         jschUtil.connect();
-        List<String> memoResult = jschUtil.execCmd(memCommand);
+        List<String> memoResult = jschUtil.execCmd(memCommandUbantu);
         List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
         return memoAnalyis(memoResult, serverNameResult);
     }
@@ -313,89 +333,199 @@ public class RemoteComputerMonitorUtil {
      *
      * @return
      */
-    public List<MonHardwareIoInfo> getIoUsage() throws JSchException {
+    public MonHardwareIoInfo getIoUsage() throws JSchException {
         jschUtil.connect();
         List<String> remoteQueryRes = jschUtil.execCmd(ioCommand);
         List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
         List<String> diskUseList = jschUtil.execCmd(diskUseRateCommand);
         String diskUsedRate = diskUseCalculat(diskUseList);
-        Map<String, List<Map<String, String>>> parseIoUsageMsg = parseIoUsageMsg(remoteQueryRes);
-        List<Map<String, String>> ioUsageCalculation = ioUsageCalculation(parseIoUsageMsg);
-        ArrayList<MonHardwareIoInfo> monHardwareIoInfoArrayList = new ArrayList<>();
+        if(remoteQueryRes == null || remoteQueryRes.size()<=0){
+            return new MonHardwareIoInfo();
+        }
+        List<List<String>> remoteQueryResTrim = remoteResTrimAndSplit(remoteQueryRes);
+        Map<String, Map<String, String>> parseIoUsageMsg = parseIoUsageMsg(remoteQueryResTrim);
+        Map<String, Double> ioUsageCalculation = ioUsageCalculation(parseIoUsageMsg);
         Date date = new Date();
-        ioUsageCalculation.forEach(map -> {
-            MonHardwareIoInfo monHardwareIoInfo = new MonHardwareIoInfo();
-            //设备名
-            monHardwareIoInfo.setDiskNm(map.get("device"));
+        MonHardwareIoInfo monHardwareIoInfo = new MonHardwareIoInfo();
+        //设备名
+        // monHardwareIoInfo.setDiskNm(map.get("device"));
             /*//每秒读次数
             splitArrayCollect.put("readTimesPerSecond", splitQuery[1]);*/
             /*//每秒写次数
             splitArrayCollect.put("writeTimesPerSecond", splitQuery[2]);*/
-            //每秒读数据量
-            monHardwareIoInfo.setDiskRead(map.get("readKbPerSecond"));
-            //每秒写数据量
-            monHardwareIoInfo.setDiskWrite(map.get("writeKbPerSecond"));
-            //磁盘响应时间
-            monHardwareIoInfo.setDiskAvgRespond(map.get("await"));
-            //磁盘使用率
-            monHardwareIoInfo.setDiskUseRate(diskUsedRate);
-            if (serverNameResult != null
-                    && serverNameResult.size() != 0
-                    && StringUtils.isNotEmpty(serverNameResult.get(0))) {
-                monHardwareIoInfo.setServiceNm(serverNameResult.get(0));
-            }
-            monHardwareIoInfo.setDataDt(date);
-            Double diskTranSecond = Double.parseDouble(map.get("readKbPerSecond")) + Double.parseDouble(map.get("writeKbPerSecond"));
-            monHardwareIoInfo.setDiskTrans(df.format(diskTranSecond));
-            monHardwareIoInfo.setServiceIp(jschUtil.getHost());
-            monHardwareIoInfoArrayList.add(monHardwareIoInfo);
-        });
-
-        return monHardwareIoInfoArrayList;
+        //每秒读数据量
+        monHardwareIoInfo.setDiskRead(df.format(ioUsageCalculation.get("rkB/s")));
+        //每秒写数据量
+        monHardwareIoInfo.setDiskWrite(df.format(ioUsageCalculation.get("wkB/s")));
+        //磁盘响应时间
+        monHardwareIoInfo.setDiskAvgRespond(df.format(ioUsageCalculation.get("await")));
+        //磁盘使用率
+        monHardwareIoInfo.setDiskUseRate(diskUsedRate);
+        if (serverNameResult != null
+                && serverNameResult.size() != 0
+                && StringUtils.isNotEmpty(serverNameResult.get(0))) {
+            monHardwareIoInfo.setServiceNm(serverNameResult.get(0));
+        }
+        monHardwareIoInfo.setDataDt(date);
+        Double diskTranSecond = ioUsageCalculation.get("rkB/s") + ioUsageCalculation.get("wkB/s");
+        monHardwareIoInfo.setDiskTrans(df.format(diskTranSecond));
+        monHardwareIoInfo.setServiceIp(jschUtil.getHost());
+        return monHardwareIoInfo;
     }
 
+    /**
+     * 返回的表头跟预设数据对比，计算出预设数据在返回结果中的索引值
+     *
+     * @param tableHeader
+     * @return
+     */
+    public Map<String, Integer> ioFieldIndexCaculat(List<String> tableHeader) {
+        HashMap<String, Integer> map = new HashMap<>();
+        List<Map<String, List<String>>> ioSearchField = ioSearchField();
+        ioSearchField.forEach(item -> {
+            boolean flag = false;
+            Set<String> itemKey = item.keySet();
+            for (String key : itemKey) {
+                List<String> itemValueList = item.get(key);
+                for (String itemValue : itemValueList) {
+                    for (int i = 0; i < tableHeader.size(); i++) {
+                        String splitItem = tableHeader.get(i);
+                        if (itemValue.equals(splitItem)) {
+                            map.put(key, i);
+                            flag = true;
+                            break;
+                        }
+
+                    }
+                    if (flag) {
+                        break;
+                    }
+                }
+                if (flag) {
+                    break;
+                }
+            }
+        });
+        return map;
+    }
+
+    //初始化io查询字段集合
+    public List<Map<String, List<String>>> ioSearchField() {
+        ArrayList<Map<String, List<String>>> result = new ArrayList<>();
+        List<String> device = Arrays.asList("Device", "Device:");
+        HashMap<String, List<String>> deviceMap = new HashMap<>();
+        deviceMap.put("Device", device);
+        List<String> readTimesPerSecond = Collections.singletonList("r/s");
+        HashMap<String, List<String>> readTimesPerSecondMap = new HashMap<>();
+        readTimesPerSecondMap.put("r/s", readTimesPerSecond);
+        List<String> writeTimesPerSecond = Collections.singletonList("w/s");
+        HashMap<String, List<String>> writeTimesPerSecondMap = new HashMap<>();
+        writeTimesPerSecondMap.put("w/s", writeTimesPerSecond);
+        List<String> readKbPerSecond = Collections.singletonList("rkB/s");
+        HashMap<String, List<String>> readKbPerSecondMap = new HashMap<>();
+        readKbPerSecondMap.put("rkB/s", readKbPerSecond);
+        List<String> writeKbPerSecond = Collections.singletonList("wkB/s");
+        HashMap<String, List<String>> writeKbPerSecondMap = new HashMap<>();
+        writeKbPerSecondMap.put("wkB/s", writeKbPerSecond);
+        List<String> rAwait = Collections.singletonList("r_await");
+        HashMap<String, List<String>> rAwaitMap = new HashMap<>();
+        rAwaitMap.put("r_await", rAwait);
+        List<String> wAwait = Collections.singletonList("w_await");
+        HashMap<String, List<String>> wAwaitMap = new HashMap<>();
+        wAwaitMap.put("w_await", wAwait);
+        List<String> await = Collections.singletonList("await");
+        HashMap<String, List<String>> awaitMap = new HashMap<>();
+        awaitMap.put("await", await);
+        result.add(deviceMap);
+        result.add(readTimesPerSecondMap);
+        result.add(writeTimesPerSecondMap);
+        result.add(readKbPerSecondMap);
+        result.add(writeKbPerSecondMap);
+        result.add(rAwaitMap);
+        result.add(wAwaitMap);
+        result.add(awaitMap);
+        return result;
+    }
+    //针对前台返回的数据以空格切割后，去除空处理
+    public List<List<String>> remoteResTrimAndSplit(List<String> remoteQueryRes){
+        ArrayList<List<String>> result = new ArrayList<>();
+        remoteQueryRes.forEach(item->{
+            if(StringUtils.isNotEmpty(item)){
+                String[] split = item.split(" ");
+                ArrayList<String> itemList = new ArrayList<>();
+                for (String itemValue : split) {
+                    if(StringUtils.isNotEmpty(itemValue)){
+                        itemList.add(itemValue);
+                    }
+                }
+                result.add(itemList);
+            }
+        });
+        return result;
+    }
     /**
      * 解析从服务器拿到的io数据
      *
      * @param remoteQueryRes
      * @return
      */
-    public Map<String, List<Map<String, String>>> parseIoUsageMsg(List<String> remoteQueryRes) {
+    public Map<String, Map<String, String>> parseIoUsageMsg(List<List<String>> remoteQueryRes) {
 
-        ArrayList<Map<String, String>> ioUsageParse = new ArrayList<>();
-        if (remoteQueryRes == null || remoteQueryRes.size() <= 0) {
+        if (remoteQueryRes == null || remoteQueryRes.size() <= 1) {
             return new HashMap<>(0);
         }
-
-        HashMap<String, List<Map<String, String>>> queryResColl = new HashMap<>();
-        for (String remoteQuery : remoteQueryRes) {
-            if (remoteQuery == null || "".equals(remoteQuery)) {
-                continue;
-            }
-            String[] splitQuery = remoteQuery.split(" ");
-            if (splitQuery.length != 7) {
-                continue;
-            }
-            HashMap<String, String> splitArrayCollect = new HashMap<>(7);
-            String deviceName = splitQuery[0];
-            //设备名
-            splitArrayCollect.put("device", deviceName);
-            //每秒读次数
-            splitArrayCollect.put("readTimesPerSecond", splitQuery[1]);
-            //每秒写次数
-            splitArrayCollect.put("writeTimesPerSecond", splitQuery[2]);
-            //每秒读数据量
-            splitArrayCollect.put("readKbPerSecond", splitQuery[3]);
-            //每秒写数据量
-            splitArrayCollect.put("writeKbPerSecond", splitQuery[4]);
-            //磁盘响应时间
-            splitArrayCollect.put("await", splitQuery[5]);
-            //磁盘使用率
-            splitArrayCollect.put("util", splitQuery[6]);
-            List<Map<String, String>> deviceNameListValue = queryResColl.computeIfAbsent(deviceName, a -> new ArrayList<Map<String, String>>());
-            deviceNameListValue.add(splitArrayCollect);
+        HashMap<String, Map<String, String>> queryResColl = new HashMap<>();
+        Map<String, Integer> fieldIndex = ioFieldIndexCaculat(remoteQueryRes.get(0));
+        Integer deviceIndex = fieldIndex.get("Device");
+        Integer readTimesPerSecondIndex = fieldIndex.get("r/s");
+        Integer writeTimePerSecondIndex = fieldIndex.get("w/s");
+        Integer readKbPerSecondIndex = fieldIndex.get("rkB/s");
+        Integer writeKbPerSecondIndex = fieldIndex.get("wkB/s");
+        Integer rAwaitIndex = fieldIndex.get("r_await");
+        Integer wAaitIndex = fieldIndex.get("w_await");
+        Integer awaitIndex = fieldIndex.get("await");
+        if (deviceIndex == null
+                || readTimesPerSecondIndex == null
+                || writeTimePerSecondIndex == null
+                || readKbPerSecondIndex == null
+                || writeKbPerSecondIndex == null
+        ) {
+            return queryResColl;
         }
+        boolean readWriteWaitCheck = rAwaitIndex == null || wAaitIndex == null;
+        if (awaitIndex == null && readWriteWaitCheck) {
+            return queryResColl;
+        }
+        for (int i = 1; i < remoteQueryRes.size(); i++) {
+            List<String> itemList = remoteQueryRes.get(i);
+            if (itemList == null
+                    || itemList.size()==0) {
+                continue;
+            }
 
+            HashMap<String, String> splitArrayCollect = new HashMap<>(8);
+            //设备名
+            splitArrayCollect.put("Device", itemList.get(deviceIndex));
+            //每秒读次数
+            splitArrayCollect.put("r/s", itemList.get(readTimesPerSecondIndex));
+            //每秒写次数
+            splitArrayCollect.put("w/s", itemList.get(writeTimePerSecondIndex));
+            //每秒读数据量
+            splitArrayCollect.put("rkB/s", itemList.get(readKbPerSecondIndex));
+            //每秒写数据量
+            splitArrayCollect.put("wkB/s", itemList.get(writeKbPerSecondIndex));
+            //磁盘响应时间
+            if (awaitIndex != null) {
+                splitArrayCollect.put("await", itemList.get(awaitIndex));
+            }
+            if (rAwaitIndex != null) {
+                splitArrayCollect.put("r_await", itemList.get(rAwaitIndex));
+            }
+            if (wAaitIndex != null) {
+                splitArrayCollect.put("w_await", itemList.get(wAaitIndex));
+            }
+            queryResColl.put(itemList.get(deviceIndex), splitArrayCollect);
+        }
         return queryResColl;
     }
 
@@ -405,33 +535,47 @@ public class RemoteComputerMonitorUtil {
      * @param ioUsageParse
      * @return
      */
-    public List<Map<String, String>> ioUsageCalculation(Map<String, List<Map<String, String>>> ioUsageParse) {
+    public Map<String, Double> ioUsageCalculation(Map<String, Map<String, String>> ioUsageParse) {
         if (ioUsageParse == null || ioUsageParse.size() <= 0) {
-            return new ArrayList<>();
+            return new HashMap<>();
         }
-        ArrayList<Map<String, String>> calculationRes = new ArrayList<>();
-        ioUsageParse.forEach((key, valueList) -> {
-            HashMap<String, Double> dataSum = new HashMap<>();
-            HashMap<String, String> dataTrans = new HashMap<>();
-            for (Map<String, String> item : valueList) {
-                item.forEach((itemKey, itemValue) -> {
-                    boolean strResult = itemValue.matches("-?[0-9]+.*[0-9]*");
-                    if (strResult) {
-                        double value = Double.parseDouble(itemValue);
-                        dataSum.merge(itemKey, value, Double::sum);
-                    } else {
-                        dataTrans.putIfAbsent(itemKey, itemValue);
-                    }
-                });
+        HashMap<String, Double> dataTrans = new HashMap<>();
+        AtomicInteger length = new AtomicInteger();
+        //求和
+        ioUsageParse.forEach((key, valueCal) -> {
+            if (length.get() == 0) {
+                length.set(valueCal.size());
             }
-            int size = valueList.size() != 0 ? valueList.size() : 1;
-            dataSum.forEach((dataSumKey, dataSumValue) -> {
-                double avageValue = dataSumValue / size;
-                dataTrans.putIfAbsent(dataSumKey, String.valueOf(avageValue));
+            valueCal.forEach((itemKey, itemValue) -> {
+                boolean strResult = itemValue.matches("-?[0-9]+.*[0-9]*");
+                if (strResult) {
+                    double value = Double.parseDouble(itemValue);
+                    dataTrans.merge(itemKey, value, Double::sum);
+                }
             });
-            calculationRes.add(dataTrans);
         });
-        return calculationRes;
+
+        Double await = dataTrans.get("await");
+        if (await == null) {
+            Double readTimesPerSecond = dataTrans.get("r/s");
+            Double writeTimesPerSecond = dataTrans.get("w/s");
+            Double rAwait = dataTrans.get("r_await");
+            Double wAwait = dataTrans.get("w_await");
+            dataTrans.put("await", ioWaitCalculat(readTimesPerSecond, writeTimesPerSecond, rAwait, wAwait));
+        } else {
+            dataTrans.put("await", await / ioUsageParse.size());
+        }
+        return dataTrans;
+    }
+
+    //计算硬盘响应时间
+    public double ioWaitCalculat(double readTimes, double writeTimes, double readWait, double writeWait) {
+        double readTimesInit = Double.compare(readTimes,0.00d)==0 ? 1 : readTimes;
+        double writeTimesInit = Double.compare(writeTimes,0.00d)==0  ? 1 : writeTimes;
+        double operateTime = readWait * readTimesInit + writeWait * writeTimesInit;
+        double operateTimes = readTimes + writeTimes;
+        operateTimes =Double.compare(operateTimes,0.00d)  == 0 ? 1 : operateTimes;
+        return operateTime / operateTimes;
     }
 
     //硬盘使用率结果集分析
@@ -495,7 +639,7 @@ public class RemoteComputerMonitorUtil {
             monHardwareDiskInfoTol.setDiskTotalSize(diskInfoArray[0]);
             monHardwareDiskInfoTol.setDiskUsedSize(diskInfoArray[1]);
             monHardwareDiskInfoTol.setDiskAvailSize(diskInfoArray[2]);
-            monHardwareDiskInfoTol.setDiskUsedRate(diskInfoArray[3]);
+            monHardwareDiskInfoTol.setDiskUsedRate(eliminatePercentSign(diskInfoArray[3]));
             monHardwareDiskInfoTol.setDataDt(new Date());
             monHardwareDiskInfoTol.setServiceIp(jschUtil.getHost());
             if (serverNameResult != null
@@ -505,6 +649,17 @@ public class RemoteComputerMonitorUtil {
             }
         }
         return monHardwareDiskInfoTol;
+    }
+    //消除字符串上的%
+    public String eliminatePercentSign(String source){
+        if(StringUtils.isEmpty(source)){
+            return "";
+        }
+        int index = source.indexOf("%");
+        if(index<0){
+            return source;
+        }
+        return source.substring(0, index);
     }
 
     /**
@@ -534,7 +689,7 @@ public class RemoteComputerMonitorUtil {
             monHardwareDiskInfoDtl.setDiskTotalSize(diskInfoArray[1]);
             monHardwareDiskInfoDtl.setDiskUsedSize(diskInfoArray[2]);
             monHardwareDiskInfoDtl.setDiskAvailSize(diskInfoArray[3]);
-            monHardwareDiskInfoDtl.setDiskUsedRate(diskInfoArray[4]);
+            monHardwareDiskInfoDtl.setDiskUsedRate(eliminatePercentSign(diskInfoArray[4]));
             if (serverNameResult != null
                     && serverNameResult.size() > 0
                     && StringUtils.isNotEmpty(serverNameResult.get(0))) {

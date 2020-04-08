@@ -27,6 +27,6 @@ public interface MonHardwareIoInfoService {
      * @param port 端口号
      * @return io信息明细
      */
-    List<MonHardwareIoInfo> queryIoInfo(String serviceUser, String servicePassword, String ip, int port) throws JSchException;
+    MonHardwareIoInfo queryIoInfo(String serviceUser, String servicePassword, String ip, int port) throws JSchException;
 
 }
