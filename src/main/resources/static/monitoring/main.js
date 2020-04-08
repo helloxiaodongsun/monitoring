@@ -1,23 +1,16 @@
 $(function(){
     var serverId = $("#servers").val();
-    getBasicInfo(serverId);
+    load(serverId);
 
     setInterval(function () {
         count++;
         serverId = $("#servers").val();
-        load_disk(serverId);
-        load_cpu(serverId);
-        load_IO(serverId);
-        load_mem(serverId);
-    }, 2000);
+        load(serverId);
+    }, 10000);
 
     $("#servers").change(function(){
         var val = $(this).val();
-        getBasicInfo(val);
-        load_disk(val);
-        load_cpu(val);
-        load_IO(val);
-        load_mem(val);
+        load(val);
     });
 
 
@@ -26,34 +19,44 @@ $(function(){
 });
 
 /**
+ * 加载
+ * @param serverId
+ */
+function load(serverId){
+    getBasicInfo(serverId);
+    load_disk(serverId);
+    load_cpu(serverId);
+    load_IO(serverId);
+    load_mem(serverId);
+}
+
+/**
  * 获取服务器基本信息
  * @param id
  */
 function getBasicInfo(id) {
     $.ajax({
-        url: portal.bp() + '/main/server/info',
+        url: portal.bp() + '/serverInfo/summary',
         type: "get",
         async: true,
         cache: false,
-        data: {"id":id},
+        data: {"ip":id},
         dataType: "json",
         success: function (o) {
             var code = o.code;
             if (code == 200) {
-                $("#ipAddress").text(o.data.ip);
-                $("#system").text(o.data.system);
-                $("#status").text(o.data.status);
-                if(o.data.statusCode=='0'){
+                $("#ipAddress").text(o.data.serviceIp);
+                $("#system").text(o.data.serviceVersion);
+                if(o.data.serviceActive=='1'){
                     //正常
                     $("#status").css("color","green");
-                }else if(o.data.statusCode=='1'){
-                    //警告
+                    $("#status").text("正常");
+                }else if(o.data.statusCode=='0'){
+                    //宕机
                     $("#status").css("color","#dada0b");
-                }else if(o.data.statusCode=='2'){
-                    //报警
-                    $("#status").css("color","red");
+                    $("#status").text("宕机");
                 }
-                $("#os").text(o.data.os);
+                $("#os").text(o.data.serviceCoreVersion);
             } else {
                 layer.msg(o.message, {icon: 2});
             }
@@ -76,22 +79,26 @@ function load_disk(id){
 
 
     $.ajax({
-        url:  portal.bp() + '/monitoring/main_load_disk.json',
+        url:  portal.bp() + '/diskInfo/summary',
         type: "get",
         async: true,
         cache: false,
-        data: {"id":id},
+        data: {"ip":id},
         dataType: "json",
         success: function (o) {
             var code = o.code;
             if (code == 200) {
                 var data = o.data;
+                var data_disk = [];
+                data_disk.push({value:(parseFloat(data.diskUsedSize)/1024/1024).toFixed(3),name:'已用'}); //已用
+                data_disk.push({value:(parseFloat(data.diskAvailSize)/1024/1024).toFixed(3),name:'空闲'}); //空闲
+
                 var colors = [];
 
 
                 //需要删除开始
-                if(count%4==0||id==2){
-                    data = [
+                if(count%2==0||id==2){
+                    data_disk = [
                         {value: 71, name: '已用'},
                         {value: 30, name: '空闲'},
                     ];
@@ -99,8 +106,8 @@ function load_disk(id){
                 //需要删除结束
 
 
-                var total = data[0].value + data[1].value;
-                if(data[0].value/total > 0.7){
+                var total = data_disk[0].value + data_disk[1].value;
+                if(data_disk[0].value/total > 0.7){
                     //超过70%显示红色
                     colors = ['red','#E0E0E0'];
                 }else{
@@ -129,7 +136,7 @@ function load_disk(id){
                             type: 'pie',
                             radius: '55%',
                             center: ['50%', '60%'],
-                            data: data,
+                            data: data_disk,
                             emphasis: {
                                 itemStyle: {
                                     shadowBlur: 10,
@@ -162,29 +169,41 @@ function load_cpu(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-cpu'));
     $.ajax({
-        url: portal.bp() + '/monitoring/main_load_cpu.json',
+        url: portal.bp() + '/cpuInfo/detail',
         type: "get",
         async: true,
         cache: false,
-        data: {"id": id},
+        data: {"ip": id},
         dataType: "json",
         success: function (o) {
             var code = o.code;
             if (code == 200) {
                 var data = o.data;
+                var usCpuRate = typeof(data.usCpuRate) == 'string'?(parseFloat(data.usCpuRate)).toFixed(2):(data.usCpuRate).toFixed(2);
+                var syCpuRate = typeof(data.syCpuRate) == 'string'?(parseFloat(data.syCpuRate)).toFixed(2):(data.syCpuRate).toFixed(2);
+                var niCpuRate = typeof(data.niCpuRate) == 'string'?(parseFloat(data.niCpuRate)).toFixed(2):(data.niCpuRate).toFixed(2);
+                var waCpuRate = typeof(data.waCpuRate) == 'string'?(parseFloat(data.waCpuRate)).toFixed(2):(data.waCpuRate).toFixed(2);
+                var totalCpuRate = (parseFloat(usCpuRate) + parseFloat(syCpuRate) + parseFloat(niCpuRate) + parseFloat(waCpuRate)).toFixed(2);
+                var data_cpu = [];
+                var data_cpu_1 = [parseFloat(totalCpuRate),parseFloat(usCpuRate),parseFloat(syCpuRate),parseFloat(niCpuRate),parseFloat(waCpuRate)];
+                var data_cpu_0 = [0,data_cpu_1[2]+data_cpu_1[3]+data_cpu_1[4],data_cpu_1[3]+data_cpu_1[4],data_cpu_1[4],0];
+
+                data_cpu.push(data_cpu_0);
+                data_cpu.push(data_cpu_1);
+
                 var colors = '#0590eb';
 
 
                 //需要删除开始
-                if(count%4==0){
-                    data = [
+                if(count%2==0){
+                    data_cpu = [
                         [0, 80, 60, 30, 0],
                         [90, 10, 20, 30, 30]
                     ];
                 }
                 //需要删除结束
 
-                if(data[1][0]>=90){
+                if(data_cpu[1][0]>=90){
                     colors = 'red';
                 }
 
@@ -241,7 +260,7 @@ function load_cpu(id){
                                     color: 'rgba(0,0,0,0)'
                                 }
                             },
-                            data: data[0]
+                            data: data_cpu[0]
                         },
                         {
                             name: '占比',
@@ -260,7 +279,7 @@ function load_cpu(id){
                                     },
                                 }
                             },
-                            data: data[1]
+                            data: data_cpu[1]
                         }
                     ]
                 };
@@ -289,21 +308,20 @@ function load_IO(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-io'));
     $.ajax({
-        url: portal.bp() + '/monitoring/main_load_io.json',
+        url: portal.bp() + '/ioInfo/summary',
         type: "get",
         async: true,
         cache: false,
-        data: {"id": id},
+        data: {"ip": id},
         dataType: "json",
         success: function (o) {
             var code = o.code;
             if (code == 200) {
                 var data = o.data;
-
-                var data_io = data;
+                var data_io = [data.diskTrans,data.diskRead,data.diskWrite];
 
                 //需要删除开始
-                if(count%4==0){
+                if(count%2==0){
                     data_io = [60,40,20];
                 }
                //需要删除结束
@@ -315,7 +333,10 @@ function load_IO(id){
                         left: 'center'
                     },
                     tooltip: {
-                        trigger: 'item',
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        },
                         formatter: '{b} : {c} KB'
                     },
                     grid: {
@@ -384,21 +405,21 @@ function load_mem(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-mem'));
     $.ajax({
-        url: portal.bp() + '/monitoring/main_load_mem.json',
+        url: portal.bp() + '/memInfo/summary',
         type: "get",
         async: true,
         cache: false,
-        data: {"id": id},
+        data: {"ip": id},
         dataType: "json",
         success: function (o) {
             var code = o.code;
             if (code == 200) {
                 var data = o.data;
-                var data_mem = data;
+                var data_mem = [data.memTotal,data.memUseTotal,data.freeMemTotal,data.sharedMemTotal,data.bufferCacheUseMemTotal,data.swapMemTotal,data.swapUseMemTotal,data.swapFreeMemTotal];
 
 
                 //需要删除开始
-                if(count%4==0){
+                if(count%2==0){
                     data_mem = [60, 55, 5,20, 45, 25,15, 41, 28];
                 }
                 //需要删除结束
@@ -413,8 +434,11 @@ function load_mem(id){
                         left: 'center'
                     },
                     tooltip: {
-                        trigger: 'item',
-                        formatter: '{b} : {c} GB'
+                        trigger: 'axis',
+                        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        },
+                        formatter: '{b} : {c} GB',
                     },
                     grid: {
                         left: '3%',

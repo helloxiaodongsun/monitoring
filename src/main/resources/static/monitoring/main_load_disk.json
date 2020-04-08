@@ -1,16 +1,13 @@
 {
-  "?data":"data中的name的顺序不能变，只有value能变",
   "code": "200",
   "message": "成功",
-  "data": [
-
-    {
-      "value": 31,
-      "name": "已用"
-    },
-    {
-      "value": 84,
-      "name": "空闲"
-    }
-  ]
+  "data": {
+    "serviceNm": "4a88d4cb1a66",
+    "serviceIp": "127.0.0.1",
+    "dataDt": "Apr 8, 2020 11:24:29 AM",
+    "diskTotalSize": "120",
+    "diskUsedSize": "4.3",
+    "diskUsedRate": "4",
+    "diskAvailSize": "110"
+  }
 }
