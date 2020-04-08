@@ -33,7 +33,7 @@ public class RemoteComputerMonitorUtil {
     private static Logger logger = LoggerFactory.getLogger(RemoteComputerMonitorUtil.class);
     private String networkAdapter;
     //private String cpuCommand = "vmstat|awk 'NR==3''{print $13, $14, $16, $15}'";
-    private String cpuCommand = "iostat -c|awk -F ' ' 'NR==4 {print $1 \";\" $2 \";\" $3 \";\" $4 \";\" $6}'";
+        private String cpuCommand = "iostat -c 1 2|awk -F ' ' 'NR==8 {print $1 \";\" $2 \";\" $3 \";\" $4 \";\" $6}'";
     //查询物理cpu数目
     private String cpuNumCommand = "grep 'physical id' /proc/cpuinfo|sort -u|wc -l";
     //查询cpu核心数
