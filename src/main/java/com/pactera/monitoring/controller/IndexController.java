@@ -35,33 +35,30 @@ public class IndexController {
         mmap.put("menus",menus);
         return "index";
     }
-    // 系统介绍
+
+    /**
+     * 主页
+     * @param mmap
+     * @return
+     * @throws Exception
+     */
     @GetMapping("/system/main")
     public String main(ModelMap mmap) throws Exception {
-        /*TestServer t1 = new TestServer("1","192.168.1.1","java");
-        TestServer t2 = new TestServer("2","192.168.1.2","gp");
-        TestServer t3 = new TestServer("3","192.168.1.3","oracle");
-        List<TestServer> servers = new ArrayList<TestServer>();
-        servers.add(t1);
-        servers.add(t2);
-        servers.add(t3);*/
-
         List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfo();
         mmap.put("servers",servers);
         return "main";
     }
-    @GetMapping("/main/server/info")
-    @ResponseBody
-    public JsonResult serverInfo(@RequestParam String id){
-        TestServer server = new TestServer();
-        if(id.equals("1")){
-            server = new TestServer(id,"192.168.1.1","java","linux","0","正常","3.6");
-        }else if(id.equals("2")){
-            server = new TestServer(id,"192.168.1.2","gp","linux","2","报警","3.6");
-        }else{
-            server = new TestServer(id,"192.168.1.3","oracle","linux","1","警告","3.6");
-        }
 
-        return new JsonResult(ResultCode.SUCCESS, ResultCode.SUCCESS.getMsg(), server);
+    /**
+     * 进入硬盘信息监控页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/disk")
+    public String diskIndex(ModelMap mmap) throws Exception {
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfo();
+        mmap.put("servers",servers);
+        return "hardware/disk";
     }
+
 }

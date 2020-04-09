@@ -38,6 +38,7 @@ var table = {
             	var defaults = {
             		id: "bootstrap-table",
             		type: 0, // 0 代表bootstrapTable 1代表bootstrapTreeTable
+                    method:'post',
         		    height: undefined,
         		    sidePagination: "server",
         		    sortName: "",
@@ -46,7 +47,7 @@ var table = {
         		    pageSize: 10,
         		    pageList: [10, 25, 50],
         		    toolbar: "toolbar",
-        		    striped: false,
+        		    striped: true,
         		    escape: false,
         		    firstLoad: true,
         		    showFooter: false,
@@ -57,7 +58,7 @@ var table = {
                     showColumns: true,
                     showToggle: true,
                     showExport: false,
-                    clickToSelect: false,
+                    clickToSelect: true,
                     singleSelect: false,
                     mobileResponsive: true,
                     rememberSelected: false,
@@ -76,7 +77,7 @@ var table = {
                 	id: options.id,
                     url: options.url,                                   // 请求后台的URL（*）
                     contentType: "application/x-www-form-urlencoded",   // 编码类型
-                    method: 'post',                                     // 请求方式（*）
+                    method: options.method,                             // 请求方式（*）
                     cache: false,                                       // 是否使用缓存
                     height: options.height,                             // 表格的高度
                     striped: options.striped,                           // 是否显示行间隔色
@@ -155,6 +156,23 @@ var table = {
             	if (typeof table.options.responseHandler == "function") {
             		table.options.responseHandler(res);
                 }
+
+                /*if (res.code == 200){
+                    if ($.common.isNotEmpty(table.options.sidePagination) && table.options.sidePagination == 'client') {
+                        return res.data.rows;
+                    } else {
+                        if ($.common.isNotEmpty(table.options.rememberSelected) && table.options.rememberSelected) {
+                            var column = $.common.isEmpty(table.options.uniqueId) ? table.options.columns[1].field : table.options.uniqueId;
+                            $.each(res.data.rows, function(i, row) {
+                                row.state = $.inArray(row[column], table.rememberSelectedIds[table.options.id]) !== -1;
+                            })
+                        }
+                        return res.data;//{ rows: res.data.rows, total: res.data.total };
+					}
+				} else {
+                    $.modal.alertWarning(res.message);
+                    return { rows: [], total: 0 };
+				}*/
                 if (res.code == 0) {
                     if ($.common.isNotEmpty(table.options.sidePagination) && table.options.sidePagination == 'client') {
                     	return res.rows;

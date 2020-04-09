@@ -1,0 +1,78 @@
+{
+  "code": 0,
+  "msg": 0,
+  "total": 2,
+  "rows": [
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "overlay",
+      "diskTotalSize": "61255492",
+      "diskUsedSize": "2228172",
+      "diskUsedRate": "4",
+      "diskAvailSize": "55885996"
+    },
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "tmpfs",
+      "diskTotalSize": "65536",
+      "diskUsedSize": "0",
+      "diskUsedRate": "0",
+      "diskAvailSize": "65536"
+    },
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "tmpfs",
+      "diskTotalSize": "1018808",
+      "diskUsedSize": "0",
+      "diskUsedRate": "0",
+      "diskAvailSize": "1018808"
+    },
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "shm",
+      "diskTotalSize": "65536",
+      "diskUsedSize": "0",
+      "diskUsedRate": "0",
+      "diskAvailSize": "65536"
+    },
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "/dev/sda1",
+      "diskTotalSize": "61255492",
+      "diskUsedSize": "2228172",
+      "diskUsedRate": "4",
+      "diskAvailSize": "55885996"
+    },
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "tmpfs",
+      "diskTotalSize": "1018808",
+      "diskUsedSize": "0",
+      "diskUsedRate": "0",
+      "diskAvailSize": "1018808"
+    },
+    {
+      "serviceNm": "4a88d4cb1a66",
+      "serviceIp": "127.0.0.1",
+      "dataDt": "2020-04-08T09:51:56.105+0000",
+      "filesystemNm": "tmpfs",
+      "diskTotalSize": "1018808",
+      "diskUsedSize": "0",
+      "diskUsedRate": "0",
+      "diskAvailSize": "1018808"
+    }
+  ]
+
+}

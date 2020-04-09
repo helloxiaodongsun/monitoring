@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('硬盘信息')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								服务器：<select id="servers" name="servers">
+									<option th:each="server : ${servers}" th:text="${server.serviceIp+' '+server.serviceNm}" th:value="${server.serviceIp}"></option>
+								</select>
+							</li>
+							<li class="select-time">
+								<label>创建时间： </label>
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginTime]"/>
+								<span>-</span>
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endTime]"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			<div class="btn-group-sm" id="toolbar" role="group">
+		        <!--<a class="btn btn-warning" onclick="$.table.exportExcel()" >
+		            <i class="fa fa-download"></i> 导出
+		        </a>-->
+	        </div>
+	        
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		$(function() {
+		    var options = {
+		        url: portal.bp() + "/json/hardware/disk_list2.json",
+                method:'get',
+		        sortName: "dataDt",
+		        modalName: "硬盘信息",
+		        columns: [
+		        {
+		            field: 'dataDt',
+		            title: '日期',
+                    sortable: true
+		        },
+		        {
+		            field: 'filesystemNm',
+		            title: '文件系统名称',
+		            sortable: true
+		        },
+		        {
+		            field: 'diskTotalSize',
+		            title: '所在磁盘大小(kb)',
+		            sortable: true
+		        },
+		        {
+		            field: 'diskUsedSize',
+		            title: '所在磁盘使用大小(kb)',
+		            sortable: true
+		        },
+		        {
+		            field: 'diskUsedRate',
+		            title: '磁盘使用率(%)',
+		            sortable: true
+		        }
+		        ]
+		    };
+		    $.table.init(options);
+		});
+
+	</script>
+</body>
+</html>
