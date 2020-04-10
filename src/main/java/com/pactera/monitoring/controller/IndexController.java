@@ -44,7 +44,7 @@ public class IndexController {
      */
     @GetMapping("/system/main")
     public String main(ModelMap mmap) throws Exception {
-        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfo();
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfoToDto();
         mmap.put("servers",servers);
         return "main";
     }
@@ -56,7 +56,7 @@ public class IndexController {
      */
     @RequestMapping("/hardware/disk")
     public String diskIndex(ModelMap mmap) throws Exception {
-        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfo();
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfoToDto();
         mmap.put("servers",servers);
         return "hardware/disk";
     }

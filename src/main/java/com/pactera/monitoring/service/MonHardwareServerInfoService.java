@@ -45,10 +45,18 @@ public interface MonHardwareServerInfoService {
     MonHardwareServerInfo queryServerInfoFromDb(String ip) throws BussinessException;
 
     /**
+     * 查询所有服务器列表,转换成DTO,返回前台
+     * @return
+     * @throws Exception
+     */
+    List<MonHardwareServerInfoDto> queryAllServerInfoToDto() throws Exception;
+
+
+    /**
      * 查询所有服务器列表
      * @return
      * @throws Exception
      */
-    List<MonHardwareServerInfoDto> queryAllServerInfo() throws Exception;
+    List<MonHardwareServerInfo> queryAllServerInfo() throws Exception ;
 
 }

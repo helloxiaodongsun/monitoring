@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
 
 /**
  * 通用http发送方法
- * 
+ *
  * @author ruoyi
  */
 public class HttpUtils
@@ -182,7 +182,7 @@ public class HttpUtils
             String ret = "";
             while ((ret = br.readLine()) != null)
             {
-                if (ret != null && !ret.trim().equals(""))
+                if (ret != null && !"".equals(ret.trim()))
                 {
                     result.append(new String(ret.getBytes("ISO-8859-1"), "utf-8"));
                 }

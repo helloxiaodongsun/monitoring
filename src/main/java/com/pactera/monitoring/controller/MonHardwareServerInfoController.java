@@ -7,6 +7,7 @@ import com.pactera.monitoring.enums.MethodType;
 import com.pactera.monitoring.enums.ResultCode;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.AjaxResult;
 import com.pactera.monitoring.utils.JsonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,15 +39,15 @@ public class MonHardwareServerInfoController {
     @GetMapping(value = "/summary")
     @MethodExplain(methodType= MethodType.SELECT,methodName = "服务器基本信息查询")
     @ResponseBody
-    public JsonResult getServerInfo(@RequestParam(value = "ip") String ip) {
+    public AjaxResult getServerInfo(@RequestParam(value = "ip") String ip) {
         MonHardwareServerInfoDto monHardwareServerInfoDto;
         try {
             monHardwareServerInfoDto = monHardwareServerInfoService.queryServerInfoByIp(ip);
         } catch (BussinessException | JSchException e) {
             log.error(e.getMessage(),e);
-            return new JsonResult(ResultCode.EXCEPTION, e.getMessage());
+            return AjaxResult.error(e.getMessage());
         }
-        return new JsonResult(ResultCode.SUCCESS,ResultCode.SUCCESS.getMsg(),monHardwareServerInfoDto);
+        return AjaxResult.success(monHardwareServerInfoDto);
     }
 
 }

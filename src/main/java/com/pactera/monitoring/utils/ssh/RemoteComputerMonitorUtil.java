@@ -44,8 +44,7 @@ public class RemoteComputerMonitorUtil {
     private String cpuModel = "grep 'model name' /proc/cpuinfo|awk -F ':' '{if(NR==1) print $NF}'";
 
     //private String memCommand = "cat /proc/meminfo |grep 'MemTotal\\|MemFree'|awk '{print $2}'";
-    private String memCommandUbantu = "free |awk '/Mem/||/Swap/ {print $2,$3,$4,$5,$6,$7}'";
-    private String memCommandCentos = "free |awk '/Mem/||/Swap/ {print $2,$3,$4,$5,$6,$7}'";
+    private String memCommand = "free|grep -v 'buffers/cache'|awk 'BEGIN{FS=\" \";OFS=\";\"} {NF=NF;print $0}'";
     //private String diskCommand = "df -h|grep -v Filesystem";
     //查看硬盘汇总
     private String diskCommandTol = "df --total|awk '/total/ {print $2,$3,$4,$5}'";
@@ -243,6 +242,7 @@ public class RemoteComputerMonitorUtil {
         monHardwareCpuInfoTol.setCpuThread(cpuTotalThreadsNumCommandRes);
         monHardwareCpuInfoTol.setDataDt(date);
         monHardwareCpuInfoTol.setServiceNm(serverName);
+        monHardwareCpuInfoTol.setServiceIp(ip);
         result.put(cpuTolKey, monHardwareCpuInfoTol);
         return result;
     }
@@ -253,11 +253,10 @@ public class RemoteComputerMonitorUtil {
      * @return
      */
     public MonHardwareMemInfoDtl getMemUsage() throws JSchException {
-        Map<String, String> map = new HashMap<>(9);
         jschUtil.connect();
-        List<String> memoResult = jschUtil.execCmd(memCommandUbantu);
+        List<String> memoResult = jschUtil.execCmd(memCommand);
         List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
-        return memoAnalyis(memoResult, serverNameResult);
+        return memoAnalyis(memoResult, serverNameResult,jschUtil.getHost());
     }
 
     /**
@@ -266,40 +265,58 @@ public class RemoteComputerMonitorUtil {
      * @param memoResult
      * @return
      */
-    public MonHardwareMemInfoDtl memoAnalyis(List<String> memoResult, List<String> serverNameResult) {
+    public MonHardwareMemInfoDtl memoAnalyis(List<String> memoResult, List<String> serverNameResult,String ip) {
 
         if (memoResult == null
-                || memoResult.size() != 2
+                || memoResult.size() != 3
                 || serverNameResult == null
                 || StringUtils.isEmpty(serverNameResult.get(0))) {
             return new MonHardwareMemInfoDtl();
         }
-
-        String memoInfo = memoResult.get(0);
-        String swapInfo = memoResult.get(1);
+        String headerStr = memoResult.get(0);
+        if(StringUtils.isEmpty(headerStr)){
+            return new MonHardwareMemInfoDtl();
+        }
+        String[] split = headerStr.split(";");
+        Map<String, Integer> filedIndex = ioFieldIndexCaculat(Arrays.asList(split),memoFields());
+        String memoInfo = memoResult.get(1);
+        String swapInfo = memoResult.get(2);
         String serverName = serverNameResult.get(0);
 
         if (StringUtils.isEmpty(memoInfo) || StringUtils.isEmpty(swapInfo)) {
             return new MonHardwareMemInfoDtl();
         }
 
-        String[] memoInfoArray = memoInfo.split(" ");
-        String[] swapInfoArray = swapInfo.split(" ");
-        int memoBookLen = 6;
+        String[] memoInfoArray = memoInfo.split(";");
+        String[] swapInfoArray = swapInfo.split(";");
+     /*   int memoBookLen = 6;
         int swapBookLen = 3;
         if (memoInfoArray.length != memoBookLen || swapInfoArray.length != swapBookLen) {
             return new MonHardwareMemInfoDtl();
-        }
-        double memTotal = Double.parseDouble(memoInfoArray[0]) / 1024 / 1024;
-        double memFree = Double.parseDouble(memoInfoArray[2]) / 1024 / 1024;
-        double memUsed = Double.parseDouble(memoInfoArray[1]) / 1024 / 1024;
-        double memoShared = Double.parseDouble(memoInfoArray[3]) / 1024 / 1024;
-        double swapTotal = Double.parseDouble(swapInfoArray[0]) / 1024 / 1024;
-        double swapUsed = Double.parseDouble(swapInfoArray[1]) / 1024 / 1024;
-        double swapFree = Double.parseDouble(swapInfoArray[2]) / 1024 / 1024;
+        }*/
+        double memTotal = Double.parseDouble(memoInfoArray[filedIndex.get("total")+1]) / 1024 / 1024;
+        double memFree = Double.parseDouble(memoInfoArray[filedIndex.get("free")+1]) / 1024 / 1024;
+        double memUsed = Double.parseDouble(memoInfoArray[filedIndex.get("used")+1]) / 1024 / 1024;
+        double memoShared = Double.parseDouble(memoInfoArray[filedIndex.get("shared")+1]) / 1024 / 1024;
+        double swapTotal = Double.parseDouble(swapInfoArray[filedIndex.get("total")+1]) / 1024 / 1024;
+        double swapUsed = Double.parseDouble(swapInfoArray[filedIndex.get("used")+1]) / 1024 / 1024;
+        double swapFree = Double.parseDouble(swapInfoArray[filedIndex.get("free")+1]) / 1024 / 1024;
         double memUsedRate = memUsed / memTotal * 100;
-        double cachedAndBuffers = (Double.parseDouble(memoInfoArray[4])
-                + Double.parseDouble(memoInfoArray[5])) / 1024 / 1024;
+        Integer buffersIndex = filedIndex.get("buffers");
+        Integer cachedIndex = filedIndex.get("cached");
+        Integer buffCacheIndex = filedIndex.get("buffCacheMap");
+        boolean bufferCheck = buffersIndex != null ;
+        boolean cacheCheck = cachedIndex != null;
+        boolean buffCacheIndexFlag = buffCacheIndex != null;
+        double cachedAndBuffers ;
+        if(buffCacheIndexFlag ){
+            cachedAndBuffers=Double.parseDouble(memoInfoArray[filedIndex.get("buffCacheMap")+1]) / 1024 / 1024;
+        }else if(bufferCheck && cacheCheck){
+            cachedAndBuffers= (Double.parseDouble(memoInfoArray[4])
+                    + Double.parseDouble(memoInfoArray[5])) / 1024 / 1024;
+        }else{
+            cachedAndBuffers=0.00d;
+        }
         MonHardwareMemInfoDtl monHardwareMemInfoDtl = new MonHardwareMemInfoDtl();
         monHardwareMemInfoDtl.setMemTotal(df.format(memTotal));
         monHardwareMemInfoDtl.setMemUseTotal(df.format(memUsed));
@@ -311,11 +328,42 @@ public class RemoteComputerMonitorUtil {
         monHardwareMemInfoDtl.setSwapFreeMemTotal(df.format(swapFree));
         monHardwareMemInfoDtl.setBufferCacheUseMemTotal(df.format(cachedAndBuffers));
         monHardwareMemInfoDtl.setServiceNm(serverName);
+        monHardwareMemInfoDtl.setServiceIp(ip);
         return monHardwareMemInfoDtl;
     }
 
+    //生成memo的各个字段
+    public List<Map<String,List<String>>> memoFields(){
+        ArrayList<Map<String,List<String>>> result = new ArrayList<>();
+        HashMap<String, List<String>> totalMap = new HashMap<>(1);
+        totalMap.put("total",Arrays.asList("total"));
+        result.add(totalMap);
+        HashMap<String, List<String>> usedMap = new HashMap<>(1);
+        usedMap.put("used",Arrays.asList("used"));
+        result.add(usedMap);
+        HashMap<String, List<String>> freeMap = new HashMap<>(1);
+        freeMap.put("free",Arrays.asList("free"));
+        result.add(freeMap);
+        HashMap<String, List<String>> sharedMap = new HashMap<>(1);
+        sharedMap.put("shared",Arrays.asList("shared"));
+        result.add(sharedMap);
+        HashMap<String, List<String>> buffCacheMap = new HashMap<>(1);
+        buffCacheMap.put("buffCacheMap",Arrays.asList("buff/cache"));
+        result.add(buffCacheMap);
+        HashMap<String, List<String>> availableMap = new HashMap<>(1);
+        availableMap.put("available",Arrays.asList("available"));
+        result.add(availableMap);
+        HashMap<String, List<String>> buffersMap = new HashMap<>(1);
+        buffersMap.put("buffers",Arrays.asList("buffers"));
+        result.add(buffersMap);
+        HashMap<String, List<String>> cachedMap = new HashMap<>(1);
+        cachedMap.put("cached",Arrays.asList("cached"));
+        result.add(cachedMap);
+        return result;
+    }
+
     public HashMap<String, String> memoInitAnalyisResult(DecimalFormat df) {
-        HashMap<String, String> analyisResult = new HashMap<>();
+        HashMap<String, String> analyisResult = new HashMap<>(9);
         analyisResult.put("memTotal", df.format(0));
         analyisResult.put("memUsed", df.format(0));
         analyisResult.put("memFree", df.format(0));
@@ -329,7 +377,7 @@ public class RemoteComputerMonitorUtil {
     }
 
     /**
-     * 获取io信息(此方法会使用5s时间去Linux收集数据求平均值)
+     * 获取io信息
      *
      * @return
      */
@@ -379,10 +427,9 @@ public class RemoteComputerMonitorUtil {
      * @param tableHeader
      * @return
      */
-    public Map<String, Integer> ioFieldIndexCaculat(List<String> tableHeader) {
-        HashMap<String, Integer> map = new HashMap<>();
-        List<Map<String, List<String>>> ioSearchField = ioSearchField();
-        ioSearchField.forEach(item -> {
+    public Map<String, Integer> ioFieldIndexCaculat(List<String> tableHeader,List<Map<String, List<String>>> searchField) {
+        HashMap<String, Integer> map = new HashMap<>(searchField.size());
+        searchField.forEach(item -> {
             boolean flag = false;
             Set<String> itemKey = item.keySet();
             for (String key : itemKey) {
@@ -413,28 +460,28 @@ public class RemoteComputerMonitorUtil {
     public List<Map<String, List<String>>> ioSearchField() {
         ArrayList<Map<String, List<String>>> result = new ArrayList<>();
         List<String> device = Arrays.asList("Device", "Device:");
-        HashMap<String, List<String>> deviceMap = new HashMap<>();
+        HashMap<String, List<String>> deviceMap = new HashMap<>(1);
         deviceMap.put("Device", device);
         List<String> readTimesPerSecond = Collections.singletonList("r/s");
-        HashMap<String, List<String>> readTimesPerSecondMap = new HashMap<>();
+        HashMap<String, List<String>> readTimesPerSecondMap = new HashMap<>(1);
         readTimesPerSecondMap.put("r/s", readTimesPerSecond);
         List<String> writeTimesPerSecond = Collections.singletonList("w/s");
-        HashMap<String, List<String>> writeTimesPerSecondMap = new HashMap<>();
+        HashMap<String, List<String>> writeTimesPerSecondMap = new HashMap<>(1);
         writeTimesPerSecondMap.put("w/s", writeTimesPerSecond);
         List<String> readKbPerSecond = Collections.singletonList("rkB/s");
-        HashMap<String, List<String>> readKbPerSecondMap = new HashMap<>();
+        HashMap<String, List<String>> readKbPerSecondMap = new HashMap<>(1);
         readKbPerSecondMap.put("rkB/s", readKbPerSecond);
         List<String> writeKbPerSecond = Collections.singletonList("wkB/s");
-        HashMap<String, List<String>> writeKbPerSecondMap = new HashMap<>();
+        HashMap<String, List<String>> writeKbPerSecondMap = new HashMap<>(1);
         writeKbPerSecondMap.put("wkB/s", writeKbPerSecond);
         List<String> rAwait = Collections.singletonList("r_await");
-        HashMap<String, List<String>> rAwaitMap = new HashMap<>();
+        HashMap<String, List<String>> rAwaitMap = new HashMap<>(1);
         rAwaitMap.put("r_await", rAwait);
         List<String> wAwait = Collections.singletonList("w_await");
-        HashMap<String, List<String>> wAwaitMap = new HashMap<>();
+        HashMap<String, List<String>> wAwaitMap = new HashMap<>(1);
         wAwaitMap.put("w_await", wAwait);
         List<String> await = Collections.singletonList("await");
-        HashMap<String, List<String>> awaitMap = new HashMap<>();
+        HashMap<String, List<String>> awaitMap = new HashMap<>(1);
         awaitMap.put("await", await);
         result.add(deviceMap);
         result.add(readTimesPerSecondMap);
@@ -475,7 +522,7 @@ public class RemoteComputerMonitorUtil {
             return new HashMap<>(0);
         }
         HashMap<String, Map<String, String>> queryResColl = new HashMap<>();
-        Map<String, Integer> fieldIndex = ioFieldIndexCaculat(remoteQueryRes.get(0));
+        Map<String, Integer> fieldIndex = ioFieldIndexCaculat(remoteQueryRes.get(0),ioSearchField());
         Integer deviceIndex = fieldIndex.get("Device");
         Integer readTimesPerSecondIndex = fieldIndex.get("r/s");
         Integer writeTimePerSecondIndex = fieldIndex.get("w/s");
