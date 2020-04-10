@@ -221,7 +221,7 @@ public class AspectLog
 	        	if(isSave){
 	        		LOGGER.info("LOGGING BEGIN");
 	        		JSONObject jsonobj = JSONObject.fromObject(json);
-	        		String code = (String) jsonobj.get("code");
+	        		String code = String.valueOf(jsonobj.get("code")) ;
 	        		MethodType methodType = annotation.methodType();
 	        		String methodName = annotation.methodName();
 	        		String opeIp = IpAddressUtil.getIpAddress(request);
