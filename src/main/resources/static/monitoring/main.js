@@ -44,7 +44,7 @@ function getBasicInfo(id) {
         dataType: "json",
         success: function (o) {
             var code = o.code;
-            if (code == 200) {
+            if (code == 0) {
                 $("#ipAddress").text(o.data.serviceIp);
                 $("#system").text(o.data.serviceVersion);
                 if(o.data.serviceActive=='1'){
@@ -58,7 +58,7 @@ function getBasicInfo(id) {
                 }
                 $("#os").text(o.data.serviceCoreVersion);
             } else {
-                layer.msg(o.message, {icon: 2});
+                layer.msg(o.msg, {icon: 2});
             }
         },
         beforeSend:function(XMLHttpRequest){},
@@ -66,7 +66,7 @@ function getBasicInfo(id) {
     });
 }
 //需要删除
-var count=0;
+var count=1;
 
 /**
  * 加载硬盘图表
@@ -76,7 +76,9 @@ var count=0;
 function load_disk(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-disk'));
-
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
 
     $.ajax({
         url:  portal.bp() + '/diskInfo/summary',
@@ -87,7 +89,7 @@ function load_disk(id){
         dataType: "json",
         success: function (o) {
             var code = o.code;
-            if (code == 200) {
+            if (code == 0) {
                 var data = o.data;
                 var data_disk = [];
                 data_disk.push({value:(parseFloat(data.diskUsedSize)/1024/1024).toFixed(3),name:'已用'}); //已用
@@ -152,7 +154,7 @@ function load_disk(id){
                 // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);
             } else {
-                layer.msg(o.message, {icon: 2});
+                layer.msg(o.msg, {icon: 2});
             }
         },
         beforeSend:function(XMLHttpRequest){},
@@ -168,6 +170,9 @@ function load_disk(id){
 function load_cpu(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-cpu'));
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
     $.ajax({
         url: portal.bp() + '/cpuInfo/detail',
         type: "get",
@@ -177,7 +182,7 @@ function load_cpu(id){
         dataType: "json",
         success: function (o) {
             var code = o.code;
-            if (code == 200) {
+            if (code == 0) {
                 var data = o.data;
                 var usCpuRate = typeof(data.usCpuRate) == 'string'?(parseFloat(data.usCpuRate)).toFixed(2):(data.usCpuRate).toFixed(2);
                 var syCpuRate = typeof(data.syCpuRate) == 'string'?(parseFloat(data.syCpuRate)).toFixed(2):(data.syCpuRate).toFixed(2);
@@ -289,7 +294,7 @@ function load_cpu(id){
                 // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);
             } else {
-                layer.msg(o.message, {icon: 2});
+                layer.msg(o.msg, {icon: 2});
             }
         },
         beforeSend: function (XMLHttpRequest) {
@@ -307,6 +312,9 @@ function load_cpu(id){
 function load_IO(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-io'));
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
     $.ajax({
         url: portal.bp() + '/ioInfo/summary',
         type: "get",
@@ -316,7 +324,7 @@ function load_IO(id){
         dataType: "json",
         success: function (o) {
             var code = o.code;
-            if (code == 200) {
+            if (code == 0) {
                 var data = o.data;
                 var data_io = [data.diskTrans,data.diskRead,data.diskWrite];
 
@@ -385,7 +393,7 @@ function load_IO(id){
                 // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);
             } else {
-                layer.msg(o.message, {icon: 2});
+                layer.msg(o.msg, {icon: 2});
             }
         },
         beforeSend: function (XMLHttpRequest) {
@@ -404,6 +412,9 @@ function load_IO(id){
 function load_mem(id){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('div-mem'));
+    window.addEventListener("resize",function(){
+        myChart.resize();
+    });
     $.ajax({
         url: portal.bp() + '/memInfo/summary',
         type: "get",
@@ -413,7 +424,7 @@ function load_mem(id){
         dataType: "json",
         success: function (o) {
             var code = o.code;
-            if (code == 200) {
+            if (code == 0) {
                 var data = o.data;
                 var data_mem = [data.memTotal,data.memUseTotal,data.freeMemTotal,data.sharedMemTotal,data.bufferCacheUseMemTotal,data.swapMemTotal,data.swapUseMemTotal,data.swapFreeMemTotal];
 
@@ -491,7 +502,7 @@ function load_mem(id){
                 // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);
             } else {
-                layer.msg(o.message, {icon: 2});
+                layer.msg(o.msg, {icon: 2});
             }
         },
         beforeSend: function (XMLHttpRequest) {
