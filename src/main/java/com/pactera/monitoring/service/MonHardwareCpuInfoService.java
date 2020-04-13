@@ -1,10 +1,14 @@
 package com.pactera.monitoring.service;
 
+import com.github.pagehelper.PageInfo;
 import com.jcraft.jsch.JSchException;
 import com.pactera.monitoring.entity.MonHardwareCpuInfoDtl;
 import com.pactera.monitoring.entity.MonHardwareCpuInfoTol;
+import com.pactera.monitoring.entity.MonHardwareServerInfo;
+import com.pactera.monitoring.entity.SearchBaseEntity;
 import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoDtlDto;
 import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoTolDto;
+import com.pactera.monitoring.entity.dto.MonHardwareMemInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
 /**
@@ -59,6 +63,25 @@ public interface MonHardwareCpuInfoService {
                                                        String ip,
                                                        int port) throws JSchException;
 
+    /**
+     * 从远程服务器查询cpu明细信息保存数据库
+     * @param monHardwareServerInfo 需要连接的服务器对象
+     * @throws JSchException 连接失败
+     */
+    int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
 
 
+    /**
+     * 从远程服务器查询cpu汇总信息保存数据库
+     * @param monHardwareServerInfo 需要连接的服务器对象
+     * @throws JSchException 连接失败
+     */
+    int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+
+    /**
+     * 根据条件从数据库查询cpu明细信息
+     * @param searchBaseEntity 搜索实体类
+     * @return 符合条件的dto
+     */
+    PageInfo<MonHardwareCpuInfoDtlDto> queryCpuInfoDtlFromDbByCondition(SearchBaseEntity searchBaseEntity);
 }

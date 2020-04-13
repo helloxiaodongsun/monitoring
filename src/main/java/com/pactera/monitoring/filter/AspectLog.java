@@ -33,7 +33,7 @@ import java.util.Arrays;
 
 /**
  * 实现Web层的日志切面
- * 
+ *
  * @author ll
  * @version v.0.1
  */
@@ -46,14 +46,14 @@ public class AspectLog
      * log
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AspectLog.class);
-    
-    
+
+
     private static String[] types = {"java.lang.Integer", "java.lang.Double",
         "java.lang.Float", "java.lang.Long", "java.lang.Short",
         "java.lang.Byte", "java.lang.Boolean", "java.lang.Char",
         "java.lang.String", "int", "double", "long", "short", "byte",
         "boolean", "char", "float"};
-    
+
     /**
      * gson
      */
@@ -66,7 +66,7 @@ public class AspectLog
 
     /**
      * Description: <br> 1、申明一个切点 里面是 execution表达式<br>
-     * 
+     *
      * @see
      */
     @Pointcut("execution(public * com.pactera.monitoring.controller..*.*(..))")
@@ -125,7 +125,7 @@ public class AspectLog
             }
         }
         sb = sb == null ? new StringBuilder() : sb;
-        
+
         LOGGER.info("请求方法参数:{}",sb);
         LOGGER.info(str);
         LOGGER.info("===============请求内容===============");
@@ -158,7 +158,7 @@ public class AspectLog
 	        	String[] parameterNames = ((MethodSignature) joinPoint.getSignature()).getParameterNames();
 	        	if(parameterNames!=null&&parameterNames.length>0){
 	        		for (int i = 0; i < parameterNames.length; i++) {
-	        			if(parameterNames[i].equals("pageNum")){
+	        			if("pageNum".equals(parameterNames[i])){
 	        				String value = "";
 	        				String typeName = joinPoint.getArgs()[i].getClass().getName();
 	        				boolean flag = false;
@@ -176,11 +176,11 @@ public class AspectLog
 	        					//2 通过反射获取实体类属性
 	        					value = getFieldsValue(joinPoint.getArgs()[i]);
 	        				}
-	        				if(!value.equals("1")){
+	        				if(!"1".equals(value)){
 	        					isSave = false;
 	        				}
 	        			}
-	        			if(parameterNames[i].equals("logTableName")){
+	        			if("logTableName".equals(parameterNames[i])){
 	        				String typeName = joinPoint.getArgs()[i].getClass().getName();
 	        				boolean flag = false;
 	        				for (String t : types) {
@@ -198,7 +198,7 @@ public class AspectLog
 	        					logTableName = getFieldsValue(joinPoint.getArgs()[i]);
 	        				}
 	        			}
-	        			if(parameterNames[i].equals("logMenuId")){
+	        			if("logMenuId".equals(parameterNames[i])){
 	        				String typeName = joinPoint.getArgs()[i].getClass().getName();
 	        				boolean flag = false;
 	        				for (String t : types) {
@@ -221,7 +221,7 @@ public class AspectLog
 	        	if(isSave){
 	        		LOGGER.info("LOGGING BEGIN");
 	        		JSONObject jsonobj = JSONObject.fromObject(json);
-	        		String code = (String) jsonobj.get("code");
+	        		String code = String.valueOf(jsonobj.get("code")) ;
 	        		MethodType methodType = annotation.methodType();
 	        		String methodName = annotation.methodName();
 	        		String opeIp = IpAddressUtil.getIpAddress(request);
@@ -236,7 +236,7 @@ public class AspectLog
 			LOGGER.error(e.getMessage());
 		}
     }
-    
+
     /**
      *  解析实体类，获取实体类中的属性
      */

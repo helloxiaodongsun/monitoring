@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.pactera.monitoring.dao.ds1.MonHardwareMemInfoDtlDao">
-  <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareMemInfoDtl">
-    <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm" />
-    <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp" />
-    <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt" />
-    <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt" />
-    <result column="MEM_TOTAL" jdbcType="VARCHAR" property="memTotal" />
-    <result column="MEM_USE_TOTAL" jdbcType="VARCHAR" property="memUseTotal" />
-    <result column="FREE_MEM_TOTAL" jdbcType="VARCHAR" property="freeMemTotal" />
-    <result column="SHARED_MEM_TOTAL" jdbcType="VARCHAR" property="sharedMemTotal" />
-    <result column="BUFFER_CACHE_USE_MEM_TOTAL" jdbcType="VARCHAR" property="bufferCacheUseMemTotal" />
-    <result column="BUFFER_CACHE_FREE_MEM_TOTAL" jdbcType="VARCHAR" property="bufferCacheFreeMemTotal" />
-    <result column="SWAP_MEM_TOTAL" jdbcType="VARCHAR" property="swapMemTotal" />
-    <result column="SWAP_USE_MEM_TOTAL" jdbcType="VARCHAR" property="swapUseMemTotal" />
-    <result column="SWAP_FREE_MEM_TOTAL" jdbcType="VARCHAR" property="swapFreeMemTotal" />
-    <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType" />
-    <result column="MEM_USED_RATE" jdbcType="VARCHAR" property="memUsedRate" />
-    <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2" />
-    <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3" />
-    <result column="CHAR_BAK_4" jdbcType="VARCHAR" property="charBak4" />
-    <result column="CHAR_BAK_5" jdbcType="VARCHAR" property="charBak5" />
-    <result column="NUM_BAK_1" jdbcType="NUMERIC" property="numBak1" />
-    <result column="NUM_BAK_2" jdbcType="NUMERIC" property="numBak2" />
-    <result column="NUM_BAK_3" jdbcType="NUMERIC" property="numBak3" />
-    <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
-    <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
-  </resultMap>
-  <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareMemInfoDtl">
+    <resultMap id="BaseResultMap" type="com.pactera.monitoring.entity.MonHardwareMemInfoDtl">
+        <result column="SERVICE_NM" jdbcType="VARCHAR" property="serviceNm"/>
+        <result column="SERVICE_IP" jdbcType="VARCHAR" property="serviceIp"/>
+        <result column="DATA_DT" jdbcType="TIMESTAMP" property="dataDt"/>
+        <result column="RECORD_DT" jdbcType="TIMESTAMP" property="recordDt"/>
+        <result column="MEM_TOTAL" jdbcType="VARCHAR" property="memTotal"/>
+        <result column="MEM_USE_TOTAL" jdbcType="VARCHAR" property="memUseTotal"/>
+        <result column="FREE_MEM_TOTAL" jdbcType="VARCHAR" property="freeMemTotal"/>
+        <result column="SHARED_MEM_TOTAL" jdbcType="VARCHAR" property="sharedMemTotal"/>
+        <result column="BUFFER_CACHE_USE_MEM_TOTAL" jdbcType="VARCHAR" property="bufferCacheUseMemTotal"/>
+        <result column="BUFFER_CACHE_FREE_MEM_TOTAL" jdbcType="VARCHAR" property="bufferCacheFreeMemTotal"/>
+        <result column="SWAP_MEM_TOTAL" jdbcType="VARCHAR" property="swapMemTotal"/>
+        <result column="SWAP_USE_MEM_TOTAL" jdbcType="VARCHAR" property="swapUseMemTotal"/>
+        <result column="SWAP_FREE_MEM_TOTAL" jdbcType="VARCHAR" property="swapFreeMemTotal"/>
+        <result column="SERVICE_TYPE" jdbcType="VARCHAR" property="serviceType"/>
+        <result column="MEM_USED_RATE" jdbcType="VARCHAR" property="memUsedRate"/>
+        <result column="CHAR_BAK_2" jdbcType="VARCHAR" property="charBak2"/>
+        <result column="CHAR_BAK_3" jdbcType="VARCHAR" property="charBak3"/>
+        <result column="CHAR_BAK_4" jdbcType="VARCHAR" property="charBak4"/>
+        <result column="CHAR_BAK_5" jdbcType="VARCHAR" property="charBak5"/>
+        <result column="NUM_BAK_1" jdbcType="NUMERIC" property="numBak1"/>
+        <result column="NUM_BAK_2" jdbcType="NUMERIC" property="numBak2"/>
+        <result column="NUM_BAK_3" jdbcType="NUMERIC" property="numBak3"/>
+        <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4"/>
+        <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5"/>
+    </resultMap>
+    <sql id="baseFormSql">
+        DATA_DT,
+        MEM_TOTAL,
+        MEM_USE_TOTAL,
+        FREE_MEM_TOTAL,
+        BUFFER_CACHE_USE_MEM_TOTAL,
+        SWAP_MEM_TOTAL,
+        MEM_USED_RATE
+  </sql>
+    <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareMemInfoDtl">
     insert into MON_HARDWARE_MEMINFO_DTL (SERVICE_NM, SERVICE_IP, DATA_DT,
       RECORD_DT, MEM_TOTAL, MEM_USE_TOTAL,
       FREE_MEM_TOTAL, SHARED_MEM_TOTAL, BUFFER_CACHE_USE_MEM_TOTAL,
       BUFFER_CACHE_FREE_MEM_TOTAL, SWAP_MEM_TOTAL,
-      SWAP_USE_MEM_TOTAL, SWAP_FREE_MEM_TOTAL, SERVICE_TYPE,
-      CHAR_BAK_1, CHAR_BAK_2, CHAR_BAK_3,
+      SWAP_USE_MEM_TOTAL, SWAP_FREE_MEM_TOTAL, SERVICE_TYPE,MEM_USED_RATE,
+       CHAR_BAK_2, CHAR_BAK_3,
       CHAR_BAK_4, CHAR_BAK_5, NUM_BAK_1,
       NUM_BAK_2, NUM_BAK_3, NUM_BAK_4,
       NUM_BAK_5)
@@ -42,160 +51,179 @@
       #{freeMemTotal,jdbcType=VARCHAR}, #{sharedMemTotal,jdbcType=VARCHAR}, #{bufferCacheUseMemTotal,jdbcType=VARCHAR},
       #{bufferCacheFreeMemTotal,jdbcType=VARCHAR}, #{swapMemTotal,jdbcType=VARCHAR},
       #{swapUseMemTotal,jdbcType=VARCHAR}, #{swapFreeMemTotal,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR},
-      #{charBak1,jdbcType=VARCHAR}, #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR},
+       #{memUsedRate,jdbcType=VARCHAR},#{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR},
       #{charBak4,jdbcType=VARCHAR}, #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC},
       #{numBak2,jdbcType=NUMERIC}, #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC},
       #{numBak5,jdbcType=NUMERIC})
   </insert>
-  <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareMemInfoDtl">
-    insert into MON_HARDWARE_MEMINFO_DTL
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="serviceNm != null">
-        SERVICE_NM,
-      </if>
-      <if test="serviceIp != null">
-        SERVICE_IP,
-      </if>
-      <if test="dataDt != null">
-        DATA_DT,
-      </if>
-      <if test="recordDt != null">
-        RECORD_DT,
-      </if>
-      <if test="memTotal != null">
-        MEM_TOTAL,
-      </if>
-      <if test="memUseTotal != null">
-        MEM_USE_TOTAL,
-      </if>
-      <if test="freeMemTotal != null">
-        FREE_MEM_TOTAL,
-      </if>
-      <if test="sharedMemTotal != null">
-        SHARED_MEM_TOTAL,
-      </if>
-      <if test="bufferCacheUseMemTotal != null">
-        BUFFER_CACHE_USE_MEM_TOTAL,
-      </if>
-      <if test="bufferCacheFreeMemTotal != null">
-        BUFFER_CACHE_FREE_MEM_TOTAL,
-      </if>
-      <if test="swapMemTotal != null">
-        SWAP_MEM_TOTAL,
-      </if>
-      <if test="swapUseMemTotal != null">
-        SWAP_USE_MEM_TOTAL,
-      </if>
-      <if test="swapFreeMemTotal != null">
-        SWAP_FREE_MEM_TOTAL,
-      </if>
-      <if test="serviceType != null">
-        SERVICE_TYPE,
-      </if>
-      <if test="charBak1 != null">
-        CHAR_BAK_1,
-      </if>
-      <if test="charBak2 != null">
-        CHAR_BAK_2,
-      </if>
-      <if test="charBak3 != null">
-        CHAR_BAK_3,
-      </if>
-      <if test="charBak4 != null">
-        CHAR_BAK_4,
-      </if>
-      <if test="charBak5 != null">
-        CHAR_BAK_5,
-      </if>
-      <if test="numBak1 != null">
-        NUM_BAK_1,
-      </if>
-      <if test="numBak2 != null">
-        NUM_BAK_2,
-      </if>
-      <if test="numBak3 != null">
-        NUM_BAK_3,
-      </if>
-      <if test="numBak4 != null">
-        NUM_BAK_4,
-      </if>
-      <if test="numBak5 != null">
-        NUM_BAK_5,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="serviceNm != null">
-        #{serviceNm,jdbcType=VARCHAR},
-      </if>
-      <if test="serviceIp != null">
-        #{serviceIp,jdbcType=VARCHAR},
-      </if>
-      <if test="dataDt != null">
-        #{dataDt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="recordDt != null">
-        #{recordDt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="memTotal != null">
-        #{memTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="memUseTotal != null">
-        #{memUseTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="freeMemTotal != null">
-        #{freeMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="sharedMemTotal != null">
-        #{sharedMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="bufferCacheUseMemTotal != null">
-        #{bufferCacheUseMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="bufferCacheFreeMemTotal != null">
-        #{bufferCacheFreeMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="swapMemTotal != null">
-        #{swapMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="swapUseMemTotal != null">
-        #{swapUseMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="swapFreeMemTotal != null">
-        #{swapFreeMemTotal,jdbcType=VARCHAR},
-      </if>
-      <if test="serviceType != null">
-        #{serviceType,jdbcType=VARCHAR},
-      </if>
-      <if test="charBak1 != null">
-        #{charBak1,jdbcType=VARCHAR},
-      </if>
-      <if test="charBak2 != null">
-        #{charBak2,jdbcType=VARCHAR},
-      </if>
-      <if test="charBak3 != null">
-        #{charBak3,jdbcType=VARCHAR},
-      </if>
-      <if test="charBak4 != null">
-        #{charBak4,jdbcType=VARCHAR},
-      </if>
-      <if test="charBak5 != null">
-        #{charBak5,jdbcType=VARCHAR},
-      </if>
-      <if test="numBak1 != null">
-        #{numBak1,jdbcType=NUMERIC},
-      </if>
-      <if test="numBak2 != null">
-        #{numBak2,jdbcType=NUMERIC},
-      </if>
-      <if test="numBak3 != null">
-        #{numBak3,jdbcType=NUMERIC},
-      </if>
-      <if test="numBak4 != null">
-        #{numBak4,jdbcType=NUMERIC},
-      </if>
-      <if test="numBak5 != null">
-        #{numBak5,jdbcType=NUMERIC},
-      </if>
-    </trim>
-  </insert>
+    <insert id="insertSelective" parameterType="com.pactera.monitoring.entity.MonHardwareMemInfoDtl">
+        insert into MON_HARDWARE_MEMINFO_DTL
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="serviceNm != null">
+                SERVICE_NM,
+            </if>
+            <if test="serviceIp != null">
+                SERVICE_IP,
+            </if>
+            <if test="dataDt != null">
+                DATA_DT,
+            </if>
+            <if test="recordDt != null">
+                RECORD_DT,
+            </if>
+            <if test="memTotal != null">
+                MEM_TOTAL,
+            </if>
+            <if test="memUseTotal != null">
+                MEM_USE_TOTAL,
+            </if>
+            <if test="freeMemTotal != null">
+                FREE_MEM_TOTAL,
+            </if>
+            <if test="sharedMemTotal != null">
+                SHARED_MEM_TOTAL,
+            </if>
+            <if test="bufferCacheUseMemTotal != null">
+                BUFFER_CACHE_USE_MEM_TOTAL,
+            </if>
+            <if test="bufferCacheFreeMemTotal != null">
+                BUFFER_CACHE_FREE_MEM_TOTAL,
+            </if>
+            <if test="swapMemTotal != null">
+                SWAP_MEM_TOTAL,
+            </if>
+            <if test="swapUseMemTotal != null">
+                SWAP_USE_MEM_TOTAL,
+            </if>
+            <if test="swapFreeMemTotal != null">
+                SWAP_FREE_MEM_TOTAL,
+            </if>
+            <if test="serviceType != null">
+                SERVICE_TYPE,
+            </if>
+            <if test="memUsedRate != null">
+                MEM_USED_RATE,
+            </if>
+            <if test="charBak2 != null">
+                CHAR_BAK_2,
+            </if>
+            <if test="charBak3 != null">
+                CHAR_BAK_3,
+            </if>
+            <if test="charBak4 != null">
+                CHAR_BAK_4,
+            </if>
+            <if test="charBak5 != null">
+                CHAR_BAK_5,
+            </if>
+            <if test="numBak1 != null">
+                NUM_BAK_1,
+            </if>
+            <if test="numBak2 != null">
+                NUM_BAK_2,
+            </if>
+            <if test="numBak3 != null">
+                NUM_BAK_3,
+            </if>
+            <if test="numBak4 != null">
+                NUM_BAK_4,
+            </if>
+            <if test="numBak5 != null">
+                NUM_BAK_5,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="serviceNm != null">
+                #{serviceNm,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceIp != null">
+                #{serviceIp,jdbcType=VARCHAR},
+            </if>
+            <if test="dataDt != null">
+                #{dataDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="recordDt != null">
+                #{recordDt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="memTotal != null">
+                #{memTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="memUseTotal != null">
+                #{memUseTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="freeMemTotal != null">
+                #{freeMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="sharedMemTotal != null">
+                #{sharedMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="bufferCacheUseMemTotal != null">
+                #{bufferCacheUseMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="bufferCacheFreeMemTotal != null">
+                #{bufferCacheFreeMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="swapMemTotal != null">
+                #{swapMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="swapUseMemTotal != null">
+                #{swapUseMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="swapFreeMemTotal != null">
+                #{swapFreeMemTotal,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceType != null">
+                #{serviceType,jdbcType=VARCHAR},
+            </if>
+            <if test="memUsedRate != null">
+                #{memUsedRate,jdbcType=VARCHAR},
+            </if>
+            <if test="charBak2 != null">
+                #{charBak2,jdbcType=VARCHAR},
+            </if>
+            <if test="charBak3 != null">
+                #{charBak3,jdbcType=VARCHAR},
+            </if>
+            <if test="charBak4 != null">
+                #{charBak4,jdbcType=VARCHAR},
+            </if>
+            <if test="charBak5 != null">
+                #{charBak5,jdbcType=VARCHAR},
+            </if>
+            <if test="numBak1 != null">
+                #{numBak1,jdbcType=NUMERIC},
+            </if>
+            <if test="numBak2 != null">
+                #{numBak2,jdbcType=NUMERIC},
+            </if>
+            <if test="numBak3 != null">
+                #{numBak3,jdbcType=NUMERIC},
+            </if>
+            <if test="numBak4 != null">
+                #{numBak4,jdbcType=NUMERIC},
+            </if>
+            <if test="numBak5 != null">
+                #{numBak5,jdbcType=NUMERIC},
+            </if>
+        </trim>
+    </insert>
+    <select id="selectByCondition"
+            resultMap="BaseResultMap"
+            parameterType="com.pactera.monitoring.entity.SearchBaseEntity">
+        select
+        <include refid="baseFormSql"/>
+        from MON_HARDWARE_MEMINFO_DTL t
+        <where>
+            <if test="searchBaseEntity.ip !=null and searchBaseEntity.ip !=''">
+                AND t.SERVICE_IP=#{searchBaseEntity.ip,jdbcType=VARCHAR}
+            </if>
+            <if test="searchBaseEntity.startTime !=null and searchBaseEntity.startTime !=''">
+                AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[>=]]> #{searchBaseEntity.startTime,jdbcType=VARCHAR}
+            </if>
+            <if test="searchBaseEntity.endTime !=null and searchBaseEntity.endTime !=''">
+                AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[<=]]> #{searchBaseEntity.endTime,jdbcType=VARCHAR}
+            </if>
+            order by t.DATA_DT DESC,t.SERVICE_IP DESC
+        </where>
+    </select>
 </mapper>

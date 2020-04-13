@@ -24,14 +24,14 @@
   <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareDiskInfoTol">
     insert into MON_HARDWARE_DISKINFO_TOL (SERVICE_NM, SERVICE_IP, DATA_DT,
       RECORD_DT, DISK_TOTAL_SIZE, DISK_USED_SIZE,
-      DISK_USED_RATE, SERVICE_TYPE, CHAR_BAK_1,
+      DISK_USED_RATE, SERVICE_TYPE,DISK_AVAIL_SIZE
       CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4,
       CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2,
       NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
       )
     values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
       #{recordDt,jdbcType=TIMESTAMP}, #{diskTotalSize,jdbcType=VARCHAR}, #{diskUsedSize,jdbcType=VARCHAR},
-      #{diskUsedRate,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR},
+      #{diskUsedRate,jdbcType=VARCHAR}, #{serviceType,jdbcType=VARCHAR},#{diskAvailSize,jdbcType=VARCHAR},
       #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR},
       #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC},
       #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
@@ -64,8 +64,8 @@
       <if test="serviceType != null">
         SERVICE_TYPE,
       </if>
-      <if test="charBak1 != null">
-        CHAR_BAK_1,
+      <if test="diskAvailSize != null">
+        DISK_AVAIL_SIZE,
       </if>
       <if test="charBak2 != null">
         CHAR_BAK_2,
@@ -120,8 +120,8 @@
       <if test="serviceType != null">
         #{serviceType,jdbcType=VARCHAR},
       </if>
-      <if test="charBak1 != null">
-        #{charBak1,jdbcType=VARCHAR},
+      <if test="diskAvailSize != null">
+        #{diskAvailSize,jdbcType=VARCHAR},
       </if>
       <if test="charBak2 != null">
         #{charBak2,jdbcType=VARCHAR},

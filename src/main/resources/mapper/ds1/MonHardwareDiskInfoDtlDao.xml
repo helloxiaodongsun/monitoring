@@ -21,17 +21,24 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
+  <sql id="baseFormSql">
+     DATA_DT,
+     FILESYSTEM_NM,
+     DISK_TOTAL_SIZE,
+     DISK_USED_SIZE,
+     DISK_USED_RATE
+  </sql>
   <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareDiskInfoDtl">
     insert into MON_HARDWARE_DISKINFO_DTL (SERVICE_NM, SERVICE_IP, DATA_DT,
       RECORD_DT, FILESYSTEM_NM, DISK_TOTAL_SIZE,
-      DISK_USED_SIZE, DISK_USED_RATE, CHAR_BAK_1,
+      DISK_USED_SIZE, DISK_USED_RATE,DISK_AVAIL_SIZE,
       CHAR_BAK_2, CHAR_BAK_3, CHAR_BAK_4,
       CHAR_BAK_5, NUM_BAK_1, NUM_BAK_2,
       NUM_BAK_3, NUM_BAK_4, NUM_BAK_5
       )
     values (#{serviceNm,jdbcType=VARCHAR}, #{serviceIp,jdbcType=VARCHAR}, #{dataDt,jdbcType=TIMESTAMP},
       #{recordDt,jdbcType=TIMESTAMP}, #{filesystemNm,jdbcType=VARCHAR}, #{diskTotalSize,jdbcType=VARCHAR},
-      #{diskUsedSize,jdbcType=VARCHAR}, #{diskUsedRate,jdbcType=VARCHAR}, #{charBak1,jdbcType=VARCHAR},
+      #{diskUsedSize,jdbcType=VARCHAR}, #{diskUsedRate,jdbcType=VARCHAR},#{diskAvailSize,jdbcType=VARCHAR},
       #{charBak2,jdbcType=VARCHAR}, #{charBak3,jdbcType=VARCHAR}, #{charBak4,jdbcType=VARCHAR},
       #{charBak5,jdbcType=VARCHAR}, #{numBak1,jdbcType=NUMERIC}, #{numBak2,jdbcType=NUMERIC},
       #{numBak3,jdbcType=NUMERIC}, #{numBak4,jdbcType=NUMERIC}, #{numBak5,jdbcType=NUMERIC}
@@ -64,8 +71,8 @@
       <if test="diskUsedRate != null">
         DISK_USED_RATE,
       </if>
-      <if test="charBak1 != null">
-        CHAR_BAK_1,
+      <if test="diskAvailSize != null">
+        DISK_AVAIL_SIZE,
       </if>
       <if test="charBak2 != null">
         CHAR_BAK_2,
@@ -120,8 +127,8 @@
       <if test="diskUsedRate != null">
         #{diskUsedRate,jdbcType=VARCHAR},
       </if>
-      <if test="charBak1 != null">
-        #{charBak1,jdbcType=VARCHAR},
+      <if test="diskAvailSize != null">
+        #{diskAvailSize,jdbcType=VARCHAR},
       </if>
       <if test="charBak2 != null">
         #{charBak2,jdbcType=VARCHAR},
@@ -151,5 +158,140 @@
         #{numBak5,jdbcType=NUMERIC},
       </if>
     </trim>
+  </insert><insert id="insertSelectiveBatch" parameterType="com.pactera.monitoring.entity.MonHardwareDiskInfoDtl">
+    insert all
+    <foreach collection="monHardwareDiskInfoDtlList" item="monHardwareDiskInfoDtl">
+     into MON_HARDWARE_DISKINFO_DTL
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="monHardwareDiskInfoDtl.serviceNm != null">
+        SERVICE_NM,
+      </if>
+      <if test="monHardwareDiskInfoDtl.serviceIp != null">
+        SERVICE_IP,
+      </if>
+      <if test="monHardwareDiskInfoDtl.dataDt != null">
+        DATA_DT,
+      </if>
+      <if test="monHardwareDiskInfoDtl.recordDt != null">
+        RECORD_DT,
+      </if>
+      <if test="monHardwareDiskInfoDtl.filesystemNm != null">
+        FILESYSTEM_NM,
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskTotalSize != null">
+        DISK_TOTAL_SIZE,
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskUsedSize != null">
+        DISK_USED_SIZE,
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskUsedRate != null">
+        DISK_USED_RATE,
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskAvailSize != null">
+        DISK_AVAIL_SIZE,
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak2 != null">
+        CHAR_BAK_2,
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak3 != null">
+        CHAR_BAK_3,
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak4 != null">
+        CHAR_BAK_4,
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak5 != null">
+        CHAR_BAK_5,
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak1 != null">
+        NUM_BAK_1,
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak2 != null">
+        NUM_BAK_2,
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak3 != null">
+        NUM_BAK_3,
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak4 != null">
+        NUM_BAK_4,
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak5 != null">
+        NUM_BAK_5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="monHardwareDiskInfoDtl.serviceNm != null">
+        #{monHardwareDiskInfoDtl.serviceNm,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.serviceIp != null">
+        #{monHardwareDiskInfoDtl.serviceIp,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.dataDt != null">
+        #{monHardwareDiskInfoDtl.dataDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="monHardwareDiskInfoDtl.recordDt != null">
+        #{monHardwareDiskInfoDtl.recordDt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="monHardwareDiskInfoDtl.filesystemNm != null">
+        #{monHardwareDiskInfoDtl.filesystemNm,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskTotalSize != null">
+        #{monHardwareDiskInfoDtl.diskTotalSize,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskUsedSize != null">
+        #{monHardwareDiskInfoDtl.diskUsedSize,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskUsedRate != null">
+        #{monHardwareDiskInfoDtl.diskUsedRate,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.diskAvailSize != null">
+        #{monHardwareDiskInfoDtl.diskAvailSize,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak2 != null">
+        #{monHardwareDiskInfoDtl.charBak2,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak3 != null">
+        #{monHardwareDiskInfoDtl.charBak3,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak4 != null">
+        #{monHardwareDiskInfoDtl.charBak4,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.charBak5 != null">
+        #{monHardwareDiskInfoDtl.charBak5,jdbcType=VARCHAR},
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak1 != null">
+        #{monHardwareDiskInfoDtl.numBak1,jdbcType=NUMERIC},
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak2 != null">
+        #{monHardwareDiskInfoDtl.numBak2,jdbcType=NUMERIC},
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak3 != null">
+        #{monHardwareDiskInfoDtl.numBak3,jdbcType=NUMERIC},
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak4 != null">
+        #{monHardwareDiskInfoDtl.numBak4,jdbcType=NUMERIC},
+      </if>
+      <if test="monHardwareDiskInfoDtl.numBak5 != null">
+        #{monHardwareDiskInfoDtl.numBak5,jdbcType=NUMERIC},
+      </if>
+    </trim>
+    </foreach>
+    select 1 from dual
   </insert>
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    select
+    <include refid="baseFormSql"/>
+    from MON_HARDWARE_DISKINFO_DTL t
+    <where>
+      <if test="searchBaseEntity.ip !=null and searchBaseEntity.ip !=''">
+        AND t.SERVICE_IP=#{searchBaseEntity.ip,jdbcType=VARCHAR}
+      </if>
+      <if test="searchBaseEntity.startTime !=null and searchBaseEntity.startTime !=''">
+        AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[>=]]> #{searchBaseEntity.startTime,jdbcType=VARCHAR}
+      </if>
+      <if test="searchBaseEntity.endTime !=null and searchBaseEntity.endTime !=''">
+        AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[<=]]> #{searchBaseEntity.endTime,jdbcType=VARCHAR}
+      </if>
+      order by t.DATA_DT DESC,t.SERVICE_IP DESC,t.FILESYSTEM_NM DESC
+    </where>
+  </select>
 </mapper>

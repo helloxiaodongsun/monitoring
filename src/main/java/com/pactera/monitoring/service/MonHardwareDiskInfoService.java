@@ -1,8 +1,11 @@
 package com.pactera.monitoring.service;
 
+import com.github.pagehelper.PageInfo;
 import com.jcraft.jsch.JSchException;
 import com.pactera.monitoring.entity.MonHardwareDiskInfoDtl;
 import com.pactera.monitoring.entity.MonHardwareDiskInfoTol;
+import com.pactera.monitoring.entity.MonHardwareServerInfo;
+import com.pactera.monitoring.entity.SearchBaseEntity;
 import com.pactera.monitoring.entity.dto.MonHardwareDiskInfoDtlDto;
 import com.pactera.monitoring.entity.dto.MonHardwareDiskInfoTolDto;
 import com.pactera.monitoring.exception.BussinessException;
@@ -59,4 +62,26 @@ public interface MonHardwareDiskInfoService {
                                                     String ip,
                                                     int port) throws JSchException;
 
+    /**
+     * 硬盘明细信息保存
+     * @param monHardwareServerInfo  需要连接的服务器对象
+     * @return  数据变更条数
+     * @throws JSchException  连接失败
+     */
+    int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+
+    /**
+     *硬盘汇总信息保存
+     * @param monHardwareServerInfo  需要连接的服务器对象
+     * @return  数据变更条数
+     * @throws JSchException  连接失败
+     */
+    int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+
+    /**
+     * 根据条件从数据库查询硬盘信息
+     * @param searchBaseEntity 搜索实体类
+     * @return 符合条件的dto
+     */
+    PageInfo<MonHardwareDiskInfoDtlDto> queryDiskInfoDtlFromDbByCondition(SearchBaseEntity searchBaseEntity);
 }

@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**服务器基本信息查询
+/**
+ * 服务器基本信息查询
+ *
  * @author 84483
  */
 @Service
@@ -43,7 +44,7 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
         int port = Integer.parseInt(servicePort);
         MonHardwareServerInfo hardwareServerInfo = queryServerInfoFromRemote(serviceUser, servicePassword, ip, port);
         MonHardwareServerInfoDto monHardwareServerInfoDto = new MonHardwareServerInfoDto();
-        BeanUtils.copyProperties(hardwareServerInfo,monHardwareServerInfoDto);
+        BeanUtils.copyProperties(hardwareServerInfo, monHardwareServerInfoDto);
         monHardwareServerInfoDto.setDataDt(new Date());
         monHardwareServerInfoDto.setServiceIp(ip);
         return monHardwareServerInfoDto;
@@ -57,19 +58,19 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
      * @param ip              ip
      * @param port            端口
      * @return 服务器信息
-     * @throws JSchException      连接服务器失败
+     * @throws JSchException 连接服务器失败
      */
     @Override
-    public MonHardwareServerInfo queryServerInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws  JSchException {
+    public MonHardwareServerInfo queryServerInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
         RemoteComputerMonitorUtil remoteComputerMonitorUtil
                 = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
         MonHardwareServerInfo serverInfo;
         try {
-             serverInfo = remoteComputerMonitorUtil.getServerInfo();
-        }finally {
+            serverInfo = remoteComputerMonitorUtil.getServerInfo();
+        } finally {
             remoteComputerMonitorUtil.close();
         }
-        return serverInfo ;
+        return serverInfo;
     }
 
 
@@ -78,14 +79,14 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
      *
      * @param ip 远程服务器地址
      * @return 从数据库查询的服务器信息
-     * @throws BussinessException  ip为空、在数据库未获得该服务器信息、在数据库中获得的服务器信息不包含密码 时抛出此异常
+     * @throws BussinessException ip为空、在数据库未获得该服务器信息、在数据库中获得的服务器信息不包含密码 时抛出此异常
      */
     @Override
     public MonHardwareServerInfo queryServerInfoFromDb(String ip) throws BussinessException {
         MonHardwareServerInfo byIp = monHardwareServerInfoDao.findByIp(ip);
-        if(byIp == null
+        if (byIp == null
                 || StringUtils.isEmpty(byIp.getServicePassword())
-                || StringUtils.isEmpty(byIp.getServiceUser())){
+                || StringUtils.isEmpty(byIp.getServiceUser())) {
             throw new BussinessException("The IP is  configured incorrectly in the basic table");
         }
         return byIp;
@@ -100,11 +101,18 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
     }
 
     @Override
-    public List<MonHardwareServerInfoDto> queryAllServerInfo() throws Exception {
-        List<MonHardwareServerInfo> monHardwareServerInfoList = monHardwareServerInfoDao.findAll();
-        List<MonHardwareServerInfoDto> monHardwareServerInfoDtoList = new ArrayList<MonHardwareServerInfoDto>();
+    public List<MonHardwareServerInfo> queryAllServerInfo() throws Exception {
+        return monHardwareServerInfoDao.findAll();
+    }
+
+    @Override
+    public List<MonHardwareServerInfoDto> queryAllServerInfoToDto() throws Exception {
+        List<MonHardwareServerInfo> monHardwareServerInfoList = queryAllServerInfo();
+        List<MonHardwareServerInfoDto> monHardwareServerInfoDtoList;
         DoToDTOConverter doToDTOConverter = new DoToDTOConverter();
-        monHardwareServerInfoDtoList = doToDTOConverter.convert(monHardwareServerInfoList,MonHardwareServerInfoDto.class);
+        monHardwareServerInfoDtoList = doToDTOConverter.convert(monHardwareServerInfoList, MonHardwareServerInfoDto.class);
         return monHardwareServerInfoDtoList;
     }
+
+
 }

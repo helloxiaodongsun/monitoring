@@ -1,34 +1,41 @@
 package com.pactera.monitoring.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.jcraft.jsch.JSchException;
+import com.pactera.monitoring.core.page.PageInfoSetVal;
 import com.pactera.monitoring.dao.ds1.MonHardwareCpuInfoDtlDao;
 import com.pactera.monitoring.dao.ds1.MonHardwareCpuInfoTolDao;
 import com.pactera.monitoring.entity.MonHardwareCpuInfoDtl;
 import com.pactera.monitoring.entity.MonHardwareCpuInfoTol;
 import com.pactera.monitoring.entity.MonHardwareServerInfo;
+import com.pactera.monitoring.entity.SearchBaseEntity;
 import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoDtlDto;
 import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoTolDto;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareCpuInfoService;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
-/**cpu信息查询
+/**
+ * cpu信息查询
+ *
  * @author 84483
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService {
     @Autowired
-    MonHardwareCpuInfoDtlDao monHardwareCpuinfoDtlMapper;
+    MonHardwareCpuInfoDtlDao monHardwareCpuInfoDtlDao;
     @Autowired
-    MonHardwareCpuInfoTolDao monHardwareCpuinfoTolDao;
+    MonHardwareCpuInfoTolDao monHardwareCpuInfoTolDao;
     @Autowired
     MonHardwareServerInfoService monHardwareServerInfoService;
 
@@ -47,7 +54,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         int port = Integer.parseInt(servicePort);
         MonHardwareCpuInfoTol monHardwareCpuInfoTol = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
         MonHardwareCpuInfoTolDto monHardwareCpuInfoTolDto = new MonHardwareCpuInfoTolDto();
-        BeanUtils.copyProperties(monHardwareCpuInfoTol,monHardwareCpuInfoTolDto);
+        BeanUtils.copyProperties(monHardwareCpuInfoTol, monHardwareCpuInfoTolDto);
         return monHardwareCpuInfoTolDto;
     }
 
@@ -67,12 +74,12 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
                 = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
         MonHardwareCpuInfoTol cpuUsageTol;
         try {
-             cpuUsageTol = remoteComputerMonitorUtil.getCpuUsageTol();
-        }finally {
+            cpuUsageTol = remoteComputerMonitorUtil.getCpuUsageTol();
+        } finally {
             remoteComputerMonitorUtil.close();
         }
 
-        return  cpuUsageTol;
+        return cpuUsageTol;
     }
 
     /**
@@ -90,7 +97,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         int port = Integer.parseInt(servicePort);
         MonHardwareCpuInfoDtl monHardwareCpuInfoDtl = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
         MonHardwareCpuInfoDtlDto monHardwareCpuInfoDtlDto = new MonHardwareCpuInfoDtlDto();
-        BeanUtils.copyProperties(monHardwareCpuInfoDtl,monHardwareCpuInfoDtlDto);
+        BeanUtils.copyProperties(monHardwareCpuInfoDtl, monHardwareCpuInfoDtlDto);
         return monHardwareCpuInfoDtlDto;
     }
 
@@ -108,14 +115,89 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
     public MonHardwareCpuInfoDtl queryCpuInfoDtlFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
         RemoteComputerMonitorUtil remoteComputerMonitorUtil
                 = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
-        MonHardwareCpuInfoDtl cpuUsageDtl ;
+        MonHardwareCpuInfoDtl cpuUsageDtl;
         try {
-            cpuUsageDtl  = remoteComputerMonitorUtil.getCpuUsageDtl();
-        }finally {
+            cpuUsageDtl = remoteComputerMonitorUtil.getCpuUsageDtl();
+        } finally {
             remoteComputerMonitorUtil.close();
         }
         return cpuUsageDtl;
     }
 
+    /**
+     * 从远程服务器查询cpu明细信息保存数据库
+     *
+     * @param monHardwareServerInfo 需要连接的服务器对象
+     * @throws JSchException 连接失败
+     */
+    @Override
+    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+        String servicePassword = monHardwareServerInfo.getServicePassword();
+        String servicePort = monHardwareServerInfo.getServicePort();
+        String serviceUser = monHardwareServerInfo.getServiceUser();
+        String serverIp = monHardwareServerInfo.getServiceIp();
+        int port = Integer.parseInt(servicePort);
+        String serviceType = monHardwareServerInfo.getServiceType();
+        Date date = new Date();
+        MonHardwareCpuInfoDtl monHardwareCpuInfoDtl
+                = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
+        monHardwareCpuInfoDtl.setDataDt(date);
+        monHardwareCpuInfoDtl.setRecordDt(date);
+        monHardwareCpuInfoDtl.setServiceType(serviceType);
+        return monHardwareCpuInfoDtlDao.insertSelective(monHardwareCpuInfoDtl);
+    }
 
+    /**
+     * 从远程服务器查询cpu汇总信息保存数据库
+     *
+     * @param monHardwareServerInfo 需要连接的服务器对象
+     * @throws JSchException 连接失败
+     */
+    @Override
+    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+        String servicePassword = monHardwareServerInfo.getServicePassword();
+        String servicePort = monHardwareServerInfo.getServicePort();
+        String serviceUser = monHardwareServerInfo.getServiceUser();
+        String serverIp = monHardwareServerInfo.getServiceIp();
+        int port = Integer.parseInt(servicePort);
+        String serviceType = monHardwareServerInfo.getServiceType();
+        Date date = new Date();
+
+        MonHardwareCpuInfoTol monHardwareCpuInfoTol
+                = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
+        monHardwareCpuInfoTol.setDataDt(date);
+        monHardwareCpuInfoTol.setRecordDt(date);
+        monHardwareCpuInfoTol.setServiceType(serviceType);
+        return monHardwareCpuInfoTolDao.insertSelective(monHardwareCpuInfoTol);
+
+    }
+
+    //do to dto
+    class DoToDTOConverter extends BaseConverter<MonHardwareCpuInfoDtl, MonHardwareCpuInfoDtlDto> {
+        @Override
+        protected void convert(MonHardwareCpuInfoDtl from, MonHardwareCpuInfoDtlDto to) {
+            super.convert(from, to);
+        }
+    }
+
+    /**
+     * 根据条件从数据库查询cpu明细信息
+     *
+     * @param searchBaseEntity 搜索实体类
+     * @return 符合条件的dto
+     */
+    @Override
+    public PageInfo<MonHardwareCpuInfoDtlDto> queryCpuInfoDtlFromDbByCondition(SearchBaseEntity searchBaseEntity) {
+        List<MonHardwareCpuInfoDtl> monHardwareCpuInfoDtls = monHardwareCpuInfoDtlDao.selectByCondition(searchBaseEntity);
+        if (monHardwareCpuInfoDtls.size() == 0) {
+            return new PageInfo<>();
+        }
+        PageInfo<MonHardwareCpuInfoDtl> oldPage = new PageInfo<>(monHardwareCpuInfoDtls);
+        DoToDTOConverter dtoConverter = new DoToDTOConverter();
+        List<MonHardwareCpuInfoDtlDto> monHardwareCpuInfoDtlDtos;
+        monHardwareCpuInfoDtlDtos = dtoConverter.convert(monHardwareCpuInfoDtls, MonHardwareCpuInfoDtlDto.class);
+        PageInfo<MonHardwareCpuInfoDtlDto> page = new PageInfo<>(monHardwareCpuInfoDtlDtos);
+        PageInfoSetVal.setVal(page, oldPage);
+        return page;
+    }
 }

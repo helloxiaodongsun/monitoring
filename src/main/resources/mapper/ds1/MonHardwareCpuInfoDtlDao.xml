@@ -23,6 +23,14 @@
     <result column="NUM_BAK_4" jdbcType="NUMERIC" property="numBak4" />
     <result column="NUM_BAK_5" jdbcType="NUMERIC" property="numBak5" />
   </resultMap>
+  <sql id="baseFormSql">
+        DATA_DT,
+        US_CPU_RATE,
+        SY_CPU_RATE,
+        NI_CPU_RATE,
+        ID_CPU_RATE,
+        WA_CPU_RATE
+  </sql>
   <insert id="insert" parameterType="com.pactera.monitoring.entity.MonHardwareCpuInfoDtl">
     insert into MON_HARDWARE_CPUINFO_DTL (SERVICE_NM, SERVICE_IP, DATA_DT,
       RECORD_DT, US_CPU_RATE, SY_CPU_RATE,
@@ -166,4 +174,21 @@
       </if>
     </trim>
   </insert>
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    select
+    <include refid="baseFormSql"/>
+    from MON_HARDWARE_CPUINFO_DTL t
+    <where>
+      <if test="searchBaseEntity.ip !=null and searchBaseEntity.ip !=''">
+        AND t.SERVICE_IP=#{searchBaseEntity.ip,jdbcType=VARCHAR}
+      </if>
+      <if test="searchBaseEntity.startTime !=null and searchBaseEntity.startTime !=''">
+        AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[>=]]> #{searchBaseEntity.startTime,jdbcType=VARCHAR}
+      </if>
+      <if test="searchBaseEntity.endTime !=null and searchBaseEntity.endTime !=''">
+        AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[<=]]> #{searchBaseEntity.endTime,jdbcType=VARCHAR}
+      </if>
+      order by t.DATA_DT DESC,t.SERVICE_IP DESC
+    </where>
+  </select>
 </mapper>
