@@ -17,6 +17,7 @@ import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService {
     @Autowired
     MonHardwareCpuInfoDtlDao monHardwareCpuInfoDtlDao;

@@ -12,8 +12,7 @@ import com.pactera.monitoring.enums.MethodType;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareDiskInfoService;
 import com.pactera.monitoring.utils.AjaxResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,60 +25,50 @@ import java.util.List;
 
 /**
  * 硬盘信息查询
+ *
  * @author 84483
  */
 @Controller
 @RequestMapping("/diskInfo")
+@Slf4j
 public class MonHardwareDiskInfoController extends BaseController {
 
-    public static final Logger log = LoggerFactory.getLogger(MonHardwareDiskInfoController.class);
 
     @Autowired
     MonHardwareDiskInfoService monHardwareDiskInfoService;
 
     /**
      * 根据ip,查询该服务器硬盘的详细信息
+     *
      * @param ip ip地址
      * @return 结果集
      */
     @GetMapping(value = "/detail")
-    @MethodExplain(methodType= MethodType.SELECT,methodName = "硬盘详细信息查询")
+    @MethodExplain(methodType = MethodType.SELECT, methodName = "硬盘详细信息查询")
     @ResponseBody
-    public AjaxResult getDiskInfoDtl(@RequestParam(value = "ip") String ip) {
-        List<MonHardwareDiskInfoDtlDto> monHardwareDiskInfoDtlDtoList;
-        try {
-            monHardwareDiskInfoDtlDtoList = monHardwareDiskInfoService.queryDiskInfoDtl(ip);
-        } catch (BussinessException | JSchException e) {
-            log.error(e.getMessage(),e);
-            return AjaxResult.error(e.getMessage());
-        }
+    public AjaxResult getDiskInfoDtl(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+        List<MonHardwareDiskInfoDtlDto> monHardwareDiskInfoDtlDtoList = monHardwareDiskInfoService.queryDiskInfoDtl(ip);
         return AjaxResult.success(monHardwareDiskInfoDtlDtoList);
     }
 
     /**
      * 根据ip,查询该服务器硬盘的汇总信息
+     *
      * @param ip ip地址
      * @return 结果集
      */
     @GetMapping(value = "/summary")
-    @MethodExplain(methodType= MethodType.SELECT,methodName = "硬盘汇总信息查询")
+    @MethodExplain(methodType = MethodType.SELECT, methodName = "硬盘汇总信息查询")
     @ResponseBody
-    public AjaxResult getDiskInfoTol(@RequestParam(value = "ip") String ip) {
-
-        MonHardwareDiskInfoTolDto monHardwareDiskInfoTolDto;
-        try {
-            monHardwareDiskInfoTolDto = monHardwareDiskInfoService.queryDiskInfoTol(ip);
-        } catch (BussinessException | JSchException e) {
-            log.error(e.getMessage(),e);
-            return AjaxResult.error(e.getMessage());
-        }
+    public AjaxResult getDiskInfoTol(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+        MonHardwareDiskInfoTolDto monHardwareDiskInfoTolDto = monHardwareDiskInfoService.queryDiskInfoTol(ip);
         return AjaxResult.success(monHardwareDiskInfoTolDto);
     }
 
     @PostMapping(value = "/list")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "服务器历史硬盘明细信息查询")
     @ResponseBody
-    public TableDataInfo getDiskInfoByCondition(SearchBaseEntity searchBaseEntity){
+    public TableDataInfo getDiskInfoByCondition(SearchBaseEntity searchBaseEntity) {
         startPage();
         PageInfo<MonHardwareDiskInfoDtlDto> monHardwareDiskInfoDtlDtoPageInfo = monHardwareDiskInfoService.queryDiskInfoDtlFromDbByCondition(searchBaseEntity);
         return getDataTable(monHardwareDiskInfoDtlDtoPageInfo);

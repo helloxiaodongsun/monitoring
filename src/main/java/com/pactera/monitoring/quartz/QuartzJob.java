@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 @Async
 public class QuartzJob {
 
-    public static final Logger log = LoggerFactory.getLogger(QuartzJob.class);
 
     @Autowired
     QuartzJobService quartzJobService;

@@ -223,7 +223,7 @@
             <if test="searchBaseEntity.endTime !=null and searchBaseEntity.endTime !=''">
                 AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[<=]]> #{searchBaseEntity.endTime,jdbcType=VARCHAR}
             </if>
-            order by t.DATA_DT DESC,t.SERVICE_IP DESC
         </where>
+        order by t.DATA_DT DESC,t.SERVICE_IP DESC
     </select>
 </mapper>
