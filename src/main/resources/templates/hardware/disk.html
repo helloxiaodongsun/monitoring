@@ -31,6 +31,9 @@
 			</div>
 		
 			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-primary" id="go-chart">
+					<i class="fa fa-line-chart"></i> 生成图表
+				</a>
 		        <!--<a class="btn btn-warning" onclick="$.table.exportExcel()" >
 		            <i class="fa fa-download"></i> 导出
 		        </a>-->
@@ -78,6 +81,10 @@
 		        ]
 		    };
 		    $.table.init(options);
+
+		    $("#go-chart").click(function(){
+		       $.modal.open('磁盘使用情况',portal.bp() + '/hardware/disk/create-chart?ip='+$("#servers").val()+'&startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val());
+			});
 		});
 
 	</script>

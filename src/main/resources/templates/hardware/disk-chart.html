@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('硬盘图表')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+	        <div id="chart" class="col-sm-12 select-table table-striped">
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+    <th:block th:include="include :: echarts-js" />
+    <script th:src="@{/monitoring/hardware/disk-chart.js}"></script>
+	<script th:inline="javascript">
+        var rawData = [[${rawData}]];
+        var legendData = [[${legendData}]];
+        var xAxisData = [[${xAxisData}]];
+	</script>
+</body>
+</html>
