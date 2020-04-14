@@ -133,14 +133,14 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         String serverIp = monHardwareServerInfo.getServiceIp();
         int port = Integer.parseInt(servicePort);
         String serviceType = monHardwareServerInfo.getServiceType();
-        Date date = new Date();
+        date = date == null ? new Date() : date;
         MonHardwareCpuInfoDtl monHardwareCpuInfoDtl
                 = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
         monHardwareCpuInfoDtl.setDataDt(date);
@@ -156,15 +156,14 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         String serverIp = monHardwareServerInfo.getServiceIp();
         int port = Integer.parseInt(servicePort);
         String serviceType = monHardwareServerInfo.getServiceType();
-        Date date = new Date();
-
+        date = date == null ? new Date() : date;
         MonHardwareCpuInfoTol monHardwareCpuInfoTol
                 = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
         monHardwareCpuInfoTol.setDataDt(date);

@@ -8,6 +8,8 @@ import com.pactera.monitoring.entity.SearchBaseEntity;
 import com.pactera.monitoring.entity.dto.MonHardwareIoInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.util.Date;
+
 /**
  * io信息查询
  * @author 84483
@@ -36,7 +38,7 @@ public interface MonHardwareIoInfoService {
      * @return  数据变更条数
      * @throws JSchException  连接失败
      */
-    int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+    int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException;
 
     /**
      * 根据条件从数据库查询IO信息

@@ -11,6 +11,8 @@ import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoTolDto;
 import com.pactera.monitoring.entity.dto.MonHardwareMemInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.util.Date;
+
 /**
  * cpu信息service
  * @author 84483
@@ -68,7 +70,7 @@ public interface MonHardwareCpuInfoService {
      * @param monHardwareServerInfo 需要连接的服务器对象
      * @throws JSchException 连接失败
      */
-    int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+    int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException;
 
 
     /**
@@ -76,7 +78,7 @@ public interface MonHardwareCpuInfoService {
      * @param monHardwareServerInfo 需要连接的服务器对象
      * @throws JSchException 连接失败
      */
-    int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+    int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException;
 
     /**
      * 根据条件从数据库查询cpu明细信息

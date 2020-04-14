@@ -2,19 +2,18 @@ package com.pactera.monitoring.quartz.service.impl;
 
 import com.jcraft.jsch.JSchException;
 import com.pactera.monitoring.entity.MonHardwareServerInfo;
-import com.pactera.monitoring.quartz.QuartzJob;
 import com.pactera.monitoring.quartz.service.QuartzJobService;
 import com.pactera.monitoring.service.MonHardwareCpuInfoService;
 import com.pactera.monitoring.service.MonHardwareDiskInfoService;
 import com.pactera.monitoring.service.MonHardwareIoInfoService;
 import com.pactera.monitoring.service.MonHardwareMemInfoService;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,9 +21,8 @@ import java.util.List;
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
+@Slf4j
 public class QuartzJobServiceImpl implements QuartzJobService {
-
-    public static final Logger log = LoggerFactory.getLogger(QuartzJobService.class);
 
     @Autowired
     MonHardwareServerInfoService monHardwareServerInfoService;
@@ -47,34 +45,35 @@ public class QuartzJobServiceImpl implements QuartzJobService {
         if (monHardwareServerInfos == null || monHardwareServerInfos.size() <= 0) {
             return;
         }
+        Date date = new Date();
         monHardwareServerInfos.forEach(monHardwareServerInfo -> {
             try {
-                monHardwareMemInfoService.saveServerMemInfoDtl(monHardwareServerInfo);
+                monHardwareMemInfoService.saveServerMemInfoDtl(monHardwareServerInfo,date);
             } catch (JSchException e) {
                 log.error(e.getMessage(),e);
             }
             try {
-                monHardwareIoInfoService.saveIoInfo(monHardwareServerInfo);
+                monHardwareIoInfoService.saveIoInfo(monHardwareServerInfo,date);
             } catch (JSchException e) {
                 log.error(e.getMessage(),e);
             }
             try {
-                monHardwareDiskInfoService.saveDiskInfoDtl(monHardwareServerInfo);
+                monHardwareDiskInfoService.saveDiskInfoDtl(monHardwareServerInfo,date);
             } catch (JSchException e) {
                 log.error(e.getMessage(),e);
             }
             try {
-                monHardwareDiskInfoService.saveDiskInfoTol(monHardwareServerInfo);
+                monHardwareDiskInfoService.saveDiskInfoTol(monHardwareServerInfo,date);
             } catch (JSchException e) {
                 log.error(e.getMessage(),e);
             }
             try {
-                monHardwareCpuInfoService.saveCpuInfoDtl(monHardwareServerInfo);
+                monHardwareCpuInfoService.saveCpuInfoDtl(monHardwareServerInfo,date);
             } catch (JSchException e) {
                 log.error(e.getMessage(),e);
             }
             try {
-                monHardwareCpuInfoService.saveCpuInfoTol(monHardwareServerInfo);
+                monHardwareCpuInfoService.saveCpuInfoTol(monHardwareServerInfo,date);
             } catch (JSchException e) {
                 log.error(e.getMessage(),e);
             }

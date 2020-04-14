@@ -139,19 +139,19 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+    public int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         String serverIp = monHardwareServerInfo.getServiceIp();
         int port = Integer.parseInt(servicePort);
-        Date date = new Date();
+        date = date == null ? new Date() : date;
         List<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList
                 = queryDiskInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
-        monHardwareDiskInfoDtlList.forEach(monHardwareDiskInfoDtl -> {
+        for (MonHardwareDiskInfoDtl monHardwareDiskInfoDtl : monHardwareDiskInfoDtlList) {
             monHardwareDiskInfoDtl.setDataDt(date);
             monHardwareDiskInfoDtl.setRecordDt(date);
-        });
+        }
         return monHardwareDiskinfoDtlDao.insertSelectiveBatch(monHardwareDiskInfoDtlList);
     }
 
@@ -163,14 +163,14 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+    public int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         String serverIp = monHardwareServerInfo.getServiceIp();
         int port = Integer.parseInt(servicePort);
         String serviceType = monHardwareServerInfo.getServiceType();
-        Date date = new Date();
+        date = date == null ? new Date() : date;
         MonHardwareDiskInfoTol monHardwareDiskInfoTol = queryDiskInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
         monHardwareDiskInfoTol.setDataDt(date);
         monHardwareDiskInfoTol.setRecordDt(date);

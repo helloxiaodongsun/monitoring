@@ -10,6 +10,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareDiskInfoDtlDto;
 import com.pactera.monitoring.entity.dto.MonHardwareDiskInfoTolDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.util.Date;
 import java.util.List;
 
 /**硬盘信息
@@ -68,7 +69,7 @@ public interface MonHardwareDiskInfoService {
      * @return  数据变更条数
      * @throws JSchException  连接失败
      */
-    int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+    int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException;
 
     /**
      *硬盘汇总信息保存
@@ -76,7 +77,7 @@ public interface MonHardwareDiskInfoService {
      * @return  数据变更条数
      * @throws JSchException  连接失败
      */
-    int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo) throws JSchException;
+    int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException;
 
     /**
      * 根据条件从数据库查询硬盘信息

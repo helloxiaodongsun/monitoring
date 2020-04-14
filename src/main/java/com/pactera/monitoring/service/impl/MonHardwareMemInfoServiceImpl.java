@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 
-/**服务器内存插叙
+/**
+ * 服务器内存插叙
+ *
  * @author 84483
  */
 @Service
@@ -52,7 +54,7 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
         int port = Integer.parseInt(servicePort);
         MonHardwareMemInfoDtl monHardwareMemInfoDtl = queryServerMemInfoFromRemote(serviceUser, servicePassword, ip, port);
         MonHardwareMemInfoDto monHardwareMemInfoDto = new MonHardwareMemInfoDto();
-        BeanUtils.copyProperties(monHardwareMemInfoDtl,monHardwareMemInfoDto);
+        BeanUtils.copyProperties(monHardwareMemInfoDtl, monHardwareMemInfoDto);
         return monHardwareMemInfoDto;
     }
 
@@ -73,7 +75,7 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
         MonHardwareMemInfoDtl memUsage;
         try {
             memUsage = remoteComputerMonitorUtil.getMemUsage();
-        }finally {
+        } finally {
             remoteComputerMonitorUtil.close();
         }
         return memUsage;
@@ -87,20 +89,20 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveServerMemInfoDtl(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+    public int saveServerMemInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         String serverIp = monHardwareServerInfo.getServiceIp();
         String serviceType = monHardwareServerInfo.getServiceType();
         int port = Integer.parseInt(servicePort);
-        Date date = new Date();
+        date = date == null ? new Date() : date;
         MonHardwareMemInfoDtl monHardwareMemInfoDtl
                 = queryServerMemInfoFromRemote(serviceUser, servicePassword, serverIp, port);
         monHardwareMemInfoDtl.setDataDt(date);
         monHardwareMemInfoDtl.setRecordDt(date);
         monHardwareMemInfoDtl.setServiceType(serviceType);
-       return monHardwareMeminfoDtlDao.insertSelective(monHardwareMemInfoDtl);
+        return monHardwareMeminfoDtlDao.insertSelective(monHardwareMemInfoDtl);
     }
 
     //do to dto
@@ -118,17 +120,17 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
      * @return 符合条件的dto
      */
     @Override
-   public PageInfo<MonHardwareMemInfoDto> queryServerMemInfoFromDbByCondition(SearchBaseEntity searchBaseEntity) {
+    public PageInfo<MonHardwareMemInfoDto> queryServerMemInfoFromDbByCondition(SearchBaseEntity searchBaseEntity) {
         List<MonHardwareMemInfoDtl> monHardwareMemInfoDtls = monHardwareMeminfoDtlDao.selectByCondition(searchBaseEntity);
-        if(monHardwareMemInfoDtls.size()==0){
+        if (monHardwareMemInfoDtls.size() == 0) {
             return new PageInfo<>();
         }
         PageInfo<MonHardwareMemInfoDtl> oldPage = new PageInfo<>(monHardwareMemInfoDtls);
         DoToDTOConverter dtoConverter = new DoToDTOConverter();
         List<MonHardwareMemInfoDto> monHardwareMemInfoDtos;
-        monHardwareMemInfoDtos= dtoConverter.convert(monHardwareMemInfoDtls, MonHardwareMemInfoDto.class);
-        PageInfo<MonHardwareMemInfoDto> page =new PageInfo<MonHardwareMemInfoDto>(monHardwareMemInfoDtos);
-        PageInfoSetVal.setVal(page,oldPage);
-        return  page;
+        monHardwareMemInfoDtos = dtoConverter.convert(monHardwareMemInfoDtls, MonHardwareMemInfoDto.class);
+        PageInfo<MonHardwareMemInfoDto> page = new PageInfo<MonHardwareMemInfoDto>(monHardwareMemInfoDtos);
+        PageInfoSetVal.setVal(page, oldPage);
+        return page;
     }
 }

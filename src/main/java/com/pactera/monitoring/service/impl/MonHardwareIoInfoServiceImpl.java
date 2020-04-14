@@ -88,14 +88,14 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo) throws JSchException {
+    public int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         String serverIp = monHardwareServerInfo.getServiceIp();
         String serviceType = monHardwareServerInfo.getServiceType();
         int port = Integer.parseInt(servicePort);
-        Date date = new Date();
+        date = date == null ? new Date() : date;
         MonHardwareIoInfo monHardwareIoInfo = queryIoInfoFromRemote(serviceUser, servicePassword, serverIp, port);
         monHardwareIoInfo.setDataDt(date);
         monHardwareIoInfo.setRecordDt(date);
@@ -110,6 +110,7 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
             super.convert(from, to);
         }
     }
+
     /**
      * 根据条件从数据库查询IO信息
      *
