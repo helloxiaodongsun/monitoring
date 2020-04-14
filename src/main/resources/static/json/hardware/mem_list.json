@@ -1,0 +1,97 @@
+{
+  "total": 38,
+  "rows": [
+    {
+      "dataDt": "Apr 13, 2020 11:16:06 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.287",
+      "freeMemTotal": "0.845",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.750"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:16:20 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.287",
+      "freeMemTotal": "0.844",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.785"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:16:40 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.288",
+      "freeMemTotal": "0.843",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.836"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:17:00 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.288",
+      "freeMemTotal": "0.844",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.795"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:17:20 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.288",
+      "freeMemTotal": "0.843",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.806"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:17:40 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.288",
+      "freeMemTotal": "0.843",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.845"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:18:00 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.289",
+      "freeMemTotal": "0.842",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.883"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:18:20 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.291",
+      "freeMemTotal": "0.841",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.949"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:18:40 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.290",
+      "freeMemTotal": "0.842",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.906"
+    },
+    {
+      "dataDt": "Apr 13, 2020 11:19:00 AM",
+      "memTotal": "1.943",
+      "memUseTotal": "0.290",
+      "freeMemTotal": "0.841",
+      "bufferCacheUseMemTotal": "0.812",
+      "swapMemTotal": "1.000",
+      "memUsedRate": "14.920"
+    }
+  ],
+  "code": 0,
+  "msg": 0
+}

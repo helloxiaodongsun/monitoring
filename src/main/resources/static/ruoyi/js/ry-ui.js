@@ -174,6 +174,7 @@ var table = {
                     return { rows: [], total: 0 };
 				}*/
                 if (res.code == 0) {
+                	res.rows == null?res.rows=[]:true;
                     if ($.common.isNotEmpty(table.options.sidePagination) && table.options.sidePagination == 'client') {
                     	return res.rows;
                     } else {

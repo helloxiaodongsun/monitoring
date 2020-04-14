@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-	<th:block th:include="include :: header('硬盘信息')" />
+	<th:block th:include="include :: header('内存信息')" />
 </head>
 <body class="gray-bg">
 	<div class="container-div">
@@ -17,9 +17,9 @@
 							</li>
 							<li class="select-time">
 								<label>创建时间： </label>
-								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="startTime" autocomplete="off" />
+								<input type="text" class="time-input" id="startTime" placeholder="开始时间" name="startTime" autocomplete="off"/>
 								<span>-</span>
-								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime" autocomplete="off" />
+								<input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime" autocomplete="off"/>
 							</li>
 							<li>
 								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
@@ -48,9 +48,9 @@
 	<script th:inline="javascript">
 		$(function() {
 		    var options = {
-		        url: portal.bp() + "/diskInfo/list",
+		        url: portal.bp() + "/memInfo/list",
 		        sortName: "dataDt",
-		        modalName: "硬盘信息",
+		        modalName: "io信息",
 		        columns: [
 		        {
 		            field: 'dataDt',
@@ -58,23 +58,28 @@
                     sortable: true
 		        },
 		        {
-		            field: 'filesystemNm',
-		            title: '文件系统名称',
+		            field: 'memTotal',
+		            title: '内存总大小',
 		            sortable: true
 		        },
 		        {
-		            field: 'diskTotalSize',
-		            title: '所在磁盘大小(kb)',
+		            field: 'memUseTotal',
+		            title: '内存已使用大小',
 		            sortable: true
 		        },
 		        {
-		            field: 'diskUsedSize',
-		            title: '所在磁盘使用大小(kb)',
+		            field: 'freeMemTotal',
+		            title: '空闲内存大小',
 		            sortable: true
 		        },
 		        {
-		            field: 'diskUsedRate',
-		            title: '磁盘使用率(%)',
+		            field: 'bufferCacheUseMemTotal',
+		            title: '缓存使用大小',
+		            sortable: true
+		        },
+		        {
+		            field: 'swapMemTotal',
+		            title: '交换区总大小',
 		            sortable: true
 		        }
 		        ]
@@ -82,7 +87,7 @@
 		    $.table.init(options);
 
 		    $("#go-chart").click(function(){
-		       $.modal.open('磁盘使用情况',portal.bp() + '/hardware/disk/create-chart?ip='+$("#ip").val()+'&startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val());
+		       $.modal.open('内存使用情况',portal.bp() + '/hardware/mem/create-chart?ip='+$("#ip").val()+'&startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val());
 			});
 		});
 

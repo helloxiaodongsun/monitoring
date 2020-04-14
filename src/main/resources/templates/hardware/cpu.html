@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-	<th:block th:include="include :: header('硬盘信息')" />
+	<th:block th:include="include :: header('cpu信息')" />
 </head>
 <body class="gray-bg">
 	<div class="container-div">
@@ -48,9 +48,9 @@
 	<script th:inline="javascript">
 		$(function() {
 		    var options = {
-		        url: portal.bp() + "/diskInfo/list",
+		        url: portal.bp() + "/cpuInfo/list",
 		        sortName: "dataDt",
-		        modalName: "硬盘信息",
+		        modalName: "cpu信息",
 		        columns: [
 		        {
 		            field: 'dataDt',
@@ -58,23 +58,28 @@
                     sortable: true
 		        },
 		        {
-		            field: 'filesystemNm',
-		            title: '文件系统名称',
+		            field: 'usCpuRate',
+		            title: '用户空间占用(%)',
 		            sortable: true
 		        },
 		        {
-		            field: 'diskTotalSize',
-		            title: '所在磁盘大小(kb)',
+		            field: 'syCpuRate',
+		            title: '内核空间占用(%)',
 		            sortable: true
 		        },
 		        {
-		            field: 'diskUsedSize',
-		            title: '所在磁盘使用大小(kb)',
+		            field: 'niCpuRate',
+		            title: '改变优先级进程占用(%)',
 		            sortable: true
 		        },
 		        {
-		            field: 'diskUsedRate',
-		            title: '磁盘使用率(%)',
+		            field: 'waCpuRate',
+		            title: 'IO等待占用(%)',
+		            sortable: true
+		        },
+		        {
+		            field: 'idCpuRate',
+		            title: '空闲cpu占用(%)',
 		            sortable: true
 		        }
 		        ]
@@ -82,7 +87,7 @@
 		    $.table.init(options);
 
 		    $("#go-chart").click(function(){
-		       $.modal.open('磁盘使用情况',portal.bp() + '/hardware/disk/create-chart?ip='+$("#ip").val()+'&startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val());
+		       $.modal.open('cpu使用情况',portal.bp() + '/hardware/cpu/create-chart?ip='+$("#ip").val()+'&startTime='+$("#startTime").val()+'&endTime='+$("#endTime").val());
 			});
 		});
 

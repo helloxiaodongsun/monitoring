@@ -2,6 +2,7 @@ package com.pactera.monitoring.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.pactera.monitoring.entity.SysMenu;
 import com.pactera.monitoring.entity.TestServer;
 import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
@@ -63,7 +64,7 @@ public class IndexController {
         return "hardware/disk";
     }
     /**
-     * 进入硬盘信息监控页面
+     * 进入硬盘信息图表页面
      * @param mmap
      * @return
      */
@@ -79,5 +80,100 @@ public class IndexController {
         mmap.put("xAxisData",xAxisData);
         return "hardware/disk-chart";
     }
+    /**
+     * 进入cpu信息监控页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/cpu")
+    public String cpuIndex(ModelMap mmap) throws Exception {
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfoToDto();
+        mmap.put("servers",servers);
+        return "hardware/cpu";
+    }
 
+    /**
+     * 进入cpu信息图表页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/cpu/create-chart")
+    public String cpuCreateChart(ModelMap mmap,String ip,String startTime,String endTime) throws Exception {
+
+        JSONArray dataSetSource = JSONArray.parseArray("[\n" +
+                "                    ['product', '2020-04-13 00:00', '2020-04-13 01:00', '2020-04-13 02:00', '2020-04-13 03:00', '2020-04-13 04:00', '2020-04-13 05:00'],\n" +
+                "                    ['用户空间占用', 41.1, 30.4, 65.1, 53.3, 83.8, 98.7],\n" +
+                "                    ['内核空间占用', 86.5, 92.1, 85.7, 83.1, 73.4, 55.1],\n" +
+                "                    ['改变优先级进程占用', 24.1, 67.2, 79.5, 86.4, 65.2, 82.5],\n" +
+                "                    ['IO等待占用', 55.2, 67.1, 69.2, 72.4, 53.9, 39.1],\n" +
+                "                    ['空闲cpu占用', 56.2, 68.1, 65.2, 70.4, 13.9, 39.1]\n" +
+                "                ]");
+
+        mmap.put("dataSetSource",dataSetSource);
+        return "hardware/cpu-chart";
+    }
+
+    /**
+     * 进入io信息监控页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/io")
+    public String ioIndex(ModelMap mmap) throws Exception {
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfoToDto();
+        mmap.put("servers",servers);
+        return "hardware/io";
+    }
+
+    /**
+     * 进入io信息图表页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/io/create-chart")
+    public String ioCreateChart(ModelMap mmap,String ip,String startTime,String endTime) throws Exception {
+
+        JSONArray xAxisData = JSONArray.parseArray("['Apr 13, 2020 11:16:06 AM', 'Apr 13, 2020 11:16:20 AM', 'Apr 13, 2020 11:16:40 AM', 'Apr 13, 2020 11:17:00 AM', 'Apr 13, 2020 11:17:20 AM', 'Apr 13, 2020 11:17:40 AM', 'Apr 13, 2020 11:18:00 AM', 'Apr 13, 2020 11:18:20 AM', 'Apr 13, 2020 11:18:40 AM', 'Apr 13, 2020 11:19:00 AM']");
+        JSONObject seriesData = JSONObject.parseObject("{\"diskTrans\":[\"10.070\",\"10.070\",\"10.070\",\"10.070\",\"10.070\",\"10.070\",\"10.070\",\"10.070\",\"10.070\",\"10.070\"],\n" +
+                "\"diskRead\":[\"2.960\",\"2.960\",\"2.960\",\"2.960\",\"2.960\",\"2.960\",\"2.960\",\"2.960\",\"2.960\",\"2.960\"],\n" +
+                "\"diskWrite\":[\"7.110\",\"7.110\",\"7.110\",\"7.110\",\"7.110\",\"7.110\",\"7.110\",\"7.110\",\"7.110\",\"7.110\"],\n" +
+                "\"diskUseRate\":[\"3.545\",\"3.545\",\"3.545\",\"3.545\",\"3.545\",\"3.545\",\"3.545\",\"3.545\",\"3.545\",\"3.545\"],\n" +
+                "\"diskAvgRespond\": [\"8.820\",\"8.820\",\"8.820\",\"8.820\",\"8.820\",\"8.820\",\"8.820\",\"8.820\",\"8.820\",\"8.820\"]}");
+
+        mmap.put("xAxisData",xAxisData);
+        mmap.put("seriesData",seriesData);
+        return "hardware/io-chart";
+    }
+
+    /**
+     * 进入内存信息监控页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/mem")
+    public String memIndex(ModelMap mmap) throws Exception {
+        List<MonHardwareServerInfoDto> servers = monHardwareServerInfoService.queryAllServerInfoToDto();
+        mmap.put("servers",servers);
+        return "hardware/mem";
+    }
+
+    /**
+     * 进入内存信息图表页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/mem/create-chart")
+    public String memCreateChart(ModelMap mmap,String ip,String startTime,String endTime) throws Exception {
+
+        JSONArray xAxisData = JSONArray.parseArray("['Apr 13, 2020 11:16:06 AM', 'Apr 13, 2020 11:16:20 AM', 'Apr 13, 2020 11:16:40 AM', 'Apr 13, 2020 11:17:00 AM', 'Apr 13, 2020 11:17:20 AM', 'Apr 13, 2020 11:17:40 AM', 'Apr 13, 2020 11:18:00 AM', 'Apr 13, 2020 11:18:20 AM', 'Apr 13, 2020 11:18:40 AM', 'Apr 13, 2020 11:19:00 AM']");
+        JSONObject seriesData = JSONObject.parseObject("{\n" +
+                "  \"memUseTotal\":[\"0.287\",\"0.288\",\"0.289\",\"0.287\",\"0.297\",\"0.267\",\"0.287\",\"0.287\",\"0.287\",\"0.287\"],\n" +
+                "  \"freeMemTotal\" :[\"0.845\",\"0.844\",\"0.843\",\"0.845\",\"0.835\",\"0.865\",\"0.845\",\"0.845\",\"0.845\",\"0.845\"],\n" +
+                "  \"bufferCacheUseMemTotal\":[\"0.832\",\"0.822\",\"0.818\",\"0.815\",\"0.912\",\"0.712\",\"0.812\",\"0.812\",\"0.812\",\"0.812\"]\n" +
+                "}");
+
+        mmap.put("xAxisData",xAxisData);
+        mmap.put("seriesData",seriesData);
+        return "hardware/mem-chart";
+    }
 }
