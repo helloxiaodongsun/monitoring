@@ -11,8 +11,7 @@ import com.pactera.monitoring.enums.MethodType;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareIoInfoService;
 import com.pactera.monitoring.utils.AjaxResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,36 +25,31 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping("/ioInfo")
+@Slf4j
 public class MonHardwareIoInfoController extends BaseController {
 
-    public static final Logger log = LoggerFactory.getLogger(MonHardwareIoInfoController.class);
 
     @Autowired
     MonHardwareIoInfoService monHardwareIoInfoService;
 
     /**
      * 根据ip,查询该服务器的io信息
+     *
      * @param ip ip地址
      * @return 结果集
      */
     @GetMapping(value = "/summary")
-    @MethodExplain(methodType= MethodType.SELECT,methodName = "io信息查询")
+    @MethodExplain(methodType = MethodType.SELECT, methodName = "io信息查询")
     @ResponseBody
-    public AjaxResult getIoInfo(@RequestParam(value = "ip") String ip) {
-        MonHardwareIoInfoDto monHardwareIoInfoDto;
-        try {
-             monHardwareIoInfoDto = monHardwareIoInfoService.queryIoInfo(ip);
-        } catch (BussinessException | JSchException e) {
-            log.error(e.getMessage(),e);
-            return AjaxResult.error(e.getMessage());
-        }
+    public AjaxResult getIoInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+        MonHardwareIoInfoDto monHardwareIoInfoDto = monHardwareIoInfoService.queryIoInfo(ip);
         return AjaxResult.success(monHardwareIoInfoDto);
     }
 
     @PostMapping(value = "/list")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "服务器历史IO信息查询")
     @ResponseBody
-    public TableDataInfo getIoInfoByCondition(SearchBaseEntity searchBaseEntity){
+    public TableDataInfo getIoInfoByCondition(SearchBaseEntity searchBaseEntity) {
         startPage();
         PageInfo<MonHardwareIoInfoDto> monHardwareIoInfoDtoPageInfo = monHardwareIoInfoService.queryIoInfoFromDbByCondition(searchBaseEntity);
         return getDataTable(monHardwareIoInfoDtoPageInfo);
