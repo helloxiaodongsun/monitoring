@@ -74,6 +74,10 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
         return new SimpleDateFormat(format).format(date);
     }
 
+    public static final String parseDataDt(Date date){
+        return parseDateToStr(YYYY_MM_DD_HH_MM_SS,date);
+    }
+
     public static final Date dateTime(final String format, final String ts)
     {
         try

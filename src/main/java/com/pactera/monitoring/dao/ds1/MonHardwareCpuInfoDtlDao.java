@@ -21,4 +21,11 @@ public interface MonHardwareCpuInfoDtlDao {
      * @return cpu明细实体类
      */
     List<MonHardwareCpuInfoDtl> selectByCondition(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 创建cpu图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    List<MonHardwareCpuInfoDtl> cpuChartData(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
 }

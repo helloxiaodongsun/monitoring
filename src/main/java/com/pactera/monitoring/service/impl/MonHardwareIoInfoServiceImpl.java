@@ -11,6 +11,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareIoInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareIoInfoService;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
@@ -19,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 查询io信息
@@ -130,5 +130,47 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
         PageInfo<MonHardwareIoInfoDto> page = new PageInfo<>(monHardwareIoInfoDtoList);
         PageInfoSetVal.setVal(page, oldPage);
         return page;
+    }
+
+    /**
+     * 生成io图表所需数据
+     *
+     * @param searchBaseEntity
+     * @return
+     */
+    @Override
+    public Map<Object, Object> ioChartData(SearchBaseEntity searchBaseEntity) {
+        Map<Object,Object> result = new HashMap<>();
+
+        List<Object> xAxisData = new ArrayList<>();
+        result.put("xAxisData",xAxisData);
+
+        Map<Object,Object> seriesData = new HashMap<>();
+        result.put("seriesData",seriesData);
+
+        List<Object> diskTrans = new ArrayList<>();
+        List<Object> diskRead = new ArrayList<>();
+        List<Object> diskWrite = new ArrayList<>();
+        List<Object> diskUseRate = new ArrayList<>();
+        List<Object> diskAvgRespond = new ArrayList<>();
+        seriesData.put("diskTrans",diskTrans);
+        seriesData.put("diskRead",diskRead);
+        seriesData.put("diskWrite",diskWrite);
+        seriesData.put("diskUseRate",diskUseRate);
+        seriesData.put("diskAvgRespond",diskAvgRespond);
+
+        List<MonHardwareIoInfo> monHardwareIoInfoList = monHardwareIoInfoDao.ioChartData(searchBaseEntity);
+        if(monHardwareIoInfoList.size()!=0){
+            for(MonHardwareIoInfo m:monHardwareIoInfoList){
+                xAxisData.add(DateUtils.parseDataDt(m.getDataDt()));
+                diskTrans.add(m.getDiskTrans());
+                diskRead.add(m.getDiskRead());
+                diskWrite.add(m.getDiskWrite());
+                diskUseRate.add(m.getDiskUseRate());
+                diskAvgRespond.add(m.getDiskAvgRespond());
+            }
+        }
+
+        return result;
     }
 }

@@ -10,6 +10,7 @@ import com.pactera.monitoring.exception.BussinessException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 84483
@@ -48,4 +49,11 @@ public interface MonHardwareMemInfoService {
      * @return 符合条件的dto
      */
     PageInfo<MonHardwareMemInfoDto> queryServerMemInfoFromDbByCondition(SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 生成内存图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    Map<Object,Object> memChartData(SearchBaseEntity searchBaseEntity);
 }

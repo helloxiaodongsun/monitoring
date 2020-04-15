@@ -1,5 +1,7 @@
 package com.pactera.monitoring.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**磁盘汇总dto
@@ -22,6 +24,7 @@ public class MonHardwareDiskInfoTolDto {
     /**
      * 日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date dataDt;
 
 

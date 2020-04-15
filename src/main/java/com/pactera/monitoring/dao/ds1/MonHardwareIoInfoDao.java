@@ -21,4 +21,11 @@ public interface MonHardwareIoInfoDao {
      * @return IO明细信息
      */
     List<MonHardwareIoInfo> selectByCondition(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 生成io图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    List<MonHardwareIoInfo> ioChartData(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
 }

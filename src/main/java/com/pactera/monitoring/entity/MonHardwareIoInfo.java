@@ -1,5 +1,7 @@
 package com.pactera.monitoring.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 /**
@@ -20,6 +22,7 @@ public class MonHardwareIoInfo {
     /**
      * 日期
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date dataDt;
 
     /**

@@ -21,4 +21,12 @@ public interface MonHardwareMemInfoDtlDao {
      * @return 内存明细信息
      */
     List<MonHardwareMemInfoDtl> selectByCondition(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 生成内存图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    List<MonHardwareMemInfoDtl> memChartData(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
+
 }

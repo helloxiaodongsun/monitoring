@@ -14,6 +14,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoTolDto;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareCpuInfoService;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -133,7 +135,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException {
+    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -156,7 +158,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException {
+    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -200,5 +202,48 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         PageInfo<MonHardwareCpuInfoDtlDto> page = new PageInfo<>(monHardwareCpuInfoDtlDtos);
         PageInfoSetVal.setVal(page, oldPage);
         return page;
+    }
+
+    /**
+     * 创建cpu图表所需数据
+     *
+     * @param searchBaseEntity
+     * @return
+     */
+    @Override
+    public List<ArrayList<Object>> cpuChartData(SearchBaseEntity searchBaseEntity) {
+        List<ArrayList<Object>> result = new ArrayList<>();
+        ArrayList<Object> arr1 = new ArrayList<>();
+        ArrayList<Object> arr2 = new ArrayList<>();
+        ArrayList<Object> arr3 = new ArrayList<>();
+        ArrayList<Object> arr4 = new ArrayList<>();
+        ArrayList<Object> arr5 = new ArrayList<>();
+        ArrayList<Object> arr6 = new ArrayList<>();
+        result.add(arr1);
+        result.add(arr2);
+        result.add(arr3);
+        result.add(arr4);
+        result.add(arr5);
+        result.add(arr6);
+
+        arr1.add("product");
+        arr2.add("用户空间占用");
+        arr3.add("内核空间占用");
+        arr4.add("改变优先级进程占用");
+        arr5.add("IO等待占用");
+        arr6.add("空闲cpu占用");
+
+        List<MonHardwareCpuInfoDtl> monHardwareCpuInfoDtls = monHardwareCpuInfoDtlDao.cpuChartData(searchBaseEntity);
+        if(monHardwareCpuInfoDtls.size()!=0){
+            for(MonHardwareCpuInfoDtl m:monHardwareCpuInfoDtls){
+                arr1.add(DateUtils.parseDataDt(m.getDataDt()));
+                arr2.add(m.getUsCpuRate());
+                arr3.add(m.getSyCpuRate());
+                arr4.add(m.getNiCpuRate());
+                arr5.add(m.getWaCpuRate());
+                arr6.add(m.getIdCpuRate());
+            }
+        }
+        return result;
     }
 }

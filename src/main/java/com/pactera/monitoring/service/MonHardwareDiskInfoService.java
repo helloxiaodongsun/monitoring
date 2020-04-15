@@ -12,6 +12,7 @@ import com.pactera.monitoring.exception.BussinessException;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**硬盘信息
  * @author 84483
@@ -85,4 +86,11 @@ public interface MonHardwareDiskInfoService {
      * @return 符合条件的dto
      */
     PageInfo<MonHardwareDiskInfoDtlDto> queryDiskInfoDtlFromDbByCondition(SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 生成硬盘图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    Map<Object,Object> diskChartData(SearchBaseEntity searchBaseEntity);
 }

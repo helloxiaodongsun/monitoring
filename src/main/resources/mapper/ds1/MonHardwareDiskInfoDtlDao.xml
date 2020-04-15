@@ -294,4 +294,37 @@
         </where>
         order by t.DATA_DT DESC,t.SERVICE_IP DESC,t.FILESYSTEM_NM DESC
     </select>
+    <select id="getMountedOnData" resultType="String">
+        select distinct MOUNTED_ON from MON_HARDWARE_DISKINFO_DTL t
+        <where>
+            <if test="searchBaseEntity.ip !=null and searchBaseEntity.ip !=''">
+                AND t.SERVICE_IP=#{searchBaseEntity.ip,jdbcType=VARCHAR}
+            </if>
+            <if test="searchBaseEntity.startTime !=null and searchBaseEntity.startTime !=''">
+                AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[>=]]> #{searchBaseEntity.startTime,jdbcType=VARCHAR}
+            </if>
+            <if test="searchBaseEntity.endTime !=null and searchBaseEntity.endTime !=''">
+                AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[<=]]> #{searchBaseEntity.endTime,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by t.MOUNTED_ON
+    </select>
+    <select id="diskChartData" resultMap="BaseResultMap">
+        select
+        <include refid="baseFormSql"/>
+        from MON_HARDWARE_DISKINFO_DTL t
+        <where>
+            t.MOUNTED_ON is not null
+            <if test="searchBaseEntity.ip !=null and searchBaseEntity.ip !=''">
+                AND t.SERVICE_IP=#{searchBaseEntity.ip,jdbcType=VARCHAR}
+            </if>
+            <if test="searchBaseEntity.startTime !=null and searchBaseEntity.startTime !=''">
+                AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[>=]]> #{searchBaseEntity.startTime,jdbcType=VARCHAR}
+            </if>
+            <if test="searchBaseEntity.endTime !=null and searchBaseEntity.endTime !=''">
+                AND TO_CHAR(t.DATA_DT,'yyyy-mm-dd') <![CDATA[<=]]> #{searchBaseEntity.endTime,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by t.DATA_DT ASC,t.SERVICE_IP DESC
+    </select>
 </mapper>

@@ -30,4 +30,17 @@ public interface MonHardwareDiskInfoDtlDao {
      */
     List<MonHardwareDiskInfoDtl> selectByCondition(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
 
+    /**
+     * 获取所有挂载点的数据
+     * @param searchBaseEntity
+     * @return
+     */
+    List<String> getMountedOnData(@Param("searchBaseEntity")SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 生成硬盘图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    List<MonHardwareDiskInfoDtl> diskChartData(@Param("searchBaseEntity") SearchBaseEntity searchBaseEntity);
 }

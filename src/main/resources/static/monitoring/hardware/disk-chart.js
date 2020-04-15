@@ -4,7 +4,6 @@ $(function() {
         myChart.resize();
     });
 
-    $.get(portal.bp()+'/json/hardware/disk_chart.json',function(rawData){
 
         myChart.setOption(option = {
             tooltip: {
@@ -48,7 +47,6 @@ $(function() {
             series: dealseries(legendData,rawData)
         }, true);
 
-    });
 
 
 });
@@ -58,11 +56,7 @@ function dealseries(legendData,rawData){
         var serie = {
             name : legendData[i],
             type : 'bar',
-            stack: '总量',
-            label: {
-                show: true,
-                position: 'insideRight'
-            },
+            stack : '总量',
             data : rawData[legendData[i]]
         }
         series.push(serie);

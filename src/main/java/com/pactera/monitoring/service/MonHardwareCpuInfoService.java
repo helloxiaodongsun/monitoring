@@ -11,7 +11,9 @@ import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoTolDto;
 import com.pactera.monitoring.entity.dto.MonHardwareMemInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * cpu信息service
@@ -86,4 +88,11 @@ public interface MonHardwareCpuInfoService {
      * @return 符合条件的dto
      */
     PageInfo<MonHardwareCpuInfoDtlDto> queryCpuInfoDtlFromDbByCondition(SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 创建cpu图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    List<ArrayList<Object>> cpuChartData(SearchBaseEntity searchBaseEntity);
 }

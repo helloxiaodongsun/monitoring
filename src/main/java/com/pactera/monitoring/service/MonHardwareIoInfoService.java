@@ -9,6 +9,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareIoInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * io信息查询
@@ -46,4 +47,11 @@ public interface MonHardwareIoInfoService {
      * @return 符合条件的dto
      */
     PageInfo<MonHardwareIoInfoDto> queryIoInfoFromDbByCondition(SearchBaseEntity searchBaseEntity);
+
+    /**
+     * 生成io图表所需数据
+     * @param searchBaseEntity
+     * @return
+     */
+    Map<Object,Object> ioChartData(SearchBaseEntity searchBaseEntity);
 }

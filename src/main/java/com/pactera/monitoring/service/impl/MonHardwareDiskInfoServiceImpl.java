@@ -14,6 +14,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareDiskInfoTolDto;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareDiskInfoService;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
@@ -22,8 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -205,5 +205,44 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
         PageInfo<MonHardwareDiskInfoDtlDto> page = new PageInfo<>(monHardwareDiskInfoDtlDtoList);
         PageInfoSetVal.setVal(page, oldPage);
         return page;
+    }
+
+    /**
+     * 生成硬盘图表所需数据
+     *
+     * @param searchBaseEntity
+     * @return
+     */
+    @Override
+    public Map<Object, Object> diskChartData(SearchBaseEntity searchBaseEntity) {
+        Map<Object,Object> result = new HashMap<>();
+
+        List<String> legendData = new ArrayList<String>();
+
+        List<Object> xAxisData = new ArrayList<>();
+
+
+        Map<String,ArrayList> rawData = new HashMap<>();
+        result.put("rawData",rawData);
+
+        legendData = monHardwareDiskinfoDtlDao.getMountedOnData(searchBaseEntity);
+        if(legendData.size()!=0){
+            for(String le:legendData){
+                rawData.put(le,new ArrayList<>());
+            }
+            List<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList = monHardwareDiskinfoDtlDao.diskChartData(searchBaseEntity);
+            if(monHardwareDiskInfoDtlList.size()!=0){
+                for(MonHardwareDiskInfoDtl m:monHardwareDiskInfoDtlList){
+                    xAxisData.add(DateUtils.parseDataDt(m.getDataDt()));
+                    rawData.get(m.getMountedOn()).add(m.getDiskUsedSize());
+                }
+                xAxisData = xAxisData.stream().distinct().collect(Collectors.toList());
+            }
+        }
+
+
+        result.put("xAxisData",xAxisData);
+        result.put("legendData",legendData);
+        return result;
     }
 }

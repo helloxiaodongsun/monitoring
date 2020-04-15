@@ -12,6 +12,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareMemInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareMemInfoService;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
+import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
 import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
@@ -20,8 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 服务器内存插叙
@@ -132,5 +132,40 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
         PageInfo<MonHardwareMemInfoDto> page = new PageInfo<MonHardwareMemInfoDto>(monHardwareMemInfoDtos);
         PageInfoSetVal.setVal(page, oldPage);
         return page;
+    }
+
+    /**
+     * 生成内存图表所需数据
+     *
+     * @param searchBaseEntity
+     * @return
+     */
+    @Override
+    public Map<Object, Object> memChartData(SearchBaseEntity searchBaseEntity) {
+        Map<Object,Object> result = new HashMap<>();
+
+        List<Object> xAxisData = new ArrayList<>();
+        result.put("xAxisData",xAxisData);
+
+        Map<Object,Object> seriesData = new HashMap<>();
+        result.put("seriesData",seriesData);
+
+        List<Object> memUseTotal = new ArrayList<>();
+        List<Object> freeMemTotal = new ArrayList<>();
+        List<Object> bufferCacheUseMemTotal = new ArrayList<>();
+        seriesData.put("memUseTotal",memUseTotal);
+        seriesData.put("freeMemTotal",freeMemTotal);
+        seriesData.put("bufferCacheUseMemTotal",bufferCacheUseMemTotal);
+
+        List<MonHardwareMemInfoDtl> monHardwareMemInfoDtls = monHardwareMeminfoDtlDao.memChartData(searchBaseEntity);
+        if(monHardwareMemInfoDtls.size()!=0){
+            for(MonHardwareMemInfoDtl m:monHardwareMemInfoDtls){
+                xAxisData.add(DateUtils.parseDataDt(m.getDataDt()));
+                memUseTotal.add(m.getMemUseTotal());
+                freeMemTotal.add(m.getFreeMemTotal());
+                bufferCacheUseMemTotal.add(m.getBufferCacheUseMemTotal());
+            }
+        }
+        return result;
     }
 }
