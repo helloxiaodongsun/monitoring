@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**服务器基本信息dao
+ * @author 84483
+ */
 @Repository
 public interface MonHardwareServerInfoDao {
     int insert(MonHardwareServerInfo record);

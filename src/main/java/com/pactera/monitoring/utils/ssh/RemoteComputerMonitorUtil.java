@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 
 /**
@@ -33,7 +34,7 @@ public class RemoteComputerMonitorUtil {
     private static Logger logger = LoggerFactory.getLogger(RemoteComputerMonitorUtil.class);
     private String networkAdapter;
     //private String cpuCommand = "vmstat|awk 'NR==3''{print $13, $14, $16, $15}'";
-        private String cpuCommand = "iostat -c 1 2|grep -v '^$'|awk 'NR==5  {print $1 \";\" $2 \";\" $3 \";\" $4 \";\" $6}'";
+    private String cpuCommand = "iostat -c 1 2|grep -v '^$'|awk 'NR==5  {print $1 \";\" $2 \";\" $3 \";\" $4 \";\" $6}'";
     //查询物理cpu数目
     private String cpuNumCommand = "grep 'physical id' /proc/cpuinfo|sort -u|wc -l";
     //查询cpu核心数
@@ -49,7 +50,7 @@ public class RemoteComputerMonitorUtil {
     //查看硬盘汇总
     private String diskCommandTol = "df --total|awk '/total/ {print $2,$3,$4,$5}'";
     //查看硬盘明细
-    private String diskCommandDtl = "df |awk 'NR>1 {print $1,$2,$3,$4,$5}'";
+    private String diskCommandDtl = "df|awk 'BEGIN{FS=\" \";OFS=\";\"} {NF=NF;print $0}'";
     //查看磁盘使用率
     private String diskUseRateCommand = "df |awk 'NR !=1 {print $2 \";\" $3}'";
     private String networkCommand = "cat /proc/net/dev|grep networkAdapter|awk '{print $2, $10}'";
@@ -127,13 +128,13 @@ public class RemoteComputerMonitorUtil {
             jschUtil.connect();
             List<String> sercerCoreResult = jschUtil.execCmd(serverCoreCommand);
             List<String> determinServerTypeList = jschUtil.execCmd(determineServerType);
-            List<String> serverInfoResult ;
-            if(determinServerTypeList==null
-                    || determinServerTypeList.size()<=0
-                    || "1".equals(determinServerTypeList.get(0))){
+            List<String> serverInfoResult;
+            if (determinServerTypeList == null
+                    || determinServerTypeList.size() <= 0
+                    || "1".equals(determinServerTypeList.get(0))) {
                 //服务器是centos、redhat
                 serverInfoResult = jschUtil.execCmd(serverInfoCommandCentos);
-            }else {
+            } else {
                 //服务器是ubantu
                 serverInfoResult = jschUtil.execCmd(serverInfoCommandUbntu);
             }
@@ -256,7 +257,7 @@ public class RemoteComputerMonitorUtil {
         jschUtil.connect();
         List<String> memoResult = jschUtil.execCmd(memCommand);
         List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
-        return memoAnalyis(memoResult, serverNameResult,jschUtil.getHost());
+        return memoAnalyis(memoResult, serverNameResult, jschUtil.getHost());
     }
 
     /**
@@ -265,7 +266,7 @@ public class RemoteComputerMonitorUtil {
      * @param memoResult
      * @return
      */
-    public MonHardwareMemInfoDtl memoAnalyis(List<String> memoResult, List<String> serverNameResult,String ip) {
+    public MonHardwareMemInfoDtl memoAnalyis(List<String> memoResult, List<String> serverNameResult, String ip) {
 
         if (memoResult == null
                 || memoResult.size() != 3
@@ -274,11 +275,11 @@ public class RemoteComputerMonitorUtil {
             return new MonHardwareMemInfoDtl();
         }
         String headerStr = memoResult.get(0);
-        if(StringUtils.isEmpty(headerStr)){
+        if (StringUtils.isEmpty(headerStr)) {
             return new MonHardwareMemInfoDtl();
         }
         String[] split = headerStr.split(";");
-        Map<String, Integer> filedIndex = ioFieldIndexCaculat(Arrays.asList(split),memoFields());
+        Map<String, Integer> filedIndex = ioFieldIndexCaculat(Arrays.asList(split), memoFields());
         String memoInfo = memoResult.get(1);
         String swapInfo = memoResult.get(2);
         String serverName = serverNameResult.get(0);
@@ -294,28 +295,28 @@ public class RemoteComputerMonitorUtil {
         if (memoInfoArray.length != memoBookLen || swapInfoArray.length != swapBookLen) {
             return new MonHardwareMemInfoDtl();
         }*/
-        double memTotal = Double.parseDouble(memoInfoArray[filedIndex.get("total")+1]) / 1024 / 1024;
-        double memFree = Double.parseDouble(memoInfoArray[filedIndex.get("free")+1]) / 1024 / 1024;
-        double memUsed = Double.parseDouble(memoInfoArray[filedIndex.get("used")+1]) / 1024 / 1024;
-        double memoShared = Double.parseDouble(memoInfoArray[filedIndex.get("shared")+1]) / 1024 / 1024;
-        double swapTotal = Double.parseDouble(swapInfoArray[filedIndex.get("total")+1]) / 1024 / 1024;
-        double swapUsed = Double.parseDouble(swapInfoArray[filedIndex.get("used")+1]) / 1024 / 1024;
-        double swapFree = Double.parseDouble(swapInfoArray[filedIndex.get("free")+1]) / 1024 / 1024;
+        double memTotal = Double.parseDouble(memoInfoArray[filedIndex.get("total") + 1]) / 1024 / 1024;
+        double memFree = Double.parseDouble(memoInfoArray[filedIndex.get("free") + 1]) / 1024 / 1024;
+        double memUsed = Double.parseDouble(memoInfoArray[filedIndex.get("used") + 1]) / 1024 / 1024;
+        double memoShared = Double.parseDouble(memoInfoArray[filedIndex.get("shared") + 1]) / 1024 / 1024;
+        double swapTotal = Double.parseDouble(swapInfoArray[filedIndex.get("total") + 1]) / 1024 / 1024;
+        double swapUsed = Double.parseDouble(swapInfoArray[filedIndex.get("used") + 1]) / 1024 / 1024;
+        double swapFree = Double.parseDouble(swapInfoArray[filedIndex.get("free") + 1]) / 1024 / 1024;
         double memUsedRate = memUsed / memTotal * 100;
         Integer buffersIndex = filedIndex.get("buffers");
         Integer cachedIndex = filedIndex.get("cached");
         Integer buffCacheIndex = filedIndex.get("buffCacheMap");
-        boolean bufferCheck = buffersIndex != null ;
+        boolean bufferCheck = buffersIndex != null;
         boolean cacheCheck = cachedIndex != null;
         boolean buffCacheIndexFlag = buffCacheIndex != null;
-        double cachedAndBuffers ;
-        if(buffCacheIndexFlag ){
-            cachedAndBuffers=Double.parseDouble(memoInfoArray[filedIndex.get("buffCacheMap")+1]) / 1024 / 1024;
-        }else if(bufferCheck && cacheCheck){
-            cachedAndBuffers= (Double.parseDouble(memoInfoArray[4])
+        double cachedAndBuffers;
+        if (buffCacheIndexFlag) {
+            cachedAndBuffers = Double.parseDouble(memoInfoArray[filedIndex.get("buffCacheMap") + 1]) / 1024 / 1024;
+        } else if (bufferCheck && cacheCheck) {
+            cachedAndBuffers = (Double.parseDouble(memoInfoArray[4])
                     + Double.parseDouble(memoInfoArray[5])) / 1024 / 1024;
-        }else{
-            cachedAndBuffers=0.00d;
+        } else {
+            cachedAndBuffers = 0.00d;
         }
         MonHardwareMemInfoDtl monHardwareMemInfoDtl = new MonHardwareMemInfoDtl();
         monHardwareMemInfoDtl.setMemTotal(df.format(memTotal));
@@ -333,48 +334,19 @@ public class RemoteComputerMonitorUtil {
     }
 
     //生成memo的各个字段
-    public List<Map<String,List<String>>> memoFields(){
-        ArrayList<Map<String,List<String>>> result = new ArrayList<>();
-        HashMap<String, List<String>> totalMap = new HashMap<>(1);
-        totalMap.put("total",Arrays.asList("total"));
-        result.add(totalMap);
-        HashMap<String, List<String>> usedMap = new HashMap<>(1);
-        usedMap.put("used",Arrays.asList("used"));
-        result.add(usedMap);
-        HashMap<String, List<String>> freeMap = new HashMap<>(1);
-        freeMap.put("free",Arrays.asList("free"));
-        result.add(freeMap);
-        HashMap<String, List<String>> sharedMap = new HashMap<>(1);
-        sharedMap.put("shared",Arrays.asList("shared"));
-        result.add(sharedMap);
-        HashMap<String, List<String>> buffCacheMap = new HashMap<>(1);
-        buffCacheMap.put("buffCacheMap",Arrays.asList("buff/cache"));
-        result.add(buffCacheMap);
-        HashMap<String, List<String>> availableMap = new HashMap<>(1);
-        availableMap.put("available",Arrays.asList("available"));
-        result.add(availableMap);
-        HashMap<String, List<String>> buffersMap = new HashMap<>(1);
-        buffersMap.put("buffers",Arrays.asList("buffers"));
-        result.add(buffersMap);
-        HashMap<String, List<String>> cachedMap = new HashMap<>(1);
-        cachedMap.put("cached",Arrays.asList("cached"));
-        result.add(cachedMap);
-        return result;
+    public Map<String, List<String>> memoFields() {
+        HashMap<String, List<String>> memoMap = new HashMap<>(1);
+        memoMap.put("total", Collections.singletonList("total"));
+        memoMap.put("used", Collections.singletonList("used"));
+        memoMap.put("free", Collections.singletonList("free"));
+        memoMap.put("shared", Collections.singletonList("shared"));
+        memoMap.put("buffCacheMap", Collections.singletonList("buff/cache"));
+        memoMap.put("available", Collections.singletonList("available"));
+        memoMap.put("buffers", Collections.singletonList("buffers"));
+        memoMap.put("cached", Collections.singletonList("cached"));
+        return memoMap;
     }
 
-    public HashMap<String, String> memoInitAnalyisResult(DecimalFormat df) {
-        HashMap<String, String> analyisResult = new HashMap<>(9);
-        analyisResult.put("memTotal", df.format(0));
-        analyisResult.put("memUsed", df.format(0));
-        analyisResult.put("memFree", df.format(0));
-        analyisResult.put("memUsedRate", df.format(0));
-        analyisResult.put("memoShared", df.format(0));
-        analyisResult.put("swapTotal", df.format(0));
-        analyisResult.put("swapUsed", df.format(0));
-        analyisResult.put("swapFree", df.format(0));
-        analyisResult.put("cachedAndBuffers", df.format(0));
-        return analyisResult;
-    }
 
     /**
      * 获取io信息
@@ -387,7 +359,7 @@ public class RemoteComputerMonitorUtil {
         List<String> serverNameResult = jschUtil.execCmd(serverHostNameCommand);
         List<String> diskUseList = jschUtil.execCmd(diskUseRateCommand);
         String diskUsedRate = diskUseCalculat(diskUseList);
-        if(remoteQueryRes == null || remoteQueryRes.size()<=0){
+        if (remoteQueryRes == null || remoteQueryRes.size() <= 0) {
             return new MonHardwareIoInfo();
         }
         List<List<String>> remoteQueryResTrim = remoteResTrimAndSplit(remoteQueryRes);
@@ -427,81 +399,46 @@ public class RemoteComputerMonitorUtil {
      * @param tableHeader
      * @return
      */
-    public Map<String, Integer> ioFieldIndexCaculat(List<String> tableHeader,List<Map<String, List<String>>> searchField) {
-        HashMap<String, Integer> map = new HashMap<>(searchField.size());
-        searchField.forEach(item -> {
-            boolean flag = false;
-            Set<String> itemKey = item.keySet();
-            for (String key : itemKey) {
-                List<String> itemValueList = item.get(key);
-                for (String itemValue : itemValueList) {
-                    for (int i = 0; i < tableHeader.size(); i++) {
-                        String splitItem = tableHeader.get(i);
-                        if (itemValue.equals(splitItem)) {
-                            map.put(key, i);
-                            flag = true;
-                            break;
-                        }
-
-                    }
-                    if (flag) {
-                        break;
-                    }
+    public Map<String, Integer> ioFieldIndexCaculat(List<String> tableHeader, Map<String, List<String>> searchField) {
+        Set<String> keySet = searchField.keySet();
+        return keySet.stream().collect(Collectors.collectingAndThen(Collectors.toMap(
+                key -> key,
+                value -> searchField.get(value).stream().filter(tableHeader::contains).mapToInt(tableHeader::indexOf).max().orElse(-1),
+                (value1, value2) -> value1 == -1 ? value2 : value1
+        ), result -> {
+            HashMap<String, Integer> filterMap = new HashMap<>(16);
+            result.forEach((key, value) -> {
+                if (value != -1) {
+                    filterMap.put(key, value);
                 }
-                if (flag) {
-                    break;
-                }
-            }
-        });
-        return map;
+            });
+            return filterMap;
+        }));
     }
 
     //初始化io查询字段集合
-    public List<Map<String, List<String>>> ioSearchField() {
-        ArrayList<Map<String, List<String>>> result = new ArrayList<>();
-        List<String> device = Arrays.asList("Device", "Device:");
+    public Map<String, List<String>> ioSearchField() {
         HashMap<String, List<String>> deviceMap = new HashMap<>(1);
-        deviceMap.put("Device", device);
-        List<String> readTimesPerSecond = Collections.singletonList("r/s");
-        HashMap<String, List<String>> readTimesPerSecondMap = new HashMap<>(1);
-        readTimesPerSecondMap.put("r/s", readTimesPerSecond);
-        List<String> writeTimesPerSecond = Collections.singletonList("w/s");
-        HashMap<String, List<String>> writeTimesPerSecondMap = new HashMap<>(1);
-        writeTimesPerSecondMap.put("w/s", writeTimesPerSecond);
-        List<String> readKbPerSecond = Collections.singletonList("rkB/s");
-        HashMap<String, List<String>> readKbPerSecondMap = new HashMap<>(1);
-        readKbPerSecondMap.put("rkB/s", readKbPerSecond);
-        List<String> writeKbPerSecond = Collections.singletonList("wkB/s");
-        HashMap<String, List<String>> writeKbPerSecondMap = new HashMap<>(1);
-        writeKbPerSecondMap.put("wkB/s", writeKbPerSecond);
-        List<String> rAwait = Collections.singletonList("r_await");
-        HashMap<String, List<String>> rAwaitMap = new HashMap<>(1);
-        rAwaitMap.put("r_await", rAwait);
-        List<String> wAwait = Collections.singletonList("w_await");
-        HashMap<String, List<String>> wAwaitMap = new HashMap<>(1);
-        wAwaitMap.put("w_await", wAwait);
-        List<String> await = Collections.singletonList("await");
-        HashMap<String, List<String>> awaitMap = new HashMap<>(1);
-        awaitMap.put("await", await);
-        result.add(deviceMap);
-        result.add(readTimesPerSecondMap);
-        result.add(writeTimesPerSecondMap);
-        result.add(readKbPerSecondMap);
-        result.add(writeKbPerSecondMap);
-        result.add(rAwaitMap);
-        result.add(wAwaitMap);
-        result.add(awaitMap);
-        return result;
+        deviceMap.put("Device", Arrays.asList("Device", "Device:"));
+        deviceMap.put("r/s", Collections.singletonList("r/s"));
+        deviceMap.put("w/s", Collections.singletonList("w/s"));
+        deviceMap.put("rkB/s", Collections.singletonList("rkB/s"));
+        deviceMap.put("wkB/s", Collections.singletonList("wkB/s"));
+        deviceMap.put("r_await", Collections.singletonList("r_await"));
+        deviceMap.put("w_await", Collections.singletonList("w_await"));
+        deviceMap.put("await", Collections.singletonList("await"));
+        return deviceMap;
     }
+
     //针对前台返回的数据以空格切割后，去除空处理
-    public List<List<String>> remoteResTrimAndSplit(List<String> remoteQueryRes){
+    public List<List<String>> remoteResTrimAndSplit(List<String> remoteQueryRes) {
         ArrayList<List<String>> result = new ArrayList<>();
-        remoteQueryRes.forEach(item->{
-            if(StringUtils.isNotEmpty(item)){
+        remoteQueryRes.forEach(item -> {
+            if (StringUtils.isNotEmpty(item)) {
                 String[] split = item.split(" ");
                 ArrayList<String> itemList = new ArrayList<>();
                 for (String itemValue : split) {
-                    if(StringUtils.isNotEmpty(itemValue)){
+                    if (StringUtils.isNotEmpty(itemValue)) {
                         itemList.add(itemValue);
                     }
                 }
@@ -510,6 +447,7 @@ public class RemoteComputerMonitorUtil {
         });
         return result;
     }
+
     /**
      * 解析从服务器拿到的io数据
      *
@@ -522,7 +460,7 @@ public class RemoteComputerMonitorUtil {
             return new HashMap<>(0);
         }
         HashMap<String, Map<String, String>> queryResColl = new HashMap<>();
-        Map<String, Integer> fieldIndex = ioFieldIndexCaculat(remoteQueryRes.get(0),ioSearchField());
+        Map<String, Integer> fieldIndex = ioFieldIndexCaculat(remoteQueryRes.get(0), ioSearchField());
         Integer deviceIndex = fieldIndex.get("Device");
         Integer readTimesPerSecondIndex = fieldIndex.get("r/s");
         Integer writeTimePerSecondIndex = fieldIndex.get("w/s");
@@ -546,7 +484,7 @@ public class RemoteComputerMonitorUtil {
         for (int i = 1; i < remoteQueryRes.size(); i++) {
             List<String> itemList = remoteQueryRes.get(i);
             if (itemList == null
-                    || itemList.size()==0) {
+                    || itemList.size() == 0) {
                 continue;
             }
 
@@ -617,11 +555,11 @@ public class RemoteComputerMonitorUtil {
 
     //计算硬盘响应时间
     public double ioWaitCalculat(double readTimes, double writeTimes, double readWait, double writeWait) {
-        double readTimesInit = Double.compare(readTimes,0.00d)==0 ? 1 : readTimes;
-        double writeTimesInit = Double.compare(writeTimes,0.00d)==0  ? 1 : writeTimes;
+        double readTimesInit = Double.compare(readTimes, 0.00d) == 0 ? 1 : readTimes;
+        double writeTimesInit = Double.compare(writeTimes, 0.00d) == 0 ? 1 : writeTimes;
         double operateTime = readWait * readTimesInit + writeWait * writeTimesInit;
         double operateTimes = readTimes + writeTimes;
-        operateTimes =Double.compare(operateTimes,0.00d)  == 0 ? 1 : operateTimes;
+        operateTimes = Double.compare(operateTimes, 0.00d) == 0 ? 1 : operateTimes;
         return operateTime / operateTimes;
     }
 
@@ -697,13 +635,14 @@ public class RemoteComputerMonitorUtil {
         }
         return monHardwareDiskInfoTol;
     }
+
     //消除字符串上的%
-    public String eliminatePercentSign(String source){
-        if(StringUtils.isEmpty(source)){
+    public String eliminatePercentSign(String source) {
+        if (StringUtils.isEmpty(source)) {
             return "";
         }
         int index = source.indexOf("%");
-        if(index<0){
+        if (index < 0) {
             return source;
         }
         return source.substring(0, index);
@@ -722,31 +661,55 @@ public class RemoteComputerMonitorUtil {
         if (result == null || result.size() <= 0) {
             return monHardwareDiskInfoDtlList;
         }
-        Date date = new Date();
-        result.forEach(item -> {
-            if (StringUtils.isEmpty(item)) {
-                return;
-            }
-            String[] diskInfoArray = item.split(" ");
-            if (diskInfoArray.length != 5) {
-                return;
-            }
-            MonHardwareDiskInfoDtl monHardwareDiskInfoDtl = new MonHardwareDiskInfoDtl();
-            monHardwareDiskInfoDtl.setFilesystemNm(diskInfoArray[0]);
-            monHardwareDiskInfoDtl.setDiskTotalSize(diskInfoArray[1]);
-            monHardwareDiskInfoDtl.setDiskUsedSize(diskInfoArray[2]);
-            monHardwareDiskInfoDtl.setDiskAvailSize(diskInfoArray[3]);
-            monHardwareDiskInfoDtl.setDiskUsedRate(eliminatePercentSign(diskInfoArray[4]));
-            if (serverNameResult != null
-                    && serverNameResult.size() > 0
-                    && StringUtils.isNotEmpty(serverNameResult.get(0))) {
-                monHardwareDiskInfoDtl.setServiceNm(serverNameResult.get(0));
-            }
-            monHardwareDiskInfoDtl.setServiceIp(jschUtil.getHost());
-            monHardwareDiskInfoDtl.setDataDt(date);
-            monHardwareDiskInfoDtlList.add(monHardwareDiskInfoDtl);
-        });
-        return monHardwareDiskInfoDtlList;
+        serverNameResult = serverNameResult == null
+                || serverNameResult.size() == 0
+                || StringUtils.isEmpty(serverNameResult.get(0))
+                ? Collections.singletonList("未知") : serverNameResult;
+
+        return cpuDetailedResultSetAnalysis(result, serverNameResult, jschUtil.getHost());
+    }
+
+    /**
+     * cpu明细结果集分析
+     *
+     * @param searchResult     cpu查询结果集
+     * @param serverNameResult 服务器信息查询结果集
+     * @return cpu明细实体类集合
+     */
+    public List<MonHardwareDiskInfoDtl> cpuDetailedResultSetAnalysis(List<String> searchResult,
+                                                                     List<String> serverNameResult,
+                                                                     String ip) {
+        String tableHeader = searchResult.get(0);
+        Date currentTime = new Date();
+        Map<String, Integer> requiredFieldIndex = ioFieldIndexCaculat(Arrays.asList(tableHeader.split(";")),
+                cpuDetailRequiredFieldGeneration());
+        return searchResult.stream().skip(1)
+                .map(queryResultString -> queryResultString.split(";"))
+                .map(queryResultArray
+                        -> new MonHardwareDiskInfoDtl(serverNameResult.get(0),
+                        ip,
+                        currentTime,
+                        queryResultArray[requiredFieldIndex.get("filesSystem")],
+                        queryResultArray[requiredFieldIndex.get("totalSize")],
+                        queryResultArray[requiredFieldIndex.get("usedSize")],
+                        eliminatePercentSign(queryResultArray[requiredFieldIndex.get("usedRate")]),
+                        queryResultArray[requiredFieldIndex.get("availSize")],
+                        queryResultArray[requiredFieldIndex.get("mountedOn")])).collect(Collectors.toList());
+
+    }
+
+    /**
+     * cpu明细必须字段生成
+     */
+    public Map<String, List<String>> cpuDetailRequiredFieldGeneration() {
+        HashMap<String, List<String>> resultMap = new HashMap<>(6);
+        resultMap.put("filesSystem", Collections.singletonList("Filesystem"));
+        resultMap.put("totalSize", Collections.singletonList("1K-blocks"));
+        resultMap.put("usedSize", Collections.singletonList("Used"));
+        resultMap.put("availSize", Collections.singletonList("Available"));
+        resultMap.put("usedRate", Collections.singletonList("Use%"));
+        resultMap.put("mountedOn", Collections.singletonList("Mounted"));
+        return resultMap;
     }
 
     /**

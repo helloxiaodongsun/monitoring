@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-/**
+/**硬盘明细dao
  * @author 84483
  */
 public interface MonHardwareDiskInfoDtlDao {

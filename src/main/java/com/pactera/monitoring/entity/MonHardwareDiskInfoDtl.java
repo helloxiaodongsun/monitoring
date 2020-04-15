@@ -52,9 +52,9 @@ public class MonHardwareDiskInfoDtl {
     private String diskAvailSize;
 
     /**
-     * 字符备用字段2
+     * 磁盘挂载点
      */
-    private String charBak2;
+    private String mountedOn;
 
     /**
      * 字符备用字段3
@@ -95,6 +95,29 @@ public class MonHardwareDiskInfoDtl {
      * 数字备用字段5
      */
     private Short numBak5;
+
+    public MonHardwareDiskInfoDtl(String serviceNm,
+                                  String serviceIp,
+                                  Date dataDt,
+                                  String filesystemNm,
+                                  String diskTotalSize,
+                                  String diskUsedSize,
+                                  String diskUsedRate,
+                                  String diskAvailSize,
+                                  String mountedOn) {
+        this.serviceNm = serviceNm;
+        this.serviceIp = serviceIp;
+        this.dataDt = dataDt;
+        this.filesystemNm = filesystemNm;
+        this.diskTotalSize = diskTotalSize;
+        this.diskUsedSize = diskUsedSize;
+        this.diskUsedRate = diskUsedRate;
+        this.diskAvailSize = diskAvailSize;
+        this.mountedOn = mountedOn;
+    }
+
+    public MonHardwareDiskInfoDtl() {
+    }
 
     public String getServiceNm() {
         return serviceNm;
@@ -168,12 +191,12 @@ public class MonHardwareDiskInfoDtl {
         this.diskAvailSize = diskAvailSize == null ? null : diskAvailSize.trim();
     }
 
-    public String getCharBak2() {
-        return charBak2;
+    public String getMountedOn() {
+        return mountedOn;
     }
 
-    public void setCharBak2(String charBak2) {
-        this.charBak2 = charBak2 == null ? null : charBak2.trim();
+    public void setMountedOn(String mountedOn) {
+        this.mountedOn = mountedOn;
     }
 
     public String getCharBak3() {

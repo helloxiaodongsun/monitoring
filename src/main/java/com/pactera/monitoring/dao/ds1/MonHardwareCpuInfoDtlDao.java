@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**cpu明细dao
+ * @author 84483
+ */
 public interface MonHardwareCpuInfoDtlDao {
     int insert(MonHardwareCpuInfoDtl record);
 

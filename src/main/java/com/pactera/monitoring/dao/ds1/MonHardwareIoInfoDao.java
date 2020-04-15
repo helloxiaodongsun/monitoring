@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**io信息dao
+ * @author 84483
+ */
 public interface MonHardwareIoInfoDao {
     int insert(MonHardwareIoInfo record);
 

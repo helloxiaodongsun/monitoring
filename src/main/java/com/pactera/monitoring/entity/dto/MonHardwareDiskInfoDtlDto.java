@@ -48,7 +48,10 @@ public class MonHardwareDiskInfoDtlDto {
      */
     private String diskAvailSize;
 
-
+    /**
+     * 文件系统挂载点
+     */
+    private String mountedOn;
 
     public String getServiceNm() {
         return serviceNm;
@@ -112,5 +115,13 @@ public class MonHardwareDiskInfoDtlDto {
 
     public void setDiskAvailSize(String diskAvailSize) {
         this.diskAvailSize = diskAvailSize;
+    }
+
+    public String getMountedOn() {
+        return mountedOn;
+    }
+
+    public void setMountedOn(String mountedOn) {
+        this.mountedOn = mountedOn;
     }
 }

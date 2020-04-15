@@ -175,12 +175,11 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
         monHardwareDiskInfoTol.setDataDt(date);
         monHardwareDiskInfoTol.setRecordDt(date);
         monHardwareDiskInfoTol.setServiceType(serviceType);
-        monHardwareDiskinfoTolDao.insertSelective(monHardwareDiskInfoTol);
-        return 0;
+        return monHardwareDiskinfoTolDao.insertSelective(monHardwareDiskInfoTol);
     }
 
     //do to dto
-    class DoToDTOConverter extends BaseConverter<MonHardwareDiskInfoDtl, MonHardwareDiskInfoDtlDto> {
+    static class DoToDTOConverter extends BaseConverter<MonHardwareDiskInfoDtl, MonHardwareDiskInfoDtlDto> {
         @Override
         protected void convert(MonHardwareDiskInfoDtl from, MonHardwareDiskInfoDtlDto to) {
             super.convert(from, to);

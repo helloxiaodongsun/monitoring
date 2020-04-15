@@ -6,6 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**内存信息明细dao
+ * @author 84483
+ */
 public interface MonHardwareMemInfoDtlDao {
     int insert(MonHardwareMemInfoDtl record);
 
