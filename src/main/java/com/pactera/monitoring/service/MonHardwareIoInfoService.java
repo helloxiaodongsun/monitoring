@@ -8,6 +8,7 @@ import com.pactera.monitoring.entity.SearchBaseEntity;
 import com.pactera.monitoring.entity.dto.MonHardwareIoInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public interface MonHardwareIoInfoService {
      * @param ip ip地址
      * @return io信息明细
      */
-    MonHardwareIoInfoDto queryIoInfo(String ip) throws BussinessException, JSchException;
+    MonHardwareIoInfoDto queryIoInfo(String ip) throws BussinessException, JSchException, IOException;
 
     /**
      * 连接Linux服务器，查询服务器IO信息
@@ -31,7 +32,7 @@ public interface MonHardwareIoInfoService {
      * @param port 端口号
      * @return io信息明细
      */
-    MonHardwareIoInfo queryIoInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException;
+    MonHardwareIoInfo queryIoInfoFromRemote(String serviceUser, String servicePassword, String ip, int port,Date date) throws JSchException, IOException;
 
     /**
      * IO信息保存
@@ -39,7 +40,7 @@ public interface MonHardwareIoInfoService {
      * @return  数据变更条数
      * @throws JSchException  连接失败
      */
-    int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException;
+    int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException;
 
     /**
      * 根据条件从数据库查询IO信息

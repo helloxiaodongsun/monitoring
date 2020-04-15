@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+
 /**
  * @author 84483
  */
@@ -41,7 +43,7 @@ public class MonHardwareIoInfoController extends BaseController {
     @GetMapping(value = "/summary")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "io信息查询")
     @ResponseBody
-    public AjaxResult getIoInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getIoInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         MonHardwareIoInfoDto monHardwareIoInfoDto = monHardwareIoInfoService.queryIoInfo(ip);
         return AjaxResult.success(monHardwareIoInfoDto);
     }

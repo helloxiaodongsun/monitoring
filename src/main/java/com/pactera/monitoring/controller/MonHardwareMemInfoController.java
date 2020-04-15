@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+
 /**
  * 服务器信息
  *
@@ -36,7 +38,7 @@ public class MonHardwareMemInfoController extends BaseController {
     @GetMapping(value = "/summary")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "服务器内存信息查询")
     @ResponseBody
-    public AjaxResult getMemoInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getMemoInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         MonHardwareMemInfoDto monHardwareMemInfoDto = monHardwareMemInfoService.queryServerMemInfo(ip);
         return AjaxResult.success(monHardwareMemInfoDto);
     }

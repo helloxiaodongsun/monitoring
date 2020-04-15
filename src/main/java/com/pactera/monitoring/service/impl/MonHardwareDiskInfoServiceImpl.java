@@ -17,12 +17,15 @@ import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
-import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
+import com.pactera.monitoring.utils.ssh.DiskDtlInformationFromServer;
+import com.pactera.monitoring.utils.ssh.DiskTolInformationFromServer;
+import com.pactera.monitoring.utils.ssh.QueryContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,13 +53,14 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @return 返回硬盘汇总
      */
     @Override
-    public MonHardwareDiskInfoTolDto queryDiskInfoTol(String serverIp) throws BussinessException, JSchException {
+    public MonHardwareDiskInfoTolDto queryDiskInfoTol(String serverIp) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(serverIp);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        MonHardwareDiskInfoTol monHardwareDiskInfoTol = queryDiskInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
+        MonHardwareDiskInfoTol monHardwareDiskInfoTol = queryDiskInfoTolFromRemote(serviceUser, servicePassword,
+                serverIp, port,new Date());
         MonHardwareDiskInfoTolDto monHardwareDiskInfoTolDto = new MonHardwareDiskInfoTolDto();
         BeanUtils.copyProperties(monHardwareDiskInfoTol, monHardwareDiskInfoTolDto);
         return monHardwareDiskInfoTolDto;
@@ -73,14 +77,18 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @throws JSchException 连接服务器失败
      */
     @Override
-    public MonHardwareDiskInfoTol queryDiskInfoTolFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public MonHardwareDiskInfoTol queryDiskInfoTolFromRemote(String serviceUser,
+                                                             String servicePassword,
+                                                             String ip,
+                                                             int port,
+                                                             Date date) throws JSchException ,IOException {
+        QueryContext<MonHardwareDiskInfoTol> monHardwareDiskInfoTolQueryContext =
+                new QueryContext<>(new DiskTolInformationFromServer(serviceUser, servicePassword, ip, port));
         MonHardwareDiskInfoTol monHardwareDiskInfoTol;
         try {
-            monHardwareDiskInfoTol = remoteComputerMonitorUtil.getDiskUsageTol();
-        } finally {
-            remoteComputerMonitorUtil.close();
+            monHardwareDiskInfoTol = monHardwareDiskInfoTolQueryContext.getObject(date);
+        }finally {
+            monHardwareDiskInfoTolQueryContext.close();
         }
 
         return monHardwareDiskInfoTol;
@@ -93,13 +101,14 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @return 返回硬盘明细
      */
     @Override
-    public List<MonHardwareDiskInfoDtlDto> queryDiskInfoDtl(String serverIp) throws BussinessException, JSchException {
+    public List<MonHardwareDiskInfoDtlDto> queryDiskInfoDtl(String serverIp) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(serverIp);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        List<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList = queryDiskInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
+        List<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList = queryDiskInfoDtlFromRemote(serviceUser,
+                servicePassword, serverIp, port,new Date());
         return monHardwareDiskInfoDtlList.stream().map(item -> {
             MonHardwareDiskInfoDtlDto monHardwareDiskInfoDtlDto = new MonHardwareDiskInfoDtlDto();
             BeanUtils.copyProperties(item, monHardwareDiskInfoDtlDto);
@@ -118,14 +127,18 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @throws JSchException 连接服务器失败
      */
     @Override
-    public List<MonHardwareDiskInfoDtl> queryDiskInfoDtlFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public List<MonHardwareDiskInfoDtl> queryDiskInfoDtlFromRemote(String serviceUser,
+                                                                   String servicePassword,
+                                                                   String ip,
+                                                                   int port,
+                                                                   Date date) throws JSchException,IOException {
+        QueryContext<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlQueryContext =
+                new QueryContext<>(new DiskDtlInformationFromServer(serviceUser, servicePassword, ip, port));
         List<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList;
         try {
-            monHardwareDiskInfoDtlList = remoteComputerMonitorUtil.getDiskUsageDtl();
+            monHardwareDiskInfoDtlList = monHardwareDiskInfoDtlQueryContext.getCollection(date);
         } finally {
-            remoteComputerMonitorUtil.close();
+            monHardwareDiskInfoDtlQueryContext.close();
         }
 
         return monHardwareDiskInfoDtlList;
@@ -139,7 +152,7 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
+    public int saveDiskInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -147,9 +160,8 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
         int port = Integer.parseInt(servicePort);
         date = date == null ? new Date() : date;
         List<MonHardwareDiskInfoDtl> monHardwareDiskInfoDtlList
-                = queryDiskInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
+                = queryDiskInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port,date);
         for (MonHardwareDiskInfoDtl monHardwareDiskInfoDtl : monHardwareDiskInfoDtlList) {
-            monHardwareDiskInfoDtl.setDataDt(date);
             monHardwareDiskInfoDtl.setRecordDt(date);
         }
         return monHardwareDiskinfoDtlDao.insertSelectiveBatch(monHardwareDiskInfoDtlList);
@@ -163,7 +175,7 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException {
+    public int saveDiskInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException, IOException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -171,8 +183,8 @@ public class MonHardwareDiskInfoServiceImpl implements MonHardwareDiskInfoServic
         int port = Integer.parseInt(servicePort);
         String serviceType = monHardwareServerInfo.getServiceType();
         date = date == null ? new Date() : date;
-        MonHardwareDiskInfoTol monHardwareDiskInfoTol = queryDiskInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
-        monHardwareDiskInfoTol.setDataDt(date);
+        MonHardwareDiskInfoTol monHardwareDiskInfoTol = queryDiskInfoTolFromRemote(serviceUser, servicePassword,
+                serverIp, port,date);
         monHardwareDiskInfoTol.setRecordDt(date);
         monHardwareDiskInfoTol.setServiceType(serviceType);
         return monHardwareDiskinfoTolDao.insertSelective(monHardwareDiskInfoTol);

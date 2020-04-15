@@ -8,6 +8,7 @@ import com.pactera.monitoring.entity.SearchBaseEntity;
 import com.pactera.monitoring.entity.dto.MonHardwareMemInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ public interface MonHardwareMemInfoService {
      * @param ip ip地址
      * @return 服务器信息明细
      */
-    MonHardwareMemInfoDto queryServerMemInfo(String ip) throws BussinessException, JSchException;
+    MonHardwareMemInfoDto queryServerMemInfo(String ip) throws BussinessException, JSchException, IOException;
 
     /**
      * 查询服务器内存信息
@@ -32,7 +33,11 @@ public interface MonHardwareMemInfoService {
      * @param port 端口号
      * @return 服务器信息
      */
-    MonHardwareMemInfoDtl queryServerMemInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException;
+    MonHardwareMemInfoDtl queryServerMemInfoFromRemote(String serviceUser,
+                                                       String servicePassword,
+                                                       String ip,
+                                                       int port,
+                                                       Date date) throws JSchException, IOException;
 
 
     /**
@@ -41,7 +46,7 @@ public interface MonHardwareMemInfoService {
      * @return  数据变更条数
      * @throws JSchException  连接失败
      */
-    int saveServerMemInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException;
+    int saveServerMemInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException;
 
     /**
      * 根据条件从数据库查询内存信息

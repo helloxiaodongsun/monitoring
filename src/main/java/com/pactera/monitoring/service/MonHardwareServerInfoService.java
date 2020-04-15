@@ -5,6 +5,9 @@ import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import javax.xml.crypto.Data;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,7 +21,7 @@ public interface MonHardwareServerInfoService {
      * @param ip 远程服务器ip
      * @return 服务器基本信息
      */
-    MonHardwareServerInfoDto queryServerInfoByIp(String ip) throws BussinessException, JSchException;
+    MonHardwareServerInfoDto queryServerInfoByIp(String ip) throws BussinessException, JSchException, IOException;
 
     /**
      * 查询linux服务器信息
@@ -33,7 +36,8 @@ public interface MonHardwareServerInfoService {
     MonHardwareServerInfo queryServerInfoFromRemote(String serviceUser,
                                                     String servicePassword,
                                                     String ip,
-                                                    int port) throws JSchException;
+                                                    int port,
+                                                    Date date) throws JSchException, IOException;
 
     /**
      * 根据ip,从数据库中获得密码、端口

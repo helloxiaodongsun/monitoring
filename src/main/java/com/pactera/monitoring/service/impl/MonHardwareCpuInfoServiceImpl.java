@@ -17,12 +17,15 @@ import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
-import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
+import com.pactera.monitoring.utils.ssh.CpuDtlInformationFromServer;
+import com.pactera.monitoring.utils.ssh.CpuTolInformationFromServer;
+import com.pactera.monitoring.utils.ssh.QueryContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,13 +53,13 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @return 返回cpu汇总
      */
     @Override
-    public MonHardwareCpuInfoTolDto queryCpuInfoTol(String serverIp) throws BussinessException, JSchException {
+    public MonHardwareCpuInfoTolDto queryCpuInfoTol(String serverIp) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(serverIp);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        MonHardwareCpuInfoTol monHardwareCpuInfoTol = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
+        MonHardwareCpuInfoTol monHardwareCpuInfoTol = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port,new Date());
         MonHardwareCpuInfoTolDto monHardwareCpuInfoTolDto = new MonHardwareCpuInfoTolDto();
         BeanUtils.copyProperties(monHardwareCpuInfoTol, monHardwareCpuInfoTolDto);
         return monHardwareCpuInfoTolDto;
@@ -73,14 +76,18 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接服务器失败
      */
     @Override
-    public MonHardwareCpuInfoTol queryCpuInfoTolFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public MonHardwareCpuInfoTol queryCpuInfoTolFromRemote(String serviceUser,
+                                                           String servicePassword,
+                                                           String ip,
+                                                           int port,
+                                                           Date date) throws JSchException, IOException {
+        QueryContext<MonHardwareCpuInfoTol> monHardwareCpuInfoTolQueryContext =
+                new QueryContext<>(new CpuTolInformationFromServer(serviceUser, servicePassword, ip, port));
         MonHardwareCpuInfoTol cpuUsageTol;
         try {
-            cpuUsageTol = remoteComputerMonitorUtil.getCpuUsageTol();
+            cpuUsageTol = monHardwareCpuInfoTolQueryContext.getObject(date);
         } finally {
-            remoteComputerMonitorUtil.close();
+            monHardwareCpuInfoTolQueryContext.close();
         }
 
         return cpuUsageTol;
@@ -93,13 +100,13 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @return 返回cpu明细
      */
     @Override
-    public MonHardwareCpuInfoDtlDto queryCpuInfoDtl(String serverIp) throws BussinessException, JSchException {
+    public MonHardwareCpuInfoDtlDto queryCpuInfoDtl(String serverIp) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(serverIp);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        MonHardwareCpuInfoDtl monHardwareCpuInfoDtl = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
+        MonHardwareCpuInfoDtl monHardwareCpuInfoDtl = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port,new Date());
         MonHardwareCpuInfoDtlDto monHardwareCpuInfoDtlDto = new MonHardwareCpuInfoDtlDto();
         BeanUtils.copyProperties(monHardwareCpuInfoDtl, monHardwareCpuInfoDtlDto);
         return monHardwareCpuInfoDtlDto;
@@ -116,14 +123,18 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接服务器失败
      */
     @Override
-    public MonHardwareCpuInfoDtl queryCpuInfoDtlFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public MonHardwareCpuInfoDtl queryCpuInfoDtlFromRemote(String serviceUser,
+                                                           String servicePassword,
+                                                           String ip,
+                                                           int port,
+                                                           Date date) throws JSchException, IOException {
+        QueryContext<MonHardwareCpuInfoDtl> monHardwareCpuInfoDtlQueryContext =
+                new QueryContext<>(new CpuDtlInformationFromServer(serviceUser, servicePassword, ip, port));
         MonHardwareCpuInfoDtl cpuUsageDtl;
         try {
-            cpuUsageDtl = remoteComputerMonitorUtil.getCpuUsageDtl();
+            cpuUsageDtl = monHardwareCpuInfoDtlQueryContext.getObject(date);
         } finally {
-            remoteComputerMonitorUtil.close();
+            monHardwareCpuInfoDtlQueryContext.close();
         }
         return cpuUsageDtl;
     }
@@ -135,7 +146,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
+    public int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -144,8 +155,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         String serviceType = monHardwareServerInfo.getServiceType();
         date = date == null ? new Date() : date;
         MonHardwareCpuInfoDtl monHardwareCpuInfoDtl
-                = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port);
-        monHardwareCpuInfoDtl.setDataDt(date);
+                = queryCpuInfoDtlFromRemote(serviceUser, servicePassword, serverIp, port,date);
         monHardwareCpuInfoDtl.setRecordDt(date);
         monHardwareCpuInfoDtl.setServiceType(serviceType);
         return monHardwareCpuInfoDtlDao.insertSelective(monHardwareCpuInfoDtl);
@@ -158,7 +168,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
+    public int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -167,8 +177,7 @@ public class MonHardwareCpuInfoServiceImpl implements MonHardwareCpuInfoService 
         String serviceType = monHardwareServerInfo.getServiceType();
         date = date == null ? new Date() : date;
         MonHardwareCpuInfoTol monHardwareCpuInfoTol
-                = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port);
-        monHardwareCpuInfoTol.setDataDt(date);
+                = queryCpuInfoTolFromRemote(serviceUser, servicePassword, serverIp, port,date);
         monHardwareCpuInfoTol.setRecordDt(date);
         monHardwareCpuInfoTol.setServiceType(serviceType);
         return monHardwareCpuInfoTolDao.insertSelective(monHardwareCpuInfoTol);

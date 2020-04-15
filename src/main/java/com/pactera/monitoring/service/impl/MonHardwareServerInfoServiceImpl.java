@@ -8,13 +8,15 @@ import com.pactera.monitoring.exception.BussinessException;
 import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
-import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
+import com.pactera.monitoring.utils.ssh.QueryContext;
+import com.pactera.monitoring.utils.ssh.ServerInformationFromServer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -38,16 +40,16 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
      * @return 服务器基本信息
      */
     @Override
-    public MonHardwareServerInfoDto queryServerInfoByIp(String ip) throws BussinessException, JSchException {
+    public MonHardwareServerInfoDto queryServerInfoByIp(String ip) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = this.queryServerInfoFromDb(ip);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        MonHardwareServerInfo hardwareServerInfo = queryServerInfoFromRemote(serviceUser, servicePassword, ip, port);
+        MonHardwareServerInfo hardwareServerInfo = queryServerInfoFromRemote(serviceUser, servicePassword, ip, port,
+                new Date());
         MonHardwareServerInfoDto monHardwareServerInfoDto = new MonHardwareServerInfoDto();
         BeanUtils.copyProperties(hardwareServerInfo, monHardwareServerInfoDto);
-        monHardwareServerInfoDto.setDataDt(new Date());
         monHardwareServerInfoDto.setServiceIp(ip);
         return monHardwareServerInfoDto;
     }
@@ -63,14 +65,18 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
      * @throws JSchException 连接服务器失败
      */
     @Override
-    public MonHardwareServerInfo queryServerInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public MonHardwareServerInfo queryServerInfoFromRemote(String serviceUser,
+                                                           String servicePassword,
+                                                           String ip,
+                                                           int port,
+                                                           Date date) throws JSchException, IOException {
+        QueryContext<MonHardwareServerInfo> monHardwareServerInfoQueryContext
+                = new QueryContext<>(new ServerInformationFromServer(serviceUser, servicePassword, ip, port));
         MonHardwareServerInfo serverInfo;
         try {
-            serverInfo = remoteComputerMonitorUtil.getServerInfo();
+            serverInfo = monHardwareServerInfoQueryContext.getObject(date);
         } finally {
-            remoteComputerMonitorUtil.close();
+            monHardwareServerInfoQueryContext.close();
         }
         return serverInfo;
     }

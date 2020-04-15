@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -46,7 +47,7 @@ public class MonHardwareDiskInfoController extends BaseController {
     @GetMapping(value = "/detail")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "硬盘详细信息查询")
     @ResponseBody
-    public AjaxResult getDiskInfoDtl(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getDiskInfoDtl(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         List<MonHardwareDiskInfoDtlDto> monHardwareDiskInfoDtlDtoList = monHardwareDiskInfoService.queryDiskInfoDtl(ip);
         return AjaxResult.success(monHardwareDiskInfoDtlDtoList);
     }
@@ -60,7 +61,7 @@ public class MonHardwareDiskInfoController extends BaseController {
     @GetMapping(value = "/summary")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "硬盘汇总信息查询")
     @ResponseBody
-    public AjaxResult getDiskInfoTol(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getDiskInfoTol(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         MonHardwareDiskInfoTolDto monHardwareDiskInfoTolDto = monHardwareDiskInfoService.queryDiskInfoTol(ip);
         return AjaxResult.success(monHardwareDiskInfoTolDto);
     }

@@ -15,12 +15,14 @@ import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
-import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
+import com.pactera.monitoring.utils.ssh.MemoDtlInformationFromServer;
+import com.pactera.monitoring.utils.ssh.QueryContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -46,13 +48,14 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
      * @return 服务器信息明细
      */
     @Override
-    public MonHardwareMemInfoDto queryServerMemInfo(String ip) throws BussinessException, JSchException {
+    public MonHardwareMemInfoDto queryServerMemInfo(String ip) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(ip);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        MonHardwareMemInfoDtl monHardwareMemInfoDtl = queryServerMemInfoFromRemote(serviceUser, servicePassword, ip, port);
+        MonHardwareMemInfoDtl monHardwareMemInfoDtl = queryServerMemInfoFromRemote(serviceUser, servicePassword, ip,
+                port,new Date());
         MonHardwareMemInfoDto monHardwareMemInfoDto = new MonHardwareMemInfoDto();
         BeanUtils.copyProperties(monHardwareMemInfoDtl, monHardwareMemInfoDto);
         return monHardwareMemInfoDto;
@@ -68,15 +71,18 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
      * @return 服务器信息
      */
     @Override
-    public MonHardwareMemInfoDtl queryServerMemInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public MonHardwareMemInfoDtl queryServerMemInfoFromRemote(String serviceUser,
+                                                              String servicePassword,
+                                                              String ip,
+                                                              int port,
+                                                              Date date) throws JSchException, IOException {
+        QueryContext<MonHardwareMemInfoDtl> monHardwareMemInfoDtlQueryContext =
+                new QueryContext<>(new MemoDtlInformationFromServer(serviceUser, servicePassword, ip, port));
         MonHardwareMemInfoDtl memUsage;
         try {
-            memUsage = remoteComputerMonitorUtil.getMemUsage();
+            memUsage = monHardwareMemInfoDtlQueryContext.getObject(date);
         } finally {
-            remoteComputerMonitorUtil.close();
+            monHardwareMemInfoDtlQueryContext.close();
         }
         return memUsage;
     }
@@ -89,7 +95,7 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveServerMemInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
+    public int saveServerMemInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -98,8 +104,7 @@ public class MonHardwareMemInfoServiceImpl implements MonHardwareMemInfoService 
         int port = Integer.parseInt(servicePort);
         date = date == null ? new Date() : date;
         MonHardwareMemInfoDtl monHardwareMemInfoDtl
-                = queryServerMemInfoFromRemote(serviceUser, servicePassword, serverIp, port);
-        monHardwareMemInfoDtl.setDataDt(date);
+                = queryServerMemInfoFromRemote(serviceUser, servicePassword, serverIp, port,date);
         monHardwareMemInfoDtl.setRecordDt(date);
         monHardwareMemInfoDtl.setServiceType(serviceType);
         return monHardwareMeminfoDtlDao.insertSelective(monHardwareMemInfoDtl);

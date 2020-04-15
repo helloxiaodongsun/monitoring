@@ -92,7 +92,7 @@ public class JSchUtil {
     /**
      * 执行一条命令
      */
-    public List<String> execCmd(String command) {
+    public List<String> execCmd(String command) throws IOException {
         BufferedReader reader = null;
         Channel channel = null;
         InputStream in = null;
@@ -110,8 +110,8 @@ public class JSchUtil {
             while ((buf = reader.readLine()) != null) {
                 result.add(buf);
             }
-        } catch (JSchException | IOException e) {
-            log.error(e.getMessage(), e);
+        } catch (JSchException e) {
+            e.printStackTrace();
         } finally {
 
             if (in != null) {
@@ -138,11 +138,11 @@ public class JSchUtil {
     /**
      * 执行一条命令,异常抛出，手动关闭channel，针对多条命令优化
      */
-    public Map<String, List<String>> execCmdMultipleCommands(String[] commandArray) {
+    public Map<String, List<String>> execCmdMultipleCommands(String[] commandArray) throws IOException {
         if (commandArray == null || commandArray.length <= 0) {
             return new HashMap<>(0);
         }
-        HashMap<String, List<String>> resultCollect = new HashMap<>();
+        HashMap<String, List<String>> resultCollect = new HashMap<>(commandArray.length);
         for (String command : commandArray) {
             if(command == null || "".equals(command)){continue;}
             List<String> commandList = execCmd(command);

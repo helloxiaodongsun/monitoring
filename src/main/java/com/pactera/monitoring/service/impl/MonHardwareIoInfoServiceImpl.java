@@ -14,12 +14,14 @@ import com.pactera.monitoring.service.MonHardwareServerInfoService;
 import com.pactera.monitoring.utils.DateUtils;
 import com.pactera.monitoring.utils.bean.BaseConverter;
 import com.pactera.monitoring.utils.bean.BeanUtils;
-import com.pactera.monitoring.utils.ssh.RemoteComputerMonitorUtil;
+import com.pactera.monitoring.utils.ssh.IoInformationFromServer;
+import com.pactera.monitoring.utils.ssh.QueryContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -43,13 +45,13 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
      * @return io信息明细
      */
     @Override
-    public MonHardwareIoInfoDto queryIoInfo(String ip) throws BussinessException, JSchException {
+    public MonHardwareIoInfoDto queryIoInfo(String ip) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfo monHardwareServerInfo = monHardwareServerInfoService.queryServerInfoFromDb(ip);
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
         int port = Integer.parseInt(servicePort);
-        MonHardwareIoInfo monHardwareIoInfo = queryIoInfoFromRemote(serviceUser, servicePassword, ip, port);
+        MonHardwareIoInfo monHardwareIoInfo = queryIoInfoFromRemote(serviceUser, servicePassword, ip, port,new Date());
         if (monHardwareIoInfo == null) {
             return new MonHardwareIoInfoDto();
         }
@@ -68,14 +70,18 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
      * @return io信息明细
      */
     @Override
-    public MonHardwareIoInfo queryIoInfoFromRemote(String serviceUser, String servicePassword, String ip, int port) throws JSchException {
-        RemoteComputerMonitorUtil remoteComputerMonitorUtil
-                = new RemoteComputerMonitorUtil(serviceUser, servicePassword, ip, port);
+    public MonHardwareIoInfo queryIoInfoFromRemote(String serviceUser,
+                                                   String servicePassword,
+                                                   String ip,
+                                                   int port,
+                                                   Date date) throws JSchException, IOException {
+        QueryContext<MonHardwareIoInfo> monHardwareIoInfoQueryContext =
+                new QueryContext<>(new IoInformationFromServer(serviceUser, servicePassword, ip, port));
         MonHardwareIoInfo ioUsage;
         try {
-            ioUsage = remoteComputerMonitorUtil.getIoUsage();
-        } finally {
-            remoteComputerMonitorUtil.close();
+            ioUsage = monHardwareIoInfoQueryContext.getObject(date);
+        }  finally {
+            monHardwareIoInfoQueryContext.close();
         }
         return ioUsage;
     }
@@ -88,7 +94,7 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
      * @throws JSchException 连接失败
      */
     @Override
-    public int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException {
+    public int saveIoInfo(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException {
         String servicePassword = monHardwareServerInfo.getServicePassword();
         String servicePort = monHardwareServerInfo.getServicePort();
         String serviceUser = monHardwareServerInfo.getServiceUser();
@@ -96,8 +102,7 @@ public class MonHardwareIoInfoServiceImpl implements MonHardwareIoInfoService {
         String serviceType = monHardwareServerInfo.getServiceType();
         int port = Integer.parseInt(servicePort);
         date = date == null ? new Date() : date;
-        MonHardwareIoInfo monHardwareIoInfo = queryIoInfoFromRemote(serviceUser, servicePassword, serverIp, port);
-        monHardwareIoInfo.setDataDt(date);
+        MonHardwareIoInfo monHardwareIoInfo = queryIoInfoFromRemote(serviceUser, servicePassword, serverIp, port,date);
         monHardwareIoInfo.setRecordDt(date);
         monHardwareIoInfo.setServiceType(serviceType);
         return monHardwareIoInfoDao.insertSelective(monHardwareIoInfo);

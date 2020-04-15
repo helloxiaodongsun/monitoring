@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 /**double运算不丢失精度
- * @author 8
+ * @author 84483
  */
 public class ArithUtil {
     // 默认除法运算精度

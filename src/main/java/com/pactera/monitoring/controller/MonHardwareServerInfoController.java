@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+
 /**
  * 服务器信息
  *
@@ -38,7 +40,7 @@ public class MonHardwareServerInfoController {
     @GetMapping(value = "/summary")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "服务器基本信息查询")
     @ResponseBody
-    public AjaxResult getServerInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getServerInfo(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         MonHardwareServerInfoDto monHardwareServerInfoDto = monHardwareServerInfoService.queryServerInfoByIp(ip);
         return AjaxResult.success(monHardwareServerInfoDto);
     }

@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 /**
- * @author 8
+ * @author 84483
  */
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -49,32 +50,32 @@ public class QuartzJobServiceImpl implements QuartzJobService {
         monHardwareServerInfos.forEach(monHardwareServerInfo -> {
             try {
                 monHardwareMemInfoService.saveServerMemInfoDtl(monHardwareServerInfo,date);
-            } catch (JSchException e) {
+            } catch (JSchException | IOException e) {
                 log.error(e.getMessage(),e);
             }
             try {
                 monHardwareIoInfoService.saveIoInfo(monHardwareServerInfo,date);
-            } catch (JSchException e) {
+            } catch (JSchException | IOException e) {
                 log.error(e.getMessage(),e);
             }
             try {
                 monHardwareDiskInfoService.saveDiskInfoDtl(monHardwareServerInfo,date);
-            } catch (JSchException e) {
+            } catch (JSchException | IOException e) {
                 log.error(e.getMessage(),e);
             }
             try {
                 monHardwareDiskInfoService.saveDiskInfoTol(monHardwareServerInfo,date);
-            } catch (JSchException e) {
+            } catch (JSchException | IOException e) {
                 log.error(e.getMessage(),e);
             }
             try {
                 monHardwareCpuInfoService.saveCpuInfoDtl(monHardwareServerInfo,date);
-            } catch (JSchException e) {
+            } catch (JSchException | IOException e) {
                 log.error(e.getMessage(),e);
             }
             try {
                 monHardwareCpuInfoService.saveCpuInfoTol(monHardwareServerInfo,date);
-            } catch (JSchException e) {
+            } catch (JSchException | IOException e) {
                 log.error(e.getMessage(),e);
             }
 

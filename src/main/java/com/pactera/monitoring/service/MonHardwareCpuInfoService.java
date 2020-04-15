@@ -11,6 +11,7 @@ import com.pactera.monitoring.entity.dto.MonHardwareCpuInfoTolDto;
 import com.pactera.monitoring.entity.dto.MonHardwareMemInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface MonHardwareCpuInfoService {
      * @param serverIp 服务器ip
      * @return 返回cpu汇总
      */
-    MonHardwareCpuInfoTolDto queryCpuInfoTol(String serverIp) throws BussinessException, JSchException;
+    MonHardwareCpuInfoTolDto queryCpuInfoTol(String serverIp) throws BussinessException, JSchException, IOException;
 
     /**
      * 访问linux服务器，查询cpu汇总信息
@@ -42,7 +43,8 @@ public interface MonHardwareCpuInfoService {
     MonHardwareCpuInfoTol queryCpuInfoTolFromRemote(String serviceUser,
                                                        String servicePassword,
                                                        String ip,
-                                                       int port) throws JSchException;
+                                                       int port,
+                                                        Date date) throws JSchException, IOException;
 
     /**
      * 查询cpu明细信息
@@ -50,7 +52,7 @@ public interface MonHardwareCpuInfoService {
      * @param serverIp 服务器ip
      * @return 返回cpu明细
      */
-    MonHardwareCpuInfoDtlDto queryCpuInfoDtl(String serverIp) throws BussinessException, JSchException;
+    MonHardwareCpuInfoDtlDto queryCpuInfoDtl(String serverIp) throws BussinessException, JSchException, IOException;
 
     /**
      * 访问linux服务器，查询cpu明细信息
@@ -65,14 +67,15 @@ public interface MonHardwareCpuInfoService {
     MonHardwareCpuInfoDtl queryCpuInfoDtlFromRemote(String serviceUser,
                                                        String servicePassword,
                                                        String ip,
-                                                       int port) throws JSchException;
+                                                       int port,
+                                                        Date date) throws JSchException, IOException;
 
     /**
      * 从远程服务器查询cpu明细信息保存数据库
      * @param monHardwareServerInfo 需要连接的服务器对象
      * @throws JSchException 连接失败
      */
-    int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException;
+    int saveCpuInfoDtl(MonHardwareServerInfo monHardwareServerInfo, Date date) throws JSchException, IOException;
 
 
     /**
@@ -80,7 +83,7 @@ public interface MonHardwareCpuInfoService {
      * @param monHardwareServerInfo 需要连接的服务器对象
      * @throws JSchException 连接失败
      */
-    int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException;
+    int saveCpuInfoTol(MonHardwareServerInfo monHardwareServerInfo,Date date) throws JSchException, IOException;
 
     /**
      * 根据条件从数据库查询cpu明细信息

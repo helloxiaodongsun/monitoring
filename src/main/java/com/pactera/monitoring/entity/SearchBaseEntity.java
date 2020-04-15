@@ -1,7 +1,7 @@
 package com.pactera.monitoring.entity;
 
 /**前台查询基础类
- * @author 8
+ * @author 84483
  */
 public class SearchBaseEntity  {
     //搜索ip

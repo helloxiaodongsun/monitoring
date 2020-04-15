@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+
 /**
  * cpu信息查询
  *
@@ -43,7 +45,7 @@ public class MonHardwareCpuInfoController extends BaseController {
     @GetMapping(value = "/detail")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "cpu详细信息查询")
     @ResponseBody
-    public AjaxResult getCpuInfoDtl(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getCpuInfoDtl(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         MonHardwareCpuInfoDtlDto monHardwareCpuInfoDtlDto = monHardwareCpuInfoService.queryCpuInfoDtl(ip);
         return AjaxResult.success(monHardwareCpuInfoDtlDto);
     }
@@ -57,7 +59,7 @@ public class MonHardwareCpuInfoController extends BaseController {
     @GetMapping(value = "/summary")
     @MethodExplain(methodType = MethodType.SELECT, methodName = "cpu汇总信息查询")
     @ResponseBody
-    public AjaxResult getCpuInfoTol(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException {
+    public AjaxResult getCpuInfoTol(@RequestParam(value = "ip") String ip) throws BussinessException, JSchException, IOException {
         MonHardwareCpuInfoTolDto monHardwareCpuInfoTolDto = monHardwareCpuInfoService.queryCpuInfoTol(ip);
         return AjaxResult.success(monHardwareCpuInfoTolDto);
     }
