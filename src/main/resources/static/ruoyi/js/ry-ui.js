@@ -1428,6 +1428,11 @@ var table = {
                 }
                 return false;
             },
+			// 判断是否是正整数
+			isPosInt:function(value){
+                var r = /^\+?[1-9][0-9]*$/;　　//正整数
+                return r.test(value);
+			},
             // 判断一个字符串是否为非空串
             isNotEmpty: function (value) {
             	return !$.common.isEmpty(value);

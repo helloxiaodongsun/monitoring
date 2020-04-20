@@ -5,7 +5,6 @@ import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
 import com.pactera.monitoring.exception.BussinessException;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -63,4 +62,23 @@ public interface MonHardwareServerInfoService {
      */
     List<MonHardwareServerInfo> queryAllServerInfo() throws Exception ;
 
+    /**
+     * 按条件查询服务器列表
+     * @param monHardwareServerInfo
+     * @return
+     */
+    List<MonHardwareServerInfo> queryListFromDbByCondition(MonHardwareServerInfo monHardwareServerInfo);
+
+    /**
+     * 增加服务器
+     * @param monHardwareServerInfo
+     * @param editFlag 修改标志
+     */
+    void addServer(MonHardwareServerInfo monHardwareServerInfo,boolean editFlag) throws BussinessException;
+
+    /**
+     * 删除服务器信息
+     * @param id
+     */
+    void remove(String[] id);
 }

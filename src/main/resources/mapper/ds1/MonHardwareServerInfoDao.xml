@@ -207,4 +207,48 @@
     select <include refid="serverInfoSql"></include>
     from MON_HARDWARE_SERVER_INFO order by SERVICE_IP
   </select>
+  <select id="queryListFromDbByCondition" resultMap="BaseResultMap" parameterType="com.pactera.monitoring.entity.MonHardwareServerInfo">
+    select <include refid="serverInfoSql"></include>
+    from MON_HARDWARE_SERVER_INFO
+    <where>
+      <if test="monHardwareServerInfo.serviceIp != null and monHardwareServerInfo.serviceIp != ''">
+        and SERVICE_IP like '%'||#{monHardwareServerInfo.serviceIp}||'%'
+      </if>
+    </where>
+  </select>
+  <update id="updateByIp" parameterType="com.pactera.monitoring.entity.MonHardwareServerInfo">
+    update  MON_HARDWARE_SERVER_INFO
+    <set>
+      SERVICE_NM = #{serviceNm,jdbcType=VARCHAR},
+      DATA_DT = #{dataDt,jdbcType=TIMESTAMP},
+      RECORD_DT = #{recordDt,jdbcType=TIMESTAMP},
+      SERVICE_VERSION = #{serviceVersion,jdbcType=VARCHAR},
+      SERVICE_ACTIVE = #{serviceActive,jdbcType=VARCHAR},
+      SERVICE_CORE_VERSION = #{serviceCoreVersion,jdbcType=VARCHAR},
+      SERVICE_USER = #{serviceUser,jdbcType=VARCHAR},
+      SERVICE_PASSWORD = #{servicePassword,jdbcType=VARCHAR},
+      SERVICE_TYPE = #{serviceType,jdbcType=VARCHAR},
+      SERVICE_PORT = #{servicePort,jdbcType=VARCHAR},
+      CHAR_BAK_1 = #{charBak1,jdbcType=VARCHAR},
+      CHAR_BAK_2 = #{charBak2,jdbcType=VARCHAR},
+      CHAR_BAK_3 = #{charBak3,jdbcType=VARCHAR},
+      CHAR_BAK_4 = #{charBak4,jdbcType=VARCHAR},
+      CHAR_BAK_5 = #{charBak5,jdbcType=VARCHAR},
+      NUM_BAK_1 = #{numBak1,jdbcType=NUMERIC},
+      NUM_BAK_2 = #{numBak2,jdbcType=NUMERIC},
+      NUM_BAK_3 = #{numBak3,jdbcType=NUMERIC},
+      NUM_BAK_4 = #{numBak4,jdbcType=NUMERIC},
+      NUM_BAK_5 = #{numBak5,jdbcType=NUMERIC},
+    </set>
+    where SERVICE_IP = #{serviceIp,jdbcType=VARCHAR}
+  </update>
+  <delete id="removeByIp" parameterType="String">
+    delete MON_HARDWARE_SERVER_INFO
+    <where>
+      SERVICE_IP in
+      <foreach collection="ips" item="ip" open="(" separator="," close=")">
+        #{ip}
+      </foreach>
+    </where>
+  </delete>
 </mapper>

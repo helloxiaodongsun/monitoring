@@ -194,4 +194,15 @@ public class IndexController {
         mmap.put("seriesData",map.get("seriesData"));
         return "hardware/mem-chart";
     }
+
+    /**
+     * 进入服务器基本信息页面
+     * @param mmap
+     * @return
+     */
+    @RequestMapping("/hardware/basic")
+    public String serverIndex(ModelMap mmap){
+
+        return "hardware/basic";
+    }
 }

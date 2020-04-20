@@ -27,4 +27,25 @@ public interface MonHardwareServerInfoDao {
      * @return
      */
     List<MonHardwareServerInfo> findAll();
+
+    /**
+     * 按条件查找服务器列表
+     * @param monHardwareServerInfo
+     * @return
+     */
+    List<MonHardwareServerInfo> queryListFromDbByCondition(@Param("monHardwareServerInfo") MonHardwareServerInfo monHardwareServerInfo);
+
+    /**
+     * 更新服务器信息
+     * @param serverInfo
+     * @return
+     */
+    int updateByIp(MonHardwareServerInfo serverInfo);
+
+    /**
+     * 删除服务器信息
+     * @param ips
+     * @return
+     */
+    int removeByIp(@Param("ips") String[] ips);
 }

@@ -1,6 +1,7 @@
 package com.pactera.monitoring.service.impl;
 
 import com.jcraft.jsch.JSchException;
+import com.pactera.monitoring.constant.ErrorMsgConstants;
 import com.pactera.monitoring.dao.ds1.MonHardwareServerInfoDao;
 import com.pactera.monitoring.entity.MonHardwareServerInfo;
 import com.pactera.monitoring.entity.dto.MonHardwareServerInfoDto;
@@ -111,6 +112,61 @@ public class MonHardwareServerInfoServiceImpl implements MonHardwareServerInfoSe
     @Override
     public List<MonHardwareServerInfo> queryAllServerInfo() throws Exception {
         return monHardwareServerInfoDao.findAll();
+    }
+
+    /**
+     * 按条件查询服务器列表
+     *
+     * @param monHardwareServerInfo
+     * @return
+     */
+    @Override
+    public List<MonHardwareServerInfo> queryListFromDbByCondition(MonHardwareServerInfo monHardwareServerInfo) {
+        return monHardwareServerInfoDao.queryListFromDbByCondition(monHardwareServerInfo);
+    }
+
+    /**
+     * 增加服务器
+     *
+     * @param monHardwareServerInfo
+     * @param editFlag 修改标志
+     */
+    @Override
+    public void addServer(MonHardwareServerInfo monHardwareServerInfo,boolean editFlag) throws BussinessException {
+        QueryContext<MonHardwareServerInfo> monHardwareServerInfoQueryContext
+                = new QueryContext<>(new ServerInformationFromServer(monHardwareServerInfo.getServiceUser(), monHardwareServerInfo.getServicePassword(), monHardwareServerInfo.getServiceIp(), Integer.parseInt(monHardwareServerInfo.getServicePort())));
+        MonHardwareServerInfo serverInfo;
+        try {
+            serverInfo = monHardwareServerInfoQueryContext.getObject(new Date());
+        } catch (JSchException e) {
+            e.printStackTrace();
+            throw new BussinessException(ErrorMsgConstants.TEST_SERVER_CONNECT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BussinessException(ErrorMsgConstants.TEST_SERVER_CONNECT);
+        } finally {
+            monHardwareServerInfoQueryContext.close();
+        }
+        serverInfo.setServiceIp(monHardwareServerInfo.getServiceIp());
+        serverInfo.setServiceUser(monHardwareServerInfo.getServiceUser());
+        serverInfo.setServicePassword(monHardwareServerInfo.getServicePassword());
+        serverInfo.setServicePort(monHardwareServerInfo.getServicePort());
+        if(editFlag){
+            monHardwareServerInfoDao.updateByIp(serverInfo);
+        }else{
+            monHardwareServerInfoDao.insertSelective(serverInfo);
+        }
+
+    }
+
+    /**
+     * 删除服务器信息
+     *
+     * @param id
+     */
+    @Override
+    public void remove(String[] id) {
+        monHardwareServerInfoDao.removeByIp(id);
     }
 
     @Override
