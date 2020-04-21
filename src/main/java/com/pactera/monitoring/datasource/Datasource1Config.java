@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -111,6 +112,8 @@ public class Datasource1Config {
         sessionFactory.setTypeAliasesPackage("com.pactera.monitoring.entity");
         sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources(Datasource1Config.MAPPER_LOCATION));
+        //解决 mybatis别名在打包成jar时扫描不到
+        sessionFactory.setVfs(SpringBootVFS.class);
         return sessionFactory.getObject();
     }
 }
